@@ -1,0 +1,45 @@
+{
+    "name": "hans-thomas/alicia",
+    "description": "it's a uploader and converter for pictures and videos",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mortazavi",
+            "email": "s.mohammad027@live.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "spatie/laravel-image-optimizer": "^1.6",
+        "pbmedia/laravel-ffmpeg": "^7.5"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.24",
+        "nunomaduro/collision": "^5.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hans\\Alicia\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Hans\\Alicia\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hans\\Alicia\\AliciaServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php ./vendor/bin/testbench package:discover --ansi"
+        ],
+        "testbench": "./vendor/bin/testbench",
+        "test": "./vendor/bin/testbench package:test",
+        "unit": "./vendor/bin/phpunit"
+    }
+}
