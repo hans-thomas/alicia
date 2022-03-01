@@ -5,7 +5,6 @@
 
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Bus\Queueable;
-	use Illuminate\Contracts\Filesystem\Filesystem;
 	use Illuminate\Contracts\Queue\ShouldQueue;
 	use Illuminate\Foundation\Bus\Dispatchable;
 	use Illuminate\Queue\InteractsWithQueue;
@@ -17,7 +16,6 @@
 		use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 		private ResourceModel $model;
-		private Filesystem $storage;
 
 		/**
 		 * Create a new job instance.
@@ -26,7 +24,6 @@
 		 */
 		public function __construct( ResourceModel $model ) {
 			$this->model   = $model;
-			$this->storage = Storage::disk( 'resources' );
 		}
 
 		/**
@@ -35,10 +32,11 @@
 		 * @return void
 		 */
 		public function handle() {
+			$storage = Storage::disk( 'resources' );
 			if ( config( 'alicia.optimization.images' ) ) {
 				$settings = require __DIR__ . '/../../config/image-optimizer.php';
-				OptimizerChainFactory::create( $settings )->optimize( $this->storage->path( $this->model->address ) );
-				$this->model->setOptions( [ 'size' => $this->storage->size( $this->model->address ) ] );
+				OptimizerChainFactory::create( $settings )->optimize( $storage->path( $this->model->address ) );
+				$this->model->setOptions( [ 'size' => $storage->size( $this->model->address ) ] );
 			}
 			$this->model->update( [ 'published_at' => now() ] );
 		}

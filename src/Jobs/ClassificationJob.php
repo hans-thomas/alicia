@@ -17,7 +17,6 @@
 		use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 		private ResourceModel $model;
-		private array $configuration;
 		private Filesystem $storage;
 
 		/**
@@ -27,8 +26,6 @@
 		 */
 		public function __construct( ResourceModel $model ) {
 			$this->model         = $model;
-			$this->configuration = config( 'alicia' );
-			$this->storage       = Storage::disk( 'resources' );
 		}
 
 		/**
@@ -38,6 +35,7 @@
 		 * @throws \Exception
 		 */
 		public function handle() {
+			$this->storage = Storage::disk( 'resources' );
 			if ( $this->model->isExternal() ) {
 				return;
 			}
@@ -65,6 +63,6 @@
 		}
 
 		private function getConfig( string $key ) {
-			return Arr::get( $this->configuration, $key );
+			return Arr::get( config( 'alicia' ), $key );
 		}
 	}

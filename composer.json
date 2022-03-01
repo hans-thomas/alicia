@@ -10,12 +10,12 @@
     ],
     "require": {
         "php": "^8.0",
-        "spatie/laravel-image-optimizer": "^1.6",
-        "pbmedia/laravel-ffmpeg": "^7.5"
+        "spatie/laravel-image-optimizer": "^1.7",
+        "pbmedia/laravel-ffmpeg": "^8"
     },
     "require-dev": {
-        "orchestra/testbench": "^6.24",
-        "nunomaduro/collision": "^5.10"
+        "orchestra/testbench": "^7",
+        "nunomaduro/collision": "^6.1"
     },
     "autoload": {
         "psr-4": {

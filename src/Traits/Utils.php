@@ -339,7 +339,7 @@
 		}
 
 		private function getConfig( string $key, $default = null ) {
-			return Arr::get( $this->configuration, $key, $default );
+			return Arr::get( config( 'alicia' ), $key, $default );
 		}
 
 		/**

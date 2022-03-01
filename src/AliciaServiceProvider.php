@@ -16,11 +16,11 @@
 		 * @return void
 		 */
 		public function register() {
-			$this->app->bind( SignatureContract::class, function() {
+			$this->app->singleton( SignatureContract::class, function() {
 				return new SignatureService( config( 'alicia.secret' ) );
 			} );
 
-			$this->app->bind( AliciaContract::class, function() {
+			$this->app->singleton( AliciaContract::class, function() {
 				return new AliciaService;
 			} );
 

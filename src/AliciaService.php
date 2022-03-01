@@ -22,13 +22,11 @@
 	class AliciaService implements AliciaContract {
 		use Utils;
 
-		private array $configuration;
 		private Filesystem $storage;
 		private ResourceModel $model;
 		private Collection $data;
 
 		public function __construct() {
-			$this->configuration = config( 'alicia' );
 			$this->storage       = Storage::disk( 'resources' );
 			$this->data          = collect();
 		}
