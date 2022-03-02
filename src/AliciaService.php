@@ -27,8 +27,8 @@
 		private Collection $data;
 
 		public function __construct() {
-			$this->storage       = Storage::disk( 'resources' );
-			$this->data          = collect();
+			$this->storage = Storage::disk( 'resources' );
+			$this->data    = collect();
 		}
 
 		/**
@@ -102,7 +102,7 @@
 		 * @return string
 		 */
 		public function generateFolder(): string {
-			$folder = $this->configuration[ 'temp' ] ? : $this->configuration[ 'classification' ];
+			$folder = $this->getConfig( 'temp' ) ? : $this->getConfig( 'classification' );
 			if ( ! $this->storage->exists( $folder ) ) {
 				$this->storage->makeDirectory( $folder );
 			}
@@ -119,7 +119,7 @@
 		 * @return string
 		 */
 		public function generateName( string $driver = null, int $length = 16 ): string {
-			return match ( $driver ? : $this->configuration[ 'naming' ] ) {
+			return match ( $driver ? : $this->getConfig( 'naming' ) ) {
 				'uuid' => Str::uuid(),
 				'string' => Str::random( $length ),
 				'digits' => substr( str_shuffle( '012345678901234567890123456789' ), 0, $length ),
