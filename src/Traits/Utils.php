@@ -19,6 +19,7 @@
 	use Illuminate\Validation\ValidationException;
 	use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+	use Throwable;
 
 	trait Utils {
 		private array $requireData = [];
@@ -59,7 +60,7 @@
 					$data[ 'duration' ] = FFMpeg::fromFilesystem( $this->storage )
 					                            ->open( $tempFile )
 					                            ->getDurationInSeconds();
-				} catch ( \Throwable $e ) {
+				} catch ( Throwable $e ) {
 					// TODO: taking a frame from video failed
 				}
 			}
@@ -315,10 +316,10 @@
 			DB::beginTransaction();
 			try {
 				$model = ResourceModel::create( $data );
-			} catch ( \Throwable $e ) {
+			} catch ( Throwable $e ) {
 				DB::rollBack();
-				throw new AliciaException( 'Field to store model on database!', AliciaErrorCode::MODEL_STORE_FAILED,
-					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
+				throw new AliciaException( 'Field to store model on database! ' . $e->getMessage(),
+					AliciaErrorCode::MODEL_STORE_FAILED, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
 			DB::commit();
 

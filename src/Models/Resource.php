@@ -9,6 +9,8 @@
 	use Hans\Alicia\Traits\FFMpegPreConfig;
 	use Illuminate\Contracts\Filesystem\Filesystem;
 	use Illuminate\Database\Eloquent\Model;
+	use Illuminate\Database\Eloquent\Relations\BelongsTo;
+	use Illuminate\Database\Eloquent\Relations\HasMany;
 	use Illuminate\Support\Arr;
 	use Illuminate\Support\Facades\App;
 	use Illuminate\Support\Facades\Storage;
@@ -98,5 +100,13 @@
 
 		public function getOptions() {
 			return $this->options;
+		}
+
+		public function parent(): BelongsTo {
+			return $this->belongsTo( self::class, 'parent_id' );
+		}
+
+		public function children(): HasMany {
+			return $this->hasMany( self::class, 'parent_id' );
 		}
 	}

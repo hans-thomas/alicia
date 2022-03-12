@@ -116,8 +116,8 @@
 		| Download link
 		|--------------------------------------------------------------------------
 		|
-		| if you want to serve your files using Nginx server or anythings else
-		| just enter the server's address
+		| if you want to customize the download url, you can update this without
+		| manipulating parameters
 		|
 		*/
 		'link'           => '/download/{resource}/{hash?}', // dont add or remove parameters
@@ -132,6 +132,16 @@
         |
         */
 		'signed'         => true,
+
+		/*
+		|--------------------------------------------------------------------------
+		| Link Expiration
+		|--------------------------------------------------------------------------
+		|
+		| determine the expiration time of each link in minutes
+		|
+		*/
+		'expiration'     => 30,
 
 		/*
 		|--------------------------------------------------------------------------
@@ -154,16 +164,6 @@
 		|
 		*/
 		'secret'         => 'resource_key',
-
-		/*
-		|--------------------------------------------------------------------------
-		| Link Expiration
-		|--------------------------------------------------------------------------
-		|
-		| determine the expiration time of each link in minutes
-		|
-		*/
-		'expiration'     => 30,
 
 		/*
 		|--------------------------------------------------------------------------
@@ -190,5 +190,19 @@
 			'bitrate'             => [ 250, 500, 1000 ],
 			'setSegmentLength'    => 10,
 			'setKeyFrameInterval' => 48,
+		],
+
+		/*
+		|--------------------------------------------------------------------------
+		| Image exports settings
+		|--------------------------------------------------------------------------
+		|
+		| define your custom resolutions
+		|
+		*/
+		'export'             => [
+			960  => 540,
+			1280 => 720,
+			1920 => 1080,
 		],
 	];

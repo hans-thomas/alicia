@@ -105,6 +105,10 @@
 				return response()->json( $this->alicia->upload( $field )->getData(), 201 );
 			} )->name( 'alicia.test.upload' );
 
+			$router->post( '/export/{field}', function( string $field ) {
+				return response()->json( $this->alicia->upload( $field )->export()->getData(), 201 );
+			} )->name( 'alicia.test.upload.export' );
+
 			$router->post( '/external/{field}', function( string $field ) {
 				return response()->json( $this->alicia->external( $field )->getData(), 201 );
 			} )->name( 'alicia.test.external' );

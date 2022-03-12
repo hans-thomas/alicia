@@ -17,6 +17,7 @@
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Str;
 	use Illuminate\Validation\ValidationException;
+	use Spatie\Image\Image;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 	class AliciaService implements AliciaContract {
@@ -216,10 +217,52 @@
 			return true;
 		}
 
+		/**
+		 * Return created Model(s)
+		 *
+		 * @return ResourceModel|Collection
+		 */
 		public function getData(): ResourceModel|Collection {
 			return match ( $this->data->isEmpty() ) {
 				true => $this->getModel(),
 				default => $this->data,
 			};
+		}
+
+		/**
+		 * @throws AliciaException
+		 */
+		public function export(): self {
+			if ( ! $this->getConfig( 'export' ) ) {
+				throw new AliciaException( 'No resolution sets for exporting!', AliciaErrorCode::EXPORT_CONFIG_NOT_SET,
+					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
+			}
+			$data = collect();
+			foreach ( Arr::wrap( $this->getData() ) as $model ) {
+				$data->push( $model );
+				foreach ( $this->getConfig( 'export' ) as $height => $width ) {
+					$fileName = Str::remove( '.' . $model->extension,
+							$model->file ) . "{$height}x{$width}." . $model->extension;
+					$filePath = $this->storage->path( $model->path . '/' . $fileName );
+					Image::load( $this->storage->path( $model->address ) )
+					     ->optimize()
+					     ->height( $height )
+					     ->width( $width )
+					     ->save( $filePath );
+					$newModel = $this->save( [
+						'title'        => $model->title . "-{$height}x{$width}",
+						'path'         => $model->path,
+						'file'         => $fileName,
+						'extension'    => $model->extension,
+						'options'      => array_merge( $model->options, [ 'size' => filesize( $filePath ) ] ),
+						'published_at' => now()
+					] );
+					$newModel->parent()->associate( $model )->save();
+					$data->push( $newModel );
+				}
+			}
+			$this->data = $data->groupBy( fn( $item ) => Str::after( $item[ 'path' ], '/' ) );
+
+			return $this;
 		}
 	}

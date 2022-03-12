@@ -11,7 +11,8 @@
     "require": {
         "php": "^8.0",
         "spatie/laravel-image-optimizer": "^1.7",
-        "pbmedia/laravel-ffmpeg": "^8"
+        "pbmedia/laravel-ffmpeg": "^8",
+        "spatie/image": "^2.2"
     },
     "require-dev": {
         "orchestra/testbench": "^7.0",

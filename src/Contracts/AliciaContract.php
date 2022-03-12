@@ -23,4 +23,6 @@
 		public function delete( $id ): bool;
 
 		public function batchDelete( array $ids ): array;
+
+		public function export(): self;
 	}

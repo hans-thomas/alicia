@@ -12,4 +12,5 @@
 		public const UNKNOWN_FIELD_TYPE = 5008;
 		public const UNKNOWN_FILE_TYPE = 5009;
 		public const MODEL_STORE_FAILED = 5010;
+		public const EXPORT_CONFIG_NOT_SET = 5011;
 	}
