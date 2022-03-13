@@ -17,6 +17,7 @@
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Str;
 	use Illuminate\Validation\ValidationException;
+	use Spatie\Image\Exceptions\InvalidManipulation;
 	use Spatie\Image\Image;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -45,7 +46,7 @@
 		 */
 		public function batch( string $field, array $uploadRules = null, array $externalRules = null ): self {
 			$request = $this->getRequest( $field );
-			if ( empty( $request ) ) {
+			if ( empty( $request[ $field ] ) ) {
 				throw new AliciaException( 'Empty request! the \'' . $field . '\' key is null.',
 					AliciaErrorCode::KEY_IS_NULL, ResponseAlias::HTTP_BAD_REQUEST );
 			}
@@ -221,6 +222,7 @@
 		 * Return created Model(s)
 		 *
 		 * @return ResourceModel|Collection
+		 * @throws AliciaException
 		 */
 		public function getData(): ResourceModel|Collection {
 			return match ( $this->data->isEmpty() ) {
@@ -231,16 +233,21 @@
 
 		/**
 		 * @throws AliciaException
+		 * @throws InvalidManipulation
 		 */
-		public function export(): self {
-			if ( ! $this->getConfig( 'export' ) ) {
+		public function export( array $resolutions = null ): self {
+			if ( ! ( $this->getConfig( 'export' ) or $resolutions ) ) {
 				throw new AliciaException( 'No resolution sets for exporting!', AliciaErrorCode::EXPORT_CONFIG_NOT_SET,
 					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
 			$data = collect();
-			foreach ( Arr::wrap( $this->getData() ) as $model ) {
+			foreach ( $this->getData() instanceof Collection ? $this->getData() : Arr::wrap( $this->getData() ) as $model ) {
 				$data->push( $model );
-				foreach ( $this->getConfig( 'export' ) as $height => $width ) {
+				if ( $model->isExternal() or ! in_array( $model->extension,
+						$this->getConfig( 'extensions.images' ) ) ) {
+					continue;
+				}
+				foreach ( $resolutions ? : $this->getConfig( 'export' ) as $height => $width ) {
 					$fileName = Str::remove( '.' . $model->extension,
 							$model->file ) . "{$height}x{$width}." . $model->extension;
 					$filePath = $this->storage->path( $model->path . '/' . $fileName );
@@ -249,7 +256,7 @@
 					     ->height( $height )
 					     ->width( $width )
 					     ->save( $filePath );
-					$newModel = $this->save( [
+					$child = $this->save( [
 						'title'        => $model->title . "-{$height}x{$width}",
 						'path'         => $model->path,
 						'file'         => $fileName,
@@ -257,11 +264,11 @@
 						'options'      => array_merge( $model->options, [ 'size' => filesize( $filePath ) ] ),
 						'published_at' => now()
 					] );
-					$newModel->parent()->associate( $model )->save();
-					$data->push( $newModel );
+					$child->parent()->associate( $model )->save();
+					$data->push( $child->withoutRelations() );
 				}
 			}
-			$this->data = $data->groupBy( fn( $item ) => Str::after( $item[ 'path' ], '/' ) );
+			$this->data = $data->groupBy( fn( $item, $key ) => $item[ 'parent_id' ] ? $item[ 'parent_id' ] . '-children' : 'parents' );
 
 			return $this;
 		}

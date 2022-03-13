@@ -197,7 +197,7 @@
 		| Image exports settings
 		|--------------------------------------------------------------------------
 		|
-		| define your custom resolutions
+		| define your resolutions in [ $height => $width ] format
 		|
 		*/
 		'export'             => [

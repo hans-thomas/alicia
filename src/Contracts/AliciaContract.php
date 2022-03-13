@@ -24,5 +24,5 @@
 
 		public function batchDelete( array $ids ): array;
 
-		public function export(): self;
+		public function export( array $resolutions = null ): self;
 	}

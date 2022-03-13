@@ -13,4 +13,6 @@
 		public const UNKNOWN_FILE_TYPE = 5009;
 		public const MODEL_STORE_FAILED = 5010;
 		public const EXPORT_CONFIG_NOT_SET = 5011;
+		public const FAILED_TO_EXPORT = 5012;
+		public const FAILED_TO_ACCESS_MODEL = 5013;
 	}

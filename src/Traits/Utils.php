@@ -78,7 +78,7 @@
 		private function getFromRequest( string $field ): mixed {
 			$key = Str::contains( $field, '.' ) ? Str::after( $field, '.' ) : 0;
 
-			return $this->getRequest( $field )[ $field ][ $key ];
+			return isset( $this->getRequest( $field )[ $field ][ $key ] ) ? $this->getRequest( $field )[ $field ][ $key ] : null;
 		}
 
 		/**
@@ -318,7 +318,7 @@
 				$model = ResourceModel::create( $data );
 			} catch ( Throwable $e ) {
 				DB::rollBack();
-				throw new AliciaException( 'Field to store model on database! ' . $e->getMessage(),
+				throw new AliciaException( 'Failed to store the model on database! ' . $e->getMessage(),
 					AliciaErrorCode::MODEL_STORE_FAILED, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
 			DB::commit();
@@ -347,8 +347,10 @@
 		 * After upload actions, you can get the related model
 		 *
 		 * @return ResourceModel
+		 * @throws AliciaException
 		 */
 		private function getModel(): ResourceModel {
-			return $this->model->refresh();
+			return isset( $this->model ) ? $this->model->refresh() : throw new AliciaException( 'Cant access data before execute an action!',
+				AliciaErrorCode::FAILED_TO_ACCESS_MODEL, ResponseAlias::HTTP_CONFLICT );
 		}
 	}

@@ -7,7 +7,7 @@
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
-	use Illuminate\Support\Str;
+	use Illuminate\Support\Arr;
 
 	class FileUploadTest extends TestCase {
 
@@ -191,32 +191,16 @@
 				                              ->createWithContent( 'posty.jpg',
 					                              file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
 			] )->assertCreated();
-			$data     = (array) json_decode( $response->getContent() );
-			$key      = array_key_first( $data );
+			$content  = (array) json_decode( $response->getContent() );
 
-			foreach ( $data[ $key ] as $datum ) {
-				$datum = (array) $datum;
-				$model = ResourceModel::query()->findOrFail( $datum[ 'id' ] );
-				$this->assertEquals( Str::after( $datum[ 'path' ], '/' ), $key );
-				if ( $datum[ 'id' ] > 1 ) {
-					$this->assertEquals( $model->parent->id, $datum[ 'parent_id' ] );
-				}
-			}
-
-			foreach ( $data[ $key ] as $datum ) {
-				$datum = (array) $datum;
-
-				$model = ResourceModel::query()->findOrFail( $datum[ 'id' ] );
+			$parent = Arr::get( $content, 'parents.0' );
+			foreach ( $content[ $parent->id . '-children' ] as $data ) {
+				$model = ResourceModel::query()->findOrFail( $data->id );
+				$this->assertEquals( $parent->path, $model->path );
+				$this->assertEquals( $parent->id, $model->parent_id );
 
 				$this->assertDirectoryExists( $this->storage->path( $model->path ) );
-				$this->assertEquals( $model->path . '/' . $model->file, $model->address );
 				$this->assertFileExists( $this->storage->path( $model->address ) );
-
-				$duplicated = clone $model;
-				$this->assertTrue( $this->alicia->delete( $model->id ) );
-
-				$this->assertDirectoryDoesNotExist( $this->storage->path( $duplicated->path ) );
-				$this->assertFileDoesNotExist( $this->storage->path( $duplicated->address ) );
 			}
 
 		}
