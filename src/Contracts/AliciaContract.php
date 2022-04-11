@@ -20,7 +20,7 @@
 
 		public function getData(): Resource|Collection;
 
-		public function delete( $id ): bool;
+		public function delete( Resource|int $model ): bool;
 
 		public function batchDelete( array $ids ): array;
 

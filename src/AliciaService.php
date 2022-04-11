@@ -7,6 +7,7 @@
 	use Hans\Alicia\Contracts\AliciaContract;
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
+	use Hans\Alicia\Models\Resource;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Traits\Utils;
 	use Illuminate\Contracts\Filesystem\Filesystem;
@@ -199,14 +200,14 @@
 		/**
 		 * Delete a specific resource include source file, hls etc
 		 *
-		 * @param $id
+		 * @param ResourceModel|int $model
 		 *
 		 * @return bool
 		 */
-		public function delete( $id ): bool {
-			$model = ResourceModel::findOrFail( $id );
+		public function delete( ResourceModel|int $model ): bool {
+			$model = $model instanceof ResourceModel ? $model : ResourceModel::findOrFail( $model );
 			try {
-				if ( $this->storage->exists( $model->path ) ) {
+				if ( ! $model->isExternal() and $this->storage->exists( $model->path ) ) {
 					$this->storage->deleteDirectory( $model->path );
 				}
 
@@ -262,6 +263,7 @@
 						'file'         => $fileName,
 						'extension'    => $model->extension,
 						'options'      => array_merge( $model->options, [ 'size' => filesize( $filePath ) ] ),
+						'external'     => $model->external,
 						'published_at' => now()
 					] );
 					$child->parent()->associate( $model )->save();

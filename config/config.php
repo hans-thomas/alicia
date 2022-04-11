@@ -197,7 +197,8 @@
 		| Image exports settings
 		|--------------------------------------------------------------------------
 		|
-		| define your resolutions in [ $height => $width ] format
+		| define your resolutions in [ $height => $width ] format,
+		| you can set false for disabling this feature
 		|
 		*/
 		'export'             => [
