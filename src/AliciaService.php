@@ -21,6 +21,7 @@
 	use Spatie\Image\Exceptions\InvalidManipulation;
 	use Spatie\Image\Image;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+	use Throwable;
 
 	class AliciaService implements AliciaContract {
 		use Utils;
@@ -91,7 +92,7 @@
 				$this->storeFile( $this->getFromRequest( $field ) );
 				$this->processModel( $this->model );
 				DB::commit();
-			} catch ( \Throwable $e ) {
+			} catch ( Throwable $e ) {
 				DB::rollBack();
 				throw new AliciaException( 'Upload failed! ' . $e->getMessage(), AliciaErrorCode::UPLOAD_FAILED );
 			}
@@ -158,7 +159,7 @@
 				] );
 				$this->model->refresh();
 				DB::commit();
-			} catch ( \Throwable $e ) {
+			} catch ( Throwable $e ) {
 				DB::rollBack();
 				throw new AliciaException( 'External link store failed!', AliciaErrorCode::EXTERNAL_LINK_STORE_FAILED );
 			}
@@ -210,9 +211,13 @@
 				if ( ! $model->isExternal() and $this->storage->exists( $model->path ) ) {
 					$this->storage->deleteDirectory( $model->path );
 				}
-
+				if ( $model->children()->exists() ) {
+					foreach ( $model->children as $child ) {
+						$this->delete( $child );
+					}
+				}
 				$model->delete();
-			} catch ( \Throwable $e ) {
+			} catch ( Throwable $e ) {
 				return false;
 			}
 
