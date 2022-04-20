@@ -21,7 +21,7 @@
 		 *
 		 * @throws AliciaException
 		 */
-		public function download( ResourceModel $resource, string $hash ) {
+		public function download( ResourceModel $resource, string $hash = '' ) {
 			if ( $this->getConfig( 'signed' ) ) {
 				if ( ! request()->hasValidSignature() ) {
 					throw new AliciaException( 'Your link in not valid!', AliciaErrorCode::LINK_IS_INVALID,
