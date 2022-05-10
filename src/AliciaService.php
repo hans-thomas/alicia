@@ -207,6 +207,7 @@
 		 */
 		public function delete( ResourceModel|int $model ): bool {
 			$model = $model instanceof ResourceModel ? $model : ResourceModel::findOrFail( $model );
+			DB::beginTransaction();
 			try {
 				if ( ! $model->isExternal() and $this->storage->exists( $model->path ) ) {
 					$this->storage->deleteDirectory( $model->path );
@@ -218,8 +219,11 @@
 				}
 				$model->delete();
 			} catch ( Throwable $e ) {
+				DB::rollBack();
+
 				return false;
 			}
+			DB::commit();
 
 			return true;
 		}
