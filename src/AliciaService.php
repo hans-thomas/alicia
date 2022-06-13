@@ -271,7 +271,8 @@
 						'path'         => $model->path,
 						'file'         => $fileName,
 						'extension'    => $model->extension,
-						'options'      => array_merge( $model->options, [ 'size' => filesize( $filePath ) ] ),
+						'options'      => array_merge( $model->options,
+							[ 'size' => filesize( $filePath ), 'width' => $width, 'height' => $height ] ),
 						'external'     => $model->external,
 						'published_at' => now()
 					] );
