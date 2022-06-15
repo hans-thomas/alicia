@@ -9,7 +9,12 @@ it is an uploader that has below features:
 - HLS support
 - collect file details
 
-## configuration
+# Table of contents
+
+- [configuration](#configuration)
+- [installation](#installation)
+
+## Configuration
 
 - `base` : is a place that Alicia stores all files and directories.
 - `temp` : the temp is an address of a temporary folder that files stores there before classification and optimization
@@ -37,3 +42,17 @@ it is an uploader that has below features:
   show only published files, you need to set this option `true`.
 - `hls`: you can en/disable hls and customize hls exporter's parameter.
 - `export`: custom resolutions to export from images.
+
+## Installation
+
+1. install the package via composer:
+
+```shell
+composer require hans-thomas/alicia
+```
+
+2. publish config file
+
+```shell
+php artisan vendor:publish --tag alicia-config
+```
