@@ -13,6 +13,7 @@ it is an uploader that has below features:
 
 - [configuration](#configuration)
 - [installation](#installation)
+- [usage](#usage)
 
 ## Configuration
 
@@ -56,3 +57,73 @@ composer require hans-thomas/alicia
 ```shell
 php artisan vendor:publish --tag alicia-config
 ```
+
+## Usage
+
+1. upload an image
+
+```php
+app( AliciaContract::class )->upload($inputName);
+```
+
+you can override default validation and pass your rules
+
+```php
+app( AliciaContract::class )->upload($inputName,[
+                    'image',
+                    'mimes:jpg,jpeg,png',
+                    'max:' . (string) 1 * 1024
+                ]);
+```
+
+2. get the created resource(s)
+
+```php
+app( AliciaContract::class )->upload($inputName)->getData();
+```
+
+3. export different resolutions of uploaded image
+
+```php
+app( AliciaContract::class )->upload($inputName)->export()->getData();
+```
+
+you can override export settings in config file and set your resolutions.
+
+```php
+app( AliciaContract::class )->upload($inputName)->export([960  => 540])->getData();
+```
+
+4. store an external link
+
+```php
+app( AliciaContract::class )->external($inputName)->getData();
+```
+
+you can pass your rules as second argument.
+
+5. batch upload
+
+if you want to upload one or more files or links, you can use
+
+```php
+app( AliciaContract::class )->batch($inputName)->getData();
+```
+
+you can pass your rules for files as second argument and for links as third argument.
+
+6. delete a resource
+
+```php
+app( AliciaContract::class )->delete($model);
+```
+
+$model can be a resource model object or a resource id.
+
+7. batch delete
+
+```php
+app( AliciaContract::class )->batchDelete($models);
+```
+
+$models can be a collection of resource model objects or resource ids.
