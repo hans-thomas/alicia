@@ -7,21 +7,21 @@ it is an uploader that has below features:
 - upload pictures and videos and files
 - store external links
 - HLS support
-- collect file's details
+- collect file details
 
 ## configuration
 
-- `base folder` : is a place that Alicia stores all files and directories.
+- `base` : is a place that Alicia stores all files and directories.
 - `temp` : the temp is an address of a temporary folder that files stores there before classification and optimization
   applies. (set `false` to disable this feature)
 - `classification` : Alicia let you determine how to classify your files.
 - `extensions` : you can define your allowed file extensions base on file types.
 - `sizes` : specifies the valid size of files based on their types.
-- `validation` : Alicia validates the files, but you can add more validations rule.
+- `validation` : Alicia validates the files, but you can add more validation rules.
 - `optimization` : optimizes pictures and videos by default, however you can enable/disable the optimization for each
-  file's type
+  file type
 - `naming` : there are several drivers to determine that how to generate files name
-- `link` : you can customize file's download link.
+- `link` : you can customize download link.
 
 > notice: you should not add or remove any parameter
 
