@@ -1,6 +1,6 @@
 # Alicia
 
-is a video and picture uploader that has belows features:
+it is an uploader that has below features:
 
 - easy-to-use
 - customizable
@@ -11,105 +11,29 @@ is a video and picture uploader that has belows features:
 
 ## configuration
 
-- `base folder` : is a place that Elurra stores all files
-- `temp folder` : the temp folder is a temporary folder that files stores before classification and optimization
-- `classification` : Elurra let you to determine how to classify your files
-- `extensions` : you can define your allowed file extensions base on files type
-- `sizes` : you can specify the allowed file size based on files type
-- `validation` : Elurra validate the inputs, but you can add some more validations rule
-- `optimization` : Elurra optimizes pictures and videos by default, however you can enable/disable the optimization for
-  each file's type
-
-- `keys` : specify the keys that exported from getModel method. for getting the full model object just set keys to false
-
+- `base folder` : is a place that Alicia stores all files and directories.
+- `temp` : the temp is an address of a temporary folder that files stores there before classification and optimization
+  applies. (set `false` to disable this feature)
+- `classification` : Alicia let you determine how to classify your files.
+- `extensions` : you can define your allowed file extensions base on file types.
+- `sizes` : specifies the valid size of files based on their types.
+- `validation` : Alicia validates the files, but you can add more validations rule.
+- `optimization` : optimizes pictures and videos by default, however you can enable/disable the optimization for each
+  file's type
 - `naming` : there are several drivers to determine that how to generate files name
+- `link` : you can customize file's download link.
 
-## Installation
+> notice: you should not add or remove any parameter
 
-install via composer
-> composer require hans-thomas/elurra
+- `signed` : this option creates a signed route with a hash key and an expiration time. this option prevent users
+  sharing download links. (if you want a permanent link, just set this `false`)
 
-and publish the config file using this command
-> php artisan vendor:publish --tag=elurra-config
+> info: hash key will create using user's ip and user-agent
 
-then create your base folder according to Elurra's config file and give needed permission to it.
-> `chown -R www-data:www-data baseFolder/` for docker in docker
-
-also, there are some tools that Elurra uses like : `ffmpeg`, `jpegoptim`, `pngquant`, `webp`
-
-you can install them using this command on your dockerfile
-
-```@shell
-RUN apt-get install -y \
-    ffmpeg \
-    jpegoptim \
-    pngquant \
-    webp
-```
-
-## Relationship
-
-to define needed relationship for your models that has uploaded files, just add `Hans\Elurra\Traits\ElurraRelationship`
-trait to your models, then you can access related files on your model instance using `uploads` MorphToMany relation.
-
-## Usage
-
-### Upload
-
-to upload a file you can use
-
-```@php
-Elurra::upload( 'file' )
-```
-
-to store a external links
-
-```@php
-Elurra::external( 'link' )
-```
-
-and in the end, you can upload both files and links using
-
-```@php
-Elurra::batch('files')
-```
-
-> notice: for batch upload you need to define your inputs name as array
-
-after uploading the file(s) you can get related model or id like this:
-
-```@php
-Elurra::upload( 'file' )->getModel()
-```
-
-for bath uploads use :
-
-```@php
-Elurra::batch('files')->getModels()
-```
-
-in the other hand, if you just want the id(s) to sync with your model you can do this
-
-```@php
-YourModel::find(1)->uploads()->sync( Elurra::upload( 'file' )->getId() );
-```
-
-and for batch uploads
-
-```@php
-YourModel::find(1)->uploads()->sync( Elurra::batch( 'files' )->getIds() );
-```
-
-### Delete
-
-to delete a file just pass the file's id
-
-```@php
-Elurra::delete( $Id )
-```
-
-to delete a group of files, just pass the file's ids as array
-
-```@php
-Elurra::batchDelete( $Ids )
-```
+- `secret`: the string that hash key encrypts and decrypts.
+- `expiration`: expiration time for signed routes.
+- `attributes`: custom attributes for download link. for example, you can add a middleware.
+- `onlyPublishedFiles`: files will not publish until classification and optimization jobs be done. so, if you want to
+  show only published files, you need to set this option `true`.
+- `hls`: you can en/disable hls and customize hls exporter's parameter.
+- `export`: custom resolutions to export from images.
