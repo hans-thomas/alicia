@@ -296,8 +296,10 @@
 			], [ 'url' => [ 'required', 'url' ] ] );
 
 			if ( $validator->fails() ) {
-				throw new AliciaException( 'url is not valid!', 1002 );
+				throw new AliciaException( 'url is not valid!', AliciaErrorCode::URL_IS_INVALID );
 			}
+
+			$address = $resource->address;
 
 			DB::beginTransaction();
 			try {
@@ -311,6 +313,8 @@
 				throw $e;
 			}
 			DB::commit();
+
+			$this->storage->delete( $address );
 
 			return $resource;
 		}

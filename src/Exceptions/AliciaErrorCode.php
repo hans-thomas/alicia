@@ -15,4 +15,5 @@
 		public const EXPORT_CONFIG_NOT_SET = 5011;
 		public const FAILED_TO_EXPORT = 5012;
 		public const FAILED_TO_ACCESS_MODEL = 5013;
+		public const URL_IS_INVALID = 5014;
 	}
