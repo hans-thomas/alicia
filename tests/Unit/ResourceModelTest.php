@@ -117,4 +117,19 @@
 
 			$this->assertTrue( $this->alicia->delete( $model->id ) );
 		}
+
+		/**
+		 * @test
+		 *
+		 *
+		 * @return void
+		 */
+		public function getStoragePath() {
+			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'file' ] ), [
+				'file' => UploadedFile::fake()->image( 'g-eazy.png', 1080, 1080 )
+			] )->assertCreated();
+			$data     = json_decode( $response->content() );
+			$model    = ResourceModel::findOrFail( $data->id );
+			$this->assertTrue( $this->storage->fileExists( $model->address ) );
+		}
 	}
