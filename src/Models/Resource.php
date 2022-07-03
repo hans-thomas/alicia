@@ -8,6 +8,7 @@
 	use Hans\Alicia\Scopes\PublishedOnlyScope;
 	use Hans\Alicia\Traits\FFMpegPreConfig;
 	use Illuminate\Contracts\Filesystem\Filesystem;
+	use Illuminate\Database\Eloquent\Casts\Attribute;
 	use Illuminate\Database\Eloquent\Model;
 	use Illuminate\Database\Eloquent\Relations\BelongsTo;
 	use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -40,21 +41,49 @@
 			}
 		}
 
-		public function getUrlAttribute() {
-			if ( $this->isExternal() ) {
-				return $this->path;
-			}
+		public function url(): Attribute {
+			return new Attribute( get: function() {
+				if ( $this->isExternal() ) {
+					return $this->path;
+				}
 
-			if ( $this->getConfig( 'signed' ) ) {
-				return URL::temporarySignedRoute( 'alicia.download',
-					now()->addMinutes( $this->getConfig( 'expiration' ) ), [
-						'resource' => $this->id,
-						'hash'     => App::make( SignatureContract::class )->create()
-					] );
-			} else {
-				return route( 'alicia.download', [ 'resource' => $this->id ] );
-			}
+				if ( $this->getConfig( 'signed' ) ) {
+					return URL::temporarySignedRoute( 'alicia.download',
+						now()->addMinutes( $this->getConfig( 'expiration' ) ), [
+							'resource' => $this->id,
+							'hash'     => App::make( SignatureContract::class )->create()
+						] );
+				} else {
+					return route( 'alicia.download', [ 'resource' => $this->id ] );
+				}
+			} );
+		}
 
+		public function hlsUrl(): Attribute {
+			return new Attribute( get: function() {
+				if ( ! $this->isPublished() ) {
+					return null;
+				}
+				if ( in_array( $this->extension, $this->getConfig( 'extensions.audios' ) ) ) {
+					$response = new BinaryFileResponse( $this->storage->path( $this->address ) );
+					BinaryFileResponse::trustXSendfileTypeHeader();
+
+					return $response;
+				}
+				if ( $this->getConfig( 'hls.enable' ) ) {
+					return url( 'resources/' . $this->path . '/' . $this->hls );
+				} else {
+					return url( 'resources/' . $this->path . '/' . $this->file );
+				}
+			} );
+		}
+
+		public function address(): Attribute {
+			return new Attribute( get: fn() => $this->path . '/' . $this->file );
+		}
+
+		public function storagePath(): Attribute {
+			return new Attribute( get: fn() => $this->storage->path( $this->address ) );
 		}
 
 		public function isExternal(): bool {
@@ -65,29 +94,8 @@
 			return Arr::get( $this->configuration, $key );
 		}
 
-		public function getHlsUrlAttribute() {
-			if ( ! $this->isPublished() ) {
-				return null;
-			}
-			if ( in_array( $this->extension, $this->getConfig( 'extensions.audios' ) ) ) {
-				$response = new BinaryFileResponse( $this->storage->path( $this->address ) );
-				BinaryFileResponse::trustXSendfileTypeHeader();
-
-				return $response;
-			}
-			if ( $this->getConfig( 'hls.enable' ) ) {
-				return url( 'resources/' . $this->path . '/' . $this->hls );
-			} else {
-				return url( 'resources/' . $this->path . '/' . $this->file );
-			}
-		}
-
 		public function isPublished(): bool {
 			return $this->published_at != null;
-		}
-
-		public function getAddressAttribute() {
-			return $this->path . '/' . $this->file;
 		}
 
 		public function status(): string {
