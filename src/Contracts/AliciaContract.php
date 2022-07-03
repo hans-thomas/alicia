@@ -25,4 +25,6 @@
 		public function batchDelete( array $ids ): array;
 
 		public function export( array $resolutions = null ): self;
+
+		public function makeExternal( Resource $resource, string $url ): Resource;
 	}

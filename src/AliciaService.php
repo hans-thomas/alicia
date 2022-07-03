@@ -16,6 +16,7 @@
 	use Illuminate\Support\Collection;
 	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\Storage;
+	use Illuminate\Support\Facades\Validator;
 	use Illuminate\Support\Str;
 	use Illuminate\Validation\ValidationException;
 	use Spatie\Image\Exceptions\InvalidManipulation;
@@ -283,5 +284,34 @@
 			$this->data = $data->groupBy( fn( $item, $key ) => $item[ 'parent_id' ] ? $item[ 'parent_id' ] . '-children' : 'parents' );
 
 			return $this;
+		}
+
+		public function makeExternal( Resource $resource, string $url ): Resource {
+			if ( $resource->isExternal() ) {
+				return $resource;
+			}
+
+			$validator = Validator::make( [
+				'url' => $url
+			], [ 'url' => [ 'required', 'url' ] ] );
+
+			if ( $validator->fails() ) {
+				throw new AliciaException( 'url is not valid!', 1002 );
+			}
+
+			DB::beginTransaction();
+			try {
+				$resource->update( [
+					'path'     => $url,
+					'file'     => null,
+					'external' => true,
+				] );
+			} catch ( \Throwable $e ) {
+				DB::rollBack();
+				throw $e;
+			}
+			DB::commit();
+
+			return $resource;
 		}
 	}
