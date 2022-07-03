@@ -259,7 +259,7 @@
 				}
 				foreach ( $resolutions ? : $this->getConfig( 'export' ) as $height => $width ) {
 					$fileName = Str::remove( '.' . $model->extension,
-							$model->file ) . "{$height}x{$width}." . $model->extension;
+							$model->file ) . "-{$height}x{$width}." . $model->extension;
 					$filePath = $this->storage->path( $model->path . '/' . $fileName );
 					Image::load( $this->storage->path( $model->address ) )
 					     ->optimize()
