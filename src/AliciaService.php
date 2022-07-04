@@ -305,7 +305,6 @@
 			try {
 				$resource->update( [
 					'path'     => $url,
-					'file'     => null,
 					'external' => true,
 				] );
 			} catch ( \Throwable $e ) {
