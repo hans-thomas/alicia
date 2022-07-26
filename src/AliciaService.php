@@ -153,7 +153,7 @@
 				DB::beginTransaction();
 				$this->model = $this->save( [
 					'title'        => $this->setTitle( $field ),
-					'path'         => $this->getFromRequest( $field ),
+					'link'         => $this->getFromRequest( $field ),
 					'extension'    => $this->getExtension( $field ),
 					'external'     => true,
 					'published_at' => now()
@@ -286,7 +286,7 @@
 			return $this;
 		}
 
-		public function makeExternal( Resource $resource, string $url ): Resource {
+		public function makeExternal( Resource $resource, string $url, bool $deleteFile = false ): Resource {
 			if ( $resource->isExternal() ) {
 				return $resource;
 			}
@@ -304,16 +304,18 @@
 			DB::beginTransaction();
 			try {
 				$resource->update( [
-					'path'     => $url,
+					'link'     => $url,
 					'external' => true,
 				] );
-			} catch ( \Throwable $e ) {
+			} catch ( Throwable $e ) {
 				DB::rollBack();
 				throw $e;
 			}
 			DB::commit();
 
-			$this->storage->delete( $address );
+			if ( $deleteFile ) {
+				$this->deleteFile( $address );
+			}
 
 			return $resource;
 		}
