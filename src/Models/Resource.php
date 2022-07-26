@@ -21,7 +21,17 @@
 	class Resource extends Model {
 		use FFMpegPreConfig;
 
-		protected $fillable = [ 'title', 'path', 'file', 'hls', 'extension', 'options', 'external', 'published_at' ];
+		protected $fillable = [
+			'title',
+			'path',
+			'file',
+			'hls',
+			'link',
+			'extension',
+			'options',
+			'external',
+			'published_at'
+		];
 		protected $casts = [
 			'options'  => 'array',
 			'external' => 'boolean'
