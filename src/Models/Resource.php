@@ -54,7 +54,7 @@
 		public function url(): Attribute {
 			return new Attribute( get: function() {
 				if ( $this->isExternal() ) {
-					return $this->path;
+					return $this->link;
 				}
 
 				if ( $this->getConfig( 'signed' ) ) {
