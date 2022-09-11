@@ -33,11 +33,17 @@
 				}
 			}
 
-			return Storage::disk( 'resources' )
-			              ->response( $resource->address, $resource->title . $resource->extension );
+			return $resource->isExternal() ?
+				response( file_get_contents( $resource->link ), headers: [
+					'Content-Type'   => $resource->getOptions()[ 'mimeType' ],
+					'Content-Length' => $resource->getOptions()[ 'size' ],
+				] ) :
+				Storage::disk( 'resources' )
+				       ->response( $resource->address,
+					       $resource->title . $resource->extension );
 		}
 
 		private function getConfig( string $key, $default = null ) {
-			return Arr::get( config( 'resources' ), $key, $default );
+			return Arr::get( config( 'alicia' ), $key, $default );
 		}
 	}
