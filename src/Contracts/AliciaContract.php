@@ -27,4 +27,6 @@
 		public function export( array $resolutions = null ): self;
 
 		public function makeExternal( Resource $resource, string $url ): Resource;
+
+		public function makeFromFile( string $path ): self;
 	}

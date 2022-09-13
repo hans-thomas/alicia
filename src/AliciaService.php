@@ -10,6 +10,7 @@
 	use Hans\Alicia\Models\Resource;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Traits\Utils;
+	use Illuminate\Contracts\Filesystem\FileNotFoundException;
 	use Illuminate\Contracts\Filesystem\Filesystem;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
@@ -319,4 +320,45 @@
 
 			return $resource;
 		}
+
+		/**
+		 * Validate the request and upload the file
+		 *
+		 * @param string $path
+		 *
+		 * @return $this
+		 * @throws AliciaException ()
+		 * @throws FileNotFoundException ()
+		 */
+		public function makeFromFile( string $path ): self {
+			$fs        = Storage::build( Str::beforeLast( $path, '/' ) );
+			$file      = Str::afterLast( $path, '/' );
+			$extension = Str::afterLast( $path, '.' );
+			if ( ! $fs->fileExists( $file ) ) {
+				throw new FileNotFoundException( 'file not found!' );
+			}
+			try {
+				DB::beginTransaction();
+				$this->model = $this->save( [
+					'title'        => $file,
+					'path'         => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
+					'file'         => $this->generateName() . '.' . $extension,
+					'extension'    => $extension,
+					'options'      => [
+						'size'     => $fs->size( $file ),
+						'mimeType' => $fs->mimeType( $file ),
+					],
+					'published_at' => now()
+				] );
+				$this->storage->put( $this->model->path . '/' . $this->model->file, $fs->read( $file ) );
+				DB::commit();
+			} catch ( Throwable $e ) {
+				DB::rollBack();
+				throw new AliciaException( 'Making resource from file failed! ' . $e->getMessage(),
+					AliciaErrorCode::UPLOAD_FAILED );
+			}
+
+			return $this;
+		}
+
 	}
