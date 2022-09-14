@@ -340,7 +340,7 @@
 			try {
 				DB::beginTransaction();
 				$this->model = $this->save( [
-					'title'        => $file,
+					'title'        => Str::beforeLast( $file, '.' ),
 					'path'         => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
 					'file'         => $this->generateName() . '.' . $extension,
 					'extension'    => $extension,
