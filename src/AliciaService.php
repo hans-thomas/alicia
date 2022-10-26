@@ -337,6 +337,12 @@
 			if ( ! $fs->fileExists( $file ) ) {
 				throw new FileNotFoundException( 'file not found!' );
 			}
+			$options[ 'size' ]     = $fs->size( $file );
+			$options[ 'mimeType' ] = $fs->mimeType( $file );
+			if ( $dimensions = getimagesize( $path ) ) {
+				$options[ 'width' ]  = $dimensions[ 0 ];
+				$options[ 'height' ] = $dimensions[ 1 ];
+			}
 			try {
 				DB::beginTransaction();
 				$this->model = $this->save( [
@@ -344,10 +350,7 @@
 					'path'         => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
 					'file'         => $this->generateName() . '.' . $extension,
 					'extension'    => $extension,
-					'options'      => [
-						'size'     => $fs->size( $file ),
-						'mimeType' => $fs->mimeType( $file ),
-					],
+					'options'      => $options,
 					'published_at' => now()
 				] );
 				$this->storage->put( $this->model->path . '/' . $this->model->file, $fs->read( $file ) );
