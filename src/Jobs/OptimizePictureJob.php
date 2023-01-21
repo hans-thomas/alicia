@@ -15,7 +15,7 @@
 	class OptimizePictureJob implements ShouldQueue {
 		use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		private ResourceModel $model;
+		public ResourceModel $model;
 
 		/**
 		 * Create a new job instance.
@@ -23,7 +23,7 @@
 		 * @return void
 		 */
 		public function __construct( ResourceModel $model ) {
-			$this->model   = $model;
+			$this->model = $model;
 		}
 
 		/**

@@ -16,8 +16,8 @@
 	class ClassificationJob implements ShouldQueue {
 		use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		private ResourceModel $model;
-		private Filesystem $storage;
+		public ResourceModel $model;
+		public Filesystem $storage;
 
 		/**
 		 * Create a new job instance.
@@ -25,7 +25,7 @@
 		 * @return void
 		 */
 		public function __construct( ResourceModel $model ) {
-			$this->model         = $model;
+			$this->model = $model;
 		}
 
 		/**
