@@ -17,7 +17,7 @@
 	class GenerateHLSJob implements ShouldQueue {
 		use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		private ResourceModel $model;
+		public ResourceModel $model;
 
 		/**
 		 * Create a new job instance.
