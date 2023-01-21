@@ -92,7 +92,7 @@
 					'options'   => $this->getOptions( $field )
 				] );
 				$this->storeFile( $this->getFromRequest( $field ) );
-				//$this->processModel( $this->model );
+				$this->processModel( $this->model );
 				DB::commit();
 			} catch ( Throwable $e ) {
 				DB::rollBack();
