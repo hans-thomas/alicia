@@ -330,14 +330,13 @@
 			try {
 				ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
 				if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
-					OptimizePictureJob::dispatch( $model );
+					OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model );
 				} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
 					OptimizeVideoJob::withChain( [
 						new GenerateHLSJob( $model )
-					] )->dispatch( $model );
-				} else {
-					$model->update( [ 'published_at' => now() ] );
+					] )->dispatchIf( config( 'alicia.optimization.videos' ), $model );
 				}
+				$model->update( [ 'published_at' => now() ] );
 			} catch ( Throwable $e ) {
 				throw new AliciaException( 'Failed to process the model! ' . $e->getMessage(),
 					AliciaErrorCode::FAILED_TO_PROCESS_MODEL, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );

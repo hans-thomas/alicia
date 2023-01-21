@@ -23,7 +23,7 @@
 		 * @return void
 		 */
 		public function __construct( ResourceModel $model ) {
-			$this->model   = $model;
+			$this->model = $model;
 		}
 
 		/**
@@ -32,12 +32,9 @@
 		 * @return void
 		 */
 		public function handle() {
-			$storage = Storage::disk( 'resources' );
-			if ( config( 'alicia.optimization.images' ) ) {
-				$settings = require __DIR__ . '/../../config/image-optimizer.php';
-				OptimizerChainFactory::create( $settings )->optimize( $storage->path( $this->model->address ) );
-				$this->model->setOptions( [ 'size' => $storage->size( $this->model->address ) ] );
-			}
-			$this->model->update( [ 'published_at' => now() ] );
+			$storage  = Storage::disk( 'resources' );
+			$settings = require __DIR__ . '/../../config/image-optimizer.php';
+			OptimizerChainFactory::create( $settings )->optimize( $storage->path( $this->model->address ) );
+			$this->model->setOptions( [ 'size' => $storage->size( $this->model->address ) ] );
 		}
 	}

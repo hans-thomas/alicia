@@ -35,21 +35,19 @@
 		 */
 		public function handle( AliciaContract $alicia ) {
 			$storage = Storage::disk( 'resources' );
-			if ( config( 'alicia.optimization.videos' ) ) {
-				// optimization
-				$oldFile = $this->model->address;
-				$this->model->ffmpeg()
-				            ->export()
-				            ->inFormat( new X264 )
-				            ->save( $this->model->path . '/' . $newFile = $alicia->generateName() . '.' . $this->model->extension );
-				// update file
-				$this->model->update( [
-					'file' => $newFile
-				] );
-				// update file's size
-				$this->model->setOptions( [ 'size' => $storage->size( $this->model->address ) ] );
-				// delete old file
-				$alicia->deleteFile( $oldFile );
-			}
+			// optimization
+			$oldFile = $this->model->address;
+			$this->model->ffmpeg()
+			            ->export()
+			            ->inFormat( new X264 )
+			            ->save( $this->model->path . '/' . $newFile = $alicia->generateName() . '.' . $this->model->extension );
+			// update file
+			$this->model->update( [
+				'file' => $newFile
+			] );
+			// update file's size
+			$this->model->setOptions( [ 'size' => $storage->size( $this->model->address ) ] );
+			// delete old file
+			$alicia->deleteFile( $oldFile );
 		}
 	}
