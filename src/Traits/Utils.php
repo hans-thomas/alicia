@@ -338,6 +338,7 @@
 				}
 				$model->update( [ 'published_at' => now() ] );
 			} catch ( Throwable $e ) {
+				throw $e;
 				throw new AliciaException( 'Failed to process the model! ' . $e->getMessage(),
 					AliciaErrorCode::FAILED_TO_PROCESS_MODEL, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
