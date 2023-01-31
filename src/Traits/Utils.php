@@ -327,16 +327,17 @@
 		}
 
 		private function processModel( ResourceModel $model ): void {
+			ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
+			if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
+				OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model );
+			} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
+				OptimizeVideoJob::withChain( [
+					new GenerateHLSJob( $model )
+				] )->dispatchIf( config( 'alicia.optimization.videos' ), $model );
+			}
+			$model->update( [ 'published_at' => now() ] );
 			try {
-				ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
-				if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
-					OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model );
-				} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
-					OptimizeVideoJob::withChain( [
-						new GenerateHLSJob( $model )
-					] )->dispatchIf( config( 'alicia.optimization.videos' ), $model );
-				}
-				$model->update( [ 'published_at' => now() ] );
+
 			} catch ( Throwable $e ) {
 				throw $e;
 				throw new AliciaException( 'Failed to process the model! ' . $e->getMessage(),
