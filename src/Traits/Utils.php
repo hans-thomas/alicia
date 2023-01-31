@@ -6,7 +6,6 @@
 
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
-	use Hans\Alicia\Jobs\ClassificationJob;
 	use Hans\Alicia\Jobs\GenerateHLSJob;
 	use Hans\Alicia\Jobs\OptimizePictureJob;
 	use Hans\Alicia\Jobs\OptimizeVideoJob;
@@ -327,9 +326,11 @@
 		}
 
 		private function processModel( ResourceModel $model ): void {
-			ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
+			//ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
 			if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
-				OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model );
+				if ( $this->getConfig( 'optimization.images' ) ) {
+					OptimizePictureJob::dispatch( $model->id );
+				}
 			} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
 				OptimizeVideoJob::withChain( [
 					new GenerateHLSJob( $model )
