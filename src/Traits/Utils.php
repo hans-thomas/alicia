@@ -330,7 +330,9 @@
 			try {
 				ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
 				if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
-					OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model )->afterCommit();
+					OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model )
+					                  ->afterCommit()
+					                  ->delay( 5 );
 				} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
 					OptimizeVideoJob::withChain( [
 						new GenerateHLSJob( $model )
