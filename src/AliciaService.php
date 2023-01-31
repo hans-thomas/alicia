@@ -84,6 +84,7 @@
 
 			try {
 				DB::beginTransaction();
+				// TODO: flag for processed model
 				$this->model = $this->save( [
 					'title'     => $this->setTitle( $field ),
 					'path'      => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
@@ -92,13 +93,12 @@
 					'options'   => $this->getOptions( $field )
 				] );
 				$this->storeFile( $this->getFromRequest( $field ) );
-				$this->processModel( $this->model );
 			} catch ( Throwable $e ) {
 				DB::rollBack();
-				throw $e;
 				throw new AliciaException( 'Upload failed! ' . $e->getMessage(), AliciaErrorCode::UPLOAD_FAILED );
 			}
 			DB::commit();
+			$this->processModel( $this->model );
 
 			return $this;
 		}

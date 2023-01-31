@@ -8,6 +8,7 @@
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Jobs\ClassificationJob;
 	use Hans\Alicia\Jobs\GenerateHLSJob;
+	use Hans\Alicia\Jobs\OptimizePictureJob;
 	use Hans\Alicia\Jobs\OptimizeVideoJob;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Http\UploadedFile;
@@ -329,7 +330,7 @@
 			try {
 				ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
 				if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
-					//OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model );
+					OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model );
 				} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
 					OptimizeVideoJob::withChain( [
 						new GenerateHLSJob( $model )
@@ -337,7 +338,6 @@
 				}
 				$model->update( [ 'published_at' => now() ] );
 			} catch ( Throwable $e ) {
-				throw $e;
 				throw new AliciaException( 'Failed to process the model! ' . $e->getMessage(),
 					AliciaErrorCode::FAILED_TO_PROCESS_MODEL, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
