@@ -86,11 +86,12 @@
 				DB::beginTransaction();
 				// TODO: flag for processed model
 				$this->model = $this->save( [
-					'title'     => $this->setTitle( $field ),
-					'path'      => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
-					'file'      => $this->generateName() . '.' . $extension = $this->getExtension( $field ),
-					'extension' => $extension,
-					'options'   => $this->getOptions( $field )
+					'title'        => $this->setTitle( $field ),
+					'path'         => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
+					'file'         => $this->generateName() . '.' . $extension = $this->getExtension( $field ),
+					'extension'    => $extension,
+					'options'      => $this->getOptions( $field ),
+					'published_at' => now()
 				] );
 				$this->storeFile( $this->getFromRequest( $field ) );
 			} catch ( Throwable $e ) {
