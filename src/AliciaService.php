@@ -93,11 +93,12 @@
 				] );
 				$this->storeFile( $this->getFromRequest( $field ) );
 				$this->processModel( $this->model );
-				DB::commit();
 			} catch ( Throwable $e ) {
 				DB::rollBack();
+				throw $e;
 				throw new AliciaException( 'Upload failed! ' . $e->getMessage(), AliciaErrorCode::UPLOAD_FAILED );
 			}
+			DB::commit();
 
 			return $this;
 		}
