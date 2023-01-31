@@ -5,7 +5,6 @@
 
 
 	use Hans\Alicia\Contracts\SignatureContract;
-	use Hans\Alicia\Scopes\PublishedOnlyScope;
 	use Hans\Alicia\Traits\FFMpegPreConfig;
 	use Illuminate\Contracts\Filesystem\Filesystem;
 	use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -47,7 +46,7 @@
 
 		protected static function booted() {
 			if ( config( 'alicia.onlyPublishedFiles' ) ) {
-				self::addGlobalScope( new PublishedOnlyScope() );
+				//self::addGlobalScope( new PublishedOnlyScope() );
 			}
 		}
 

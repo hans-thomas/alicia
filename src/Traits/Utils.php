@@ -6,8 +6,8 @@
 
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
+	use Hans\Alicia\Jobs\ClassificationJob;
 	use Hans\Alicia\Jobs\GenerateHLSJob;
-	use Hans\Alicia\Jobs\OptimizePictureJob;
 	use Hans\Alicia\Jobs\OptimizeVideoJob;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Http\UploadedFile;
@@ -326,19 +326,16 @@
 		}
 
 		private function processModel( ResourceModel $model ): void {
-			//ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
-			if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
-				if ( $this->getConfig( 'optimization.images' ) ) {
-					OptimizePictureJob::dispatch( $model->id );
-				}
-			} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
-				OptimizeVideoJob::withChain( [
-					new GenerateHLSJob( $model )
-				] )->dispatchIf( config( 'alicia.optimization.videos' ), $model );
-			}
-			$model->update( [ 'published_at' => now() ] );
 			try {
-
+				ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
+				if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
+					//OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model );
+				} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
+					OptimizeVideoJob::withChain( [
+						new GenerateHLSJob( $model )
+					] )->dispatchIf( config( 'alicia.optimization.videos' ), $model );
+				}
+				$model->update( [ 'published_at' => now() ] );
 			} catch ( Throwable $e ) {
 				throw $e;
 				throw new AliciaException( 'Failed to process the model! ' . $e->getMessage(),
