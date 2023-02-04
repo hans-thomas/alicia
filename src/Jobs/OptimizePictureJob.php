@@ -15,13 +15,6 @@
 	class OptimizePictureJob implements ShouldQueue {
 		use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		/**
-		 * Indicates whether the job should be dispatched after all database transactions have committed.
-		 *
-		 * @var bool|null
-		 */
-		public $afterCommit = true;
-
 		public int $id;
 
 		/**
