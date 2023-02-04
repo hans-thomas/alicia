@@ -330,6 +330,7 @@
 			try {
 				ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
 				if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
+					dd( $model, $model->id );
 					OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model->id )
 					                  ->afterCommit();
 				} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
