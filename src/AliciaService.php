@@ -99,7 +99,9 @@
 				throw new AliciaException( 'Upload failed! ' . $e->getMessage(), AliciaErrorCode::UPLOAD_FAILED );
 			}
 			DB::commit();
-			$this->processModel( $this->model );
+			if ( $this->model->exists ) {
+				$this->processModel( $this->model );
+			}
 
 			return $this;
 		}
