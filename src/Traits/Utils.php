@@ -315,7 +315,7 @@
 		private function save( array $data ): ResourceModel {
 			DB::beginTransaction();
 			try {
-				$model = ResourceModel::create( $data );
+				$model = ResourceModel::query()->create( $data );
 			} catch ( Throwable $e ) {
 				DB::rollBack();
 				throw new AliciaException( 'Failed to store the model on database! ' . $e->getMessage(),
@@ -323,14 +323,13 @@
 			}
 			DB::commit();
 
-			return $model;
+			return $model->fresh();
 		}
 
 		private function processModel( ResourceModel $model ): void {
 			try {
 				ClassificationJob::dispatchIf( $this->getConfig( 'temp' ), $model );
 				if ( in_array( $model->extension, $this->getConfig( 'extensions.images' ) ) ) {
-					dd( $model, $model->id );
 					OptimizePictureJob::dispatchIf( $this->getConfig( 'optimization.images' ), $model->id )
 					                  ->afterCommit();
 				} else if ( in_array( $model->extension, $this->getConfig( 'extensions.videos' ) ) ) {
