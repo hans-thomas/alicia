@@ -13,7 +13,6 @@
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
-	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\Validator;
 	use Illuminate\Support\Str;
 	use Illuminate\Validation\ValidationException;
@@ -310,20 +309,9 @@
 		 * @param array $data
 		 *
 		 * @return ResourceModel
-		 * @throws AliciaException
 		 */
 		private function save( array $data ): ResourceModel {
-			DB::beginTransaction();
-			try {
-				$model = ResourceModel::query()->create( $data );
-			} catch ( Throwable $e ) {
-				DB::rollBack();
-				throw new AliciaException( 'Failed to store the model on database! ' . $e->getMessage(),
-					AliciaErrorCode::MODEL_STORE_FAILED, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
-			}
-			DB::commit();
-
-			return $model->fresh();
+			return ResourceModel::query()->create( $data )->fresh();
 		}
 
 		private function processModel( ResourceModel $model ): void {
