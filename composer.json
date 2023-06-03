@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-exif": "*",
         "spatie/laravel-image-optimizer": "^1.7",
         "pbmedia/laravel-ffmpeg": "^8",
