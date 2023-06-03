@@ -9,7 +9,6 @@
 	use Illuminate\Foundation\Application;
 	use Illuminate\Foundation\Testing\RefreshDatabase;
 	use Illuminate\Routing\Router;
-	use Illuminate\Support\Arr;
 	use Illuminate\Support\Facades\Storage;
 	use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -19,11 +18,6 @@
 		public AliciaContract $alicia;
 		public SignatureContract $signature;
 		public Filesystem $storage;
-		private array $config;
-
-		public function getConfig( string $key, $default ) {
-			return Arr::get( $this->config, $key, $default );
-		}
 
 		/**
 		 * Setup the test environment.
@@ -34,7 +28,6 @@
 			parent::setUp();
 
 			// Code after application created.
-			$this->config    = config( 'alicia' );
 			$this->alicia    = app( AliciaContract::class );
 			$this->signature = app( SignatureContract::class );
 			$this->storage   = Storage::disk( 'resources' );
@@ -102,7 +95,7 @@
 		 */
 		protected function defineRoutes( $router ) {
 			$router->post( '/upload/{field}', function( string $field ) {
-				return response()->json( $this->alicia->upload( $field )->getData(), 201 );
+				return response()->json( $this->alicia->upload( request()->file( $field ) )->getData(), 201 );
 			} )->name( 'alicia.test.upload' );
 
 			$router->post( '/export/{field}', function( string $field ) {

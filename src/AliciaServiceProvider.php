@@ -6,6 +6,8 @@
 
 	use Hans\Alicia\Contracts\AliciaContract;
 	use Hans\Alicia\Contracts\SignatureContract;
+	use Hans\Alicia\Services\AliciaService;
+	use Hans\Alicia\Services\SignatureService;
 	use Illuminate\Support\Facades\Route;
 	use Illuminate\Support\ServiceProvider;
 
@@ -27,7 +29,7 @@
 			// register FFMpeg
 			$this->app->register( 'ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider' );
 			$this->app->alias( 'FFMpeg', 'ProtoneMedia\LaravelFFMpeg\Support\FFMpeg' );
-			// register FFMpeg
+			// register ImageOptimizer
 			$this->app->register( 'Spatie\LaravelImageOptimizer\ImageOptimizerServiceProvider' );
 			$this->app->alias( 'ImageOptimizer', 'Spatie\LaravelImageOptimizer\Facades\ImageOptimizer' );
 		}
@@ -39,10 +41,6 @@
 		 */
 		public function boot() {
 			$this->mergeConfigFrom( __DIR__ . '/../config/config.php', 'alicia' );
-			$this->publishes( [
-				__DIR__ . '/../config/config.php' => config_path( 'alicia.php' )
-			], 'alicia-config' );
-			$this->loadMigrationsFrom( __DIR__ . '/../migrations' );
 
 			config( [
 				'filesystems.disks' => array_merge( config( 'filesystems.disks' ), [
@@ -59,8 +57,17 @@
 				] )
 			] );
 
-
 			$this->registerRoutes();
+
+			if ( $this->app->runningInConsole() ) {
+				$this->publishes(
+					[
+						__DIR__ . '/../config/config.php' => config_path( 'alicia.php' )
+					],
+					'alicia-config'
+				);
+				$this->loadMigrationsFrom( __DIR__ . '/../migrations' );
+			}
 		}
 
 		/**

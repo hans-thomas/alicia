@@ -11,7 +11,6 @@
 
 	class FileUploadTest extends TestCase {
 
-
 		/**
 		 * @test
 		 *
@@ -19,27 +18,32 @@
 		 * @return void
 		 */
 		public function uploadAZipedFile() {
-			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'uploadAZipedFile' ] ), [
-				'uploadAZipedFile' => UploadedFile::fake()->create( 'ziped.file.zip', 10230, 'application/zip' )
-			] );
-			$response->assertCreated()->assertJsonStructure( [
-				'id',
-				'path',
-				'file',
-				'extension',
-				'options'
-			] );
-			$data  = (object) json_decode( $response->content() );
-			$model = ResourceModel::findOrFail( $data->id );
-			$this->assertDatabaseHas( $model->getTable(), [
-				'title'     => 'ziped-file',
-				'path'      => $model->path,
+			$response = $this->postJson(
+				route( 'alicia.test.upload', [ 'field' => 'uploadAZipedFile' ] ),
+				[
+					'uploadAZipedFile' => UploadedFile::fake()->create( 'ziped.file.zip', 10230, 'application/zip' )
+				]
+			)
+			                 ->assertCreated()
+			                 ->assertJsonStructure( [
+				                 'id',
+				                 'path',
+				                 'file',
+				                 'extension',
+				                 'options'
+			                 ] );
+
+			$data = json_decode( $response->content(), true );
+			$this->assertDatabaseHas( ( new ResourceModel )->getTable(), [
+				'title'     => 'ziped_file',
+				'path'      => $data[ 'path' ],
 				'external'  => false,
-				'file'      => $model->file,
+				'file'      => $data[ 'file' ],
 				'extension' => 'zip'
 			] );
-			$this->assertDirectoryExists( $this->storage->path( $model->path ) );
-			$this->assertEquals( $model->path . '/' . $model->file, $model->address );
+			$model = ResourceModel::query()->findOrFail( $data[ 'id' ] );
+			$this->assertDirectoryExists( $this->storage->path( $data[ 'path' ] ) );
+			$this->assertEquals( $data[ 'path' ] . '/' . $data[ 'file' ], $model->address );
 			$this->assertFileExists( $this->storage->path( $model->address ) );
 
 			$this->assertTrue( $this->alicia->delete( $model->id ) );

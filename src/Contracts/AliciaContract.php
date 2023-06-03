@@ -3,10 +3,11 @@
 	namespace Hans\Alicia\Contracts;
 
 	use Hans\Alicia\Models\Resource;
+	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Collection;
 
 	interface AliciaContract {
-		public function upload( string $field, array $rules = null ): self;
+		public function upload( UploadedFile $file ): self;
 
 		public function external( string $field, array $rules = null ): self;
 

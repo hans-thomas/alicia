@@ -4,7 +4,7 @@
 	use Illuminate\Database\Schema\Blueprint;
 	use Illuminate\Support\Facades\Schema;
 
-	class CreateResourcesTable extends Migration {
+	return new class extends Migration {
 		/**
 		 * Run the migrations.
 		 *
@@ -13,7 +13,9 @@
 		public function up() {
 			Schema::create( 'resources', function( Blueprint $table ) {
 				$table->id();
-				$table->unsignedBigInteger( 'parent_id' )->nullable();
+
+				$table->foreignId( 'parent_id' )->nullable()->constrained()->cascadeOnDelete();
+
 				$table->string( 'title' );
 				$table->string( 'path' )->nullable();
 				$table->string( 'file' )->nullable();
@@ -22,7 +24,6 @@
 				$table->string( 'extension', 50 );
 				$table->text( 'options' )->nullable();
 				$table->boolean( 'external' )->default( false );
-				$table->timestamp( 'published_at' )->nullable();
 
 				$table->timestamps();
 			} );
@@ -36,4 +37,4 @@
 		public function down() {
 			Schema::dropIfExists( 'resources' );
 		}
-	}
+	};

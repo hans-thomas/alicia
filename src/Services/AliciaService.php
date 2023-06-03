@@ -1,14 +1,13 @@
 <?php
 
 
-	namespace Hans\Alicia;
+	namespace Hans\Alicia\Services;
 
 
 	use Hans\Alicia\Contracts\AliciaContract;
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
-	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Traits\Utils;
 	use Illuminate\Contracts\Filesystem\FileNotFoundException;
 	use Illuminate\Contracts\Filesystem\Filesystem;
@@ -29,7 +28,7 @@
 		use Utils;
 
 		private Filesystem $storage;
-		private ResourceModel $model;
+		private Resource $model;
 		private Collection $data;
 
 		public function __construct() {
@@ -68,35 +67,28 @@
 		/**
 		 * Validate the request and upload the file
 		 *
-		 * @param string     $field
-		 * @param array|null $rules
+		 * @param UploadedFile $file
 		 *
-		 * @return $this
+		 * @return self
 		 * @throws AliciaException ()
-		 * @throws ValidationException
 		 */
-		public function upload( string $field, array $rules = null ): self {
-			$this->validate( $field, $rules ? : [
-				'required',
-				'mimes:' . $this->getAllowedExtensions(),
-				'max:' . $this->getMaxSize( $field )
-			] );
-
+		public function upload( UploadedFile $file ): self {
+			DB::beginTransaction();
 			try {
-				DB::beginTransaction();
-				// TODO: flag for processed model
-				$this->model = $this->save( [
-					'title'        => $this->setTitle( $field ),
-					'path'         => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
-					'file'         => $this->generateName() . '.' . $extension = $this->getExtension( $field ),
-					'extension'    => $extension,
-					'options'      => $this->getOptions( $field ),
-					'published_at' => now()
+				$this->makeModel( [
+					'title'     => Str::of( $this->getFileName( $file ) )->camel()->snake()->toString(),
+					'path'      => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
+					'file'      => $this->generateName() . '.' . $extension = $this->getExtension( $file ),
+					'extension' => $extension,
+					'options'   => $this->getOptions( $file ),
 				] );
-				$this->storeFile( $this->getFromRequest( $field ) );
+				$this->storeOnDisk( $file );
 			} catch ( Throwable $e ) {
 				DB::rollBack();
-				throw new AliciaException( 'Upload failed! ' . $e->getMessage(), AliciaErrorCode::UPLOAD_FAILED );
+				throw new AliciaException(
+					'Upload failed! ' . $e->getMessage(),
+					AliciaErrorCode::UPLOAD_FAILED
+				);
 			}
 			DB::commit();
 			if ( $this->model->exists ) {
@@ -112,7 +104,7 @@
 		 * @return string
 		 */
 		public function generateFolder(): string {
-			$folder = $this->getConfig( 'temp' ) ? : $this->getConfig( 'classification' );
+			$folder = alicia_config( 'temp' ) ? : alicia_config( 'classification' );
 			if ( ! $this->storage->exists( $folder ) ) {
 				$this->storage->makeDirectory( $folder );
 			}
@@ -129,7 +121,7 @@
 		 * @return string
 		 */
 		public function generateName( string $driver = null, int $length = 16 ): string {
-			return match ( $driver ? : $this->getConfig( 'naming' ) ) {
+			return match ( $driver ? : alicia_config( 'naming' ) ) {
 				'uuid' => Str::uuid(),
 				'string' => Str::random( $length ),
 				'digits' => substr( str_shuffle( '012345678901234567890123456789' ), 0, $length ),
@@ -207,12 +199,12 @@
 		/**
 		 * Delete a specific resource include source file, hls etc
 		 *
-		 * @param ResourceModel|int $model
+		 * @param Resource|int $model
 		 *
 		 * @return bool
 		 */
-		public function delete( ResourceModel|int $model ): bool {
-			$model = $model instanceof ResourceModel ? $model : ResourceModel::findOrFail( $model );
+		public function delete( Resource|int $model ): bool {
+			$model = $model instanceof Resource ? $model : Resource::findOrFail( $model );
 			DB::beginTransaction();
 			try {
 				if ( ! $model->isExternal() and $this->storage->exists( $model->path ) ) {
@@ -237,10 +229,10 @@
 		/**
 		 * Return created Model(s)
 		 *
-		 * @return ResourceModel|Collection
+		 * @return Resource|Collection
 		 * @throws AliciaException
 		 */
-		public function getData(): ResourceModel|Collection {
+		public function getData(): Resource|Collection {
 			return match ( $this->data->isEmpty() ) {
 				true => $this->getModel(),
 				default => $this->data,
@@ -252,7 +244,7 @@
 		 * @throws InvalidManipulation
 		 */
 		public function export( array $resolutions = null ): self {
-			if ( ! ( $this->getConfig( 'export' ) or $resolutions ) ) {
+			if ( ! ( alicia_config( 'export' ) or $resolutions ) ) {
 				throw new AliciaException( 'No resolution sets for exporting!', AliciaErrorCode::EXPORT_CONFIG_NOT_SET,
 					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
@@ -260,10 +252,10 @@
 			foreach ( $this->getData() instanceof Collection ? $this->getData() : Arr::wrap( $this->getData() ) as $model ) {
 				$data->push( $model );
 				if ( $model->isExternal() or ! in_array( $model->extension,
-						$this->getConfig( 'extensions.images' ) ) ) {
+						alicia_config( 'extensions.images' ) ) ) {
 					continue;
 				}
-				foreach ( $resolutions ? : $this->getConfig( 'export' ) as $height => $width ) {
+				foreach ( $resolutions ? : alicia_config( 'export' ) as $height => $width ) {
 					$fileName = Str::remove( '.' . $model->extension,
 							$model->file ) . "-{$height}x{$width}." . $model->extension;
 					$filePath = $this->storage->path( $model->path . '/' . $fileName );

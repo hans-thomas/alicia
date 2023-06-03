@@ -1,10 +1,11 @@
 <?php
 
+	use Hans\Alicia\Models\Resource;
 	use Illuminate\Database\Migrations\Migration;
 	use Illuminate\Database\Schema\Blueprint;
 	use Illuminate\Support\Facades\Schema;
 
-	class CreateResourcablesTable extends Migration {
+	return new class extends Migration {
 		/**
 		 * Run the migrations.
 		 *
@@ -12,9 +13,8 @@
 		 */
 		public function up() {
 			Schema::create( 'resourcables', function( Blueprint $table ) {
-				$table->foreignId( 'resource_id' )->constrained();
-				$table->unsignedBigInteger( 'resourcable_id' );
-				$table->string( 'resourcable_type' );
+				$table->foreignIdFor( Resource::class )->constrained()->cascadeOnDelete();
+				$table->morphs( 'resourcable' );
 
 				$table->string( 'key' )->nullable();
 			} );
@@ -28,4 +28,4 @@
 		public function down() {
 			Schema::dropIfExists( 'resourcables' );
 		}
-	}
+	};

@@ -24,12 +24,17 @@
 		public function download( ResourceModel $resource, string $hash = '' ) {
 			if ( $this->getConfig( 'signed' ) ) {
 				if ( ! request()->hasValidSignature() ) {
-					throw new AliciaException( 'Your link in not valid!', AliciaErrorCode::LINK_IS_INVALID,
-						ResponseAlias::HTTP_BAD_REQUEST );
+					throw new AliciaException(
+						'Your link in not valid!', AliciaErrorCode::LINK_IS_INVALID,
+						ResponseAlias::HTTP_BAD_REQUEST
+					);
 				}
 				if ( App::make( SignatureContract::class )->isNotValid( $hash ) ) {
-					throw new AliciaException( 'You\'re not allow to download this file!',
-						AliciaErrorCode::NOT_ALLOWED_TO_DOWNLOAD, ResponseAlias::HTTP_UNAUTHORIZED );
+					throw new AliciaException(
+						'You\'re not allow to download this file!',
+						AliciaErrorCode::NOT_ALLOWED_TO_DOWNLOAD,
+						ResponseAlias::HTTP_UNAUTHORIZED
+					);
 				}
 			}
 
@@ -39,8 +44,10 @@
 					'Content-Length' => $resource->getOptions()[ 'size' ],
 				] ) :
 				Storage::disk( 'resources' )
-				       ->response( $resource->address,
-					       $resource->title . $resource->extension );
+				       ->response(
+					       $resource->address,
+					       $resource->title . $resource->extension
+				       );
 		}
 
 		private function getConfig( string $key, $default = null ) {

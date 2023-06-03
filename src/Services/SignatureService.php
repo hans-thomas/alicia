@@ -1,7 +1,7 @@
 <?php
 
 
-	namespace Hans\Alicia;
+	namespace Hans\Alicia\Services;
 
 	use Hans\Alicia\Contracts\SignatureContract;
 
