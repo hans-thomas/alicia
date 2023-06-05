@@ -15,19 +15,6 @@
 		*/
 		'base'           => base_path( 'vault' ),
 
-
-		/*
-		|--------------------------------------------------------------------------
-		| template folder
-		|--------------------------------------------------------------------------
-		|
-		| the temporary folder is where files uploaded temporarily before
-		| classification and optimization. false for disabling this feature
-		|
-		*/
-		'temp'           => false,
-
-
 		/*
 		|--------------------------------------------------------------------------
 		| classification
@@ -68,22 +55,6 @@
 			'video' => 100,
 			'audio' => 10,
 			'file'  => 10
-		],
-
-		/*
-		|--------------------------------------------------------------------------
-		| validation
-		|--------------------------------------------------------------------------
-		|
-		| add additional validation rule for uploading a file
-		|
-		*/
-		'validation'     => [
-			'image'    => [ 'file' ],
-			'video'    => [ 'file' ],
-			'file'     => [ 'file' ],
-			'audio'    => [ 'file' ],
-			'external' => [ 'url' ]
 		],
 
 		/*
@@ -164,18 +135,6 @@
 		'attributes'     => [
 			'middleware' => [ 'api' ]
 		],
-
-		/*
-		|--------------------------------------------------------------------------
-		| Only Published
-		|--------------------------------------------------------------------------
-		|
-		| you can determine the Resources just return published files or not.
-		| there is a PublishedOnlyScope that apply to the Resources Model
-		|
-		*/
-
-		'onlyPublishedFiles' => true,
 
 		/*
 		|--------------------------------------------------------------------------
