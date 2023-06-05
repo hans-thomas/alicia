@@ -4,7 +4,6 @@
 	namespace Hans\Alicia\Services;
 
 
-	use Hans\Alicia\Contracts\AliciaContract;
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
@@ -24,7 +23,7 @@
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 	use Throwable;
 
-	class AliciaService implements AliciaContract {
+	class AliciaService {
 		use Utils;
 
 		private Filesystem $storage;

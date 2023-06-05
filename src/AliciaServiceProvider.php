@@ -4,8 +4,6 @@
 	namespace Hans\Alicia;
 
 
-	use Hans\Alicia\Contracts\AliciaContract;
-	use Hans\Alicia\Contracts\SignatureContract;
 	use Hans\Alicia\Services\AliciaService;
 	use Hans\Alicia\Services\SignatureService;
 	use Illuminate\Support\Facades\Route;
@@ -18,13 +16,8 @@
 		 * @return void
 		 */
 		public function register() {
-			$this->app->singleton( SignatureContract::class, function() {
-				return new SignatureService( config( 'alicia.secret' ) );
-			} );
-
-			$this->app->singleton( AliciaContract::class, function() {
-				return new AliciaService;
-			} );
+			$this->app->singleton( 'signature-service', fn() => new SignatureService( alicia_config( 'secret' ) ) );
+			$this->app->bind( 'alicia-service', AliciaService::class );
 
 			// register FFMpeg
 			$this->app->register( 'ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider' );

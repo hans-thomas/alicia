@@ -3,9 +3,7 @@
 
 	namespace Hans\Alicia\Services;
 
-	use Hans\Alicia\Contracts\SignatureContract;
-
-	class SignatureService implements SignatureContract {
+	class SignatureService {
 		private string $secret;
 
 		public function __construct( string $secret ) {
