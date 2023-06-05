@@ -6,7 +6,6 @@
 
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
-	use Hans\Alicia\Jobs\ClassificationJob;
 	use Hans\Alicia\Jobs\GenerateHLSJob;
 	use Hans\Alicia\Jobs\OptimizePictureJob;
 	use Hans\Alicia\Jobs\OptimizeVideoJob;
@@ -216,36 +215,41 @@
 			return $this->model = ResourceModel::query()->create( $data )->refresh();
 		}
 
+		/**
+		 * Apply related jobs on model
+		 *
+		 * @param ResourceModel $model
+		 *
+		 * @return void
+		 * @throws AliciaException
+		 */
 		private function processModel( ResourceModel $model ): void {
 			try {
-				ClassificationJob::dispatchIf( alicia_config( 'temp' ), $model );
 				if ( in_array( $model->extension, alicia_config( 'extensions.images' ) ) ) {
-					OptimizePictureJob::dispatchIf( alicia_config( 'optimization.images' ), $model->id )
-					                  ->afterCommit();
-				} else if ( in_array( $model->extension, alicia_config( 'extensions.videos' ) ) ) {
+					OptimizePictureJob::dispatchIf( alicia_config( 'optimization.images' ), $model->id );
+				} else if (
+					alicia_config( 'optimization.videos' ) and
+					in_array( $model->extension, alicia_config( 'extensions.videos' ) )
+				) {
 					OptimizeVideoJob::withChain( [
 						new GenerateHLSJob( $model )
-					] )->dispatchIf( config( 'alicia.optimization.videos' ), $model );
+					] )->dispatch( $model );
 				}
 			} catch ( Throwable $e ) {
-				throw new AliciaException( 'Failed to process the model! ' . $e->getMessage(),
-					AliciaErrorCode::FAILED_TO_PROCESS_MODEL, ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
+				throw new AliciaException(
+					'Failed to process the model! ' . $e->getMessage(),
+					AliciaErrorCode::FAILED_TO_PROCESS_MODEL,
+					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
+				);
 			}
 		}
 
 		/**
-		 * After upload actions, you can get the related model
+		 * Return created model instance
 		 *
 		 * @return ResourceModel
-		 * @throws AliciaException
 		 */
 		private function getModel(): ResourceModel {
-			return isset( $this->model ) ?
-				$this->model->refresh() :
-				throw new AliciaException(
-					'Cant access data before execute an action!',
-					AliciaErrorCode::FAILED_TO_ACCESS_MODEL,
-					ResponseAlias::HTTP_CONFLICT
-				);
+			return $this->model->refresh();
 		}
 	}

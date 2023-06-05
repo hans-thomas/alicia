@@ -58,16 +58,17 @@
 		public function uploadAnImage() {
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'UploadAnImage' ] ), [
 				'UploadAnImage' => UploadedFile::fake()->image( 'imagefile.png', 512, 512 )
-			] );
-			$response->assertCreated()->assertJsonStructure( [
-				'id',
-				'path',
-				'file',
-				'extension',
-				'options'
-			] );
-			$data  = json_decode( $response->content() );
-			$model = ResourceModel::findOrFail( $data->id );
+			] )
+			                 ->assertCreated()
+			                 ->assertJsonStructure( [
+				                 'id',
+				                 'path',
+				                 'file',
+				                 'extension',
+				                 'options'
+			                 ] );
+			$data     = json_decode( $response->content() );
+			$model    = ResourceModel::findOrFail( $data->id );
 			$this->assertDatabaseHas( $model->getTable(), [
 				'title'     => 'imagefile',
 				'path'      => $model->path,
@@ -91,18 +92,21 @@
 		public function uploadAVideo() {
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'UploadAVideo' ] ), [
 				'UploadAVideo' => UploadedFile::fake()
-				                              ->createWithContent( 'video.mp4',
-					                              file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
-			] );
-			$response->assertCreated()->assertJsonStructure( [
-				'id',
-				'path',
-				'file',
-				'extension',
-				'options'
-			] );
-			$data  = json_decode( $response->content() );
-			$model = ResourceModel::findOrFail( $data->id );
+				                              ->createWithContent(
+					                              'video.mp4',
+					                              file_get_contents( __DIR__ . '/../resources/video.mp4' )
+				                              )
+			] )
+			                 ->assertCreated()
+			                 ->assertJsonStructure( [
+				                 'id',
+				                 'path',
+				                 'file',
+				                 'extension',
+				                 'options'
+			                 ] );
+			$data     = json_decode( $response->content() );
+			$model    = ResourceModel::findOrFail( $data->id );
 			$this->assertDatabaseHas( $model->getTable(), [
 				'title'     => "video",
 				'path'      => $model->path,

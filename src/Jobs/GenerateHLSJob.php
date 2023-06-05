@@ -25,7 +25,7 @@
 		 * @return void
 		 */
 		public function __construct( ResourceModel $model ) {
-			$this->model         = $model;
+			$this->model = $model;
 		}
 
 		/**
@@ -34,23 +34,20 @@
 		 * @return void
 		 */
 		public function handle( AliciaContract $alicia ) {
-			$data[ 'published_at' ] = now();
-			if ( $this->getConfig( 'enable' ) ) {
+			if ( alicia_config( 'enable' ) ) {
 				$export = $this->model->ffmpeg()->exportForHLS();
-				foreach ( Arr::wrap( $this->getConfig( 'bitrate' ) ) as $bitrate ) {
+
+				foreach ( Arr::wrap( alicia_config( 'bitrate' ) ) as $bitrate ) {
 					$export->addFormat( ( new X264 )->setKiloBitrate( $bitrate ) );
 				}
-				$export->setSegmentLength( $this->getConfig( 'setSegmentLength' ) ) // optional
-				       ->setKeyFrameInterval( $this->getConfig( 'setKeyFrameInterval' ) ) // optional
+
+				$export->setSegmentLength( alicia_config( 'setSegmentLength' ) ) // optional
+				       ->setKeyFrameInterval( alicia_config( 'setKeyFrameInterval' ) ) // optional
 				       ->save( $this->model->path . ( $hls = '/hls/' . $alicia->generateName() . '.m3u8' ) );
-				$data[ 'hls' ] = ltrim( $hls, '/' );
+
+				$this->model->update( [ 'hls' => ltrim( $hls, '/' ) ] );
 			}
 
-
-			$this->model->update( $data );
 		}
 
-		private function getConfig( string $key ) {
-			return Arr::get( config( 'alicia.hls' ), $key );
-		}
 	}
