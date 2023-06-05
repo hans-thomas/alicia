@@ -9,8 +9,9 @@
 	use function app;
 
 	trait AliciaRelationHandler {
+
 		public function removeUploads(): array {
-			$ids = $this->uploads->pluck( 'id' );
+			$ids = $this->uploads()->select( 'id' )->pluck( 'id' );
 			$this->uploads()->detach( $ids );
 
 			return app( AliciaContract::class )->batchDelete( $ids );
@@ -19,4 +20,5 @@
 		public function uploads() {
 			return $this->morphToMany( ResourceModel::class, 'resourcable' );
 		}
+
 	}
