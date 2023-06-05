@@ -47,17 +47,19 @@
 		 * @throws AliciaException ()
 		 * @throws ValidationException
 		 */
-		public function batch( string $field, array $uploadRules = null, array $externalRules = null ): self {
-			$request = $this->getRequest( $field );
-			if ( empty( $request[ $field ] ) ) {
-				throw new AliciaException( 'Empty request! the \'' . $field . '\' key is null.',
-					AliciaErrorCode::KEY_IS_NULL, ResponseAlias::HTTP_BAD_REQUEST );
+		public function batch( array $files ): self {
+			if ( empty( $files ) ) {
+				throw new AliciaException(
+					'Empty request! the passed files array is empty.',
+					AliciaErrorCode::KEY_IS_NULL,
+					ResponseAlias::HTTP_BAD_REQUEST
+				);
 			}
-			foreach ( Arr::first( $request ) as $key => $item ) {
-				if ( $item instanceof UploadedFile ) {
-					$this->data->push( $this->upload( $field . '\.' . $key, $uploadRules )->getModel() );
-				} elseif ( is_string( $item ) ) {
-					$this->data->push( $this->external( $field . '\.' . $key, $externalRules )->getModel() );
+			foreach ( $files as $key => $file ) {
+				if ( $file instanceof UploadedFile ) {
+					$this->data->push( $this->upload( $file )->getModel() );
+				} elseif ( is_string( $file ) ) {
+					$this->data->push( $this->external( $file )->getModel() );
 				}
 			}
 
@@ -76,7 +78,7 @@
 			DB::beginTransaction();
 			try {
 				$this->makeModel( [
-					'title'     => Str::of( $this->getFileName( $file ) )->camel()->snake()->toString(),
+					'title'     => $this->makeFileTitle( $file ),
 					'path'      => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
 					'file'      => $this->generateName() . '.' . $extension = $this->getExtension( $file ),
 					'extension' => $extension,
@@ -94,6 +96,37 @@
 			if ( $this->model->exists ) {
 				$this->processModel( $this->model );
 			}
+
+			return $this;
+		}
+
+		/**
+		 * Store a given external link
+		 *
+		 * @param string $file
+		 *
+		 * @return $this
+		 * @throws AliciaException ()
+		 */
+		public function external( string $file ): self {
+			$file = filter_var( $file, FILTER_SANITIZE_URL );
+			$file = filter_var( $file, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+			DB::beginTransaction();
+			try {
+				$this->model = $this->makeModel( [
+					'title'     => $this->makeFileTitle( $file ),
+					'link'      => $file,
+					'extension' => $this->getExtension( $file ),
+					'external'  => true,
+				] );
+			} catch ( Throwable $e ) {
+				DB::rollBack();
+				throw new AliciaException(
+					'External link store failed!',
+					AliciaErrorCode::EXTERNAL_LINK_STORE_FAILED
+				);
+			}
+			DB::commit();
 
 			return $this;
 		}
@@ -132,37 +165,6 @@
 				default => Str::uuid(),
 			};
 
-		}
-
-		/**
-		 * Store a given external link
-		 *
-		 * @param string     $field
-		 * @param array|null $rules
-		 *
-		 * @return $this
-		 * @throws AliciaException ()
-		 * @throws ValidationException
-		 */
-		public function external( string $field, array $rules = null ): self {
-			$this->validate( $field, $rules ? : [ 'required' ], 'external' );
-			try {
-				DB::beginTransaction();
-				$this->model = $this->save( [
-					'title'        => $this->setTitle( $field ),
-					'link'         => $this->getFromRequest( $field ),
-					'extension'    => $this->getExtension( $field ),
-					'external'     => true,
-					'published_at' => now()
-				] );
-				$this->model->refresh();
-				DB::commit();
-			} catch ( Throwable $e ) {
-				DB::rollBack();
-				throw new AliciaException( 'External link store failed!', AliciaErrorCode::EXTERNAL_LINK_STORE_FAILED );
-			}
-
-			return $this;
 		}
 
 		/**
@@ -251,8 +253,10 @@
 			$data = collect();
 			foreach ( $this->getData() instanceof Collection ? $this->getData() : Arr::wrap( $this->getData() ) as $model ) {
 				$data->push( $model );
-				if ( $model->isExternal() or ! in_array( $model->extension,
-						alicia_config( 'extensions.images' ) ) ) {
+				if (
+					$model->isExternal() or
+					! in_array( $model->extension, alicia_config( 'extensions.images' ) )
+				) {
 					continue;
 				}
 				foreach ( $resolutions ? : alicia_config( 'export' ) as $height => $width ) {
@@ -264,15 +268,14 @@
 					     ->height( $height )
 					     ->width( $width )
 					     ->save( $filePath );
-					$child = $this->save( [
-						'title'        => $model->title . "-{$height}x{$width}",
-						'path'         => $model->path,
-						'file'         => $fileName,
-						'extension'    => $model->extension,
-						'options'      => array_merge( $model->options,
+					$child = $this->makeModel( [
+						'title'     => $model->title . "-{$height}x{$width}",
+						'path'      => $model->path,
+						'file'      => $fileName,
+						'extension' => $model->extension,
+						'options'   => array_merge( $model->options,
 							[ 'size' => filesize( $filePath ), 'width' => $width, 'height' => $height ] ),
-						'external'     => $model->external,
-						'published_at' => now()
+						'external'  => $model->external,
 					] );
 					$child->parent()->associate( $model )->save();
 					$data->push( $child->withoutRelations() );
@@ -341,20 +344,21 @@
 			}
 			try {
 				DB::beginTransaction();
-				$this->model = $this->save( [
-					'title'        => Str::beforeLast( $file, '.' ),
-					'path'         => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
-					'file'         => $this->generateName() . '.' . $extension,
-					'extension'    => $extension,
-					'options'      => $options,
-					'published_at' => now()
+				$this->model = $this->makeModel( [
+					'title'     => Str::beforeLast( $file, '.' ),
+					'path'      => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
+					'file'      => $this->generateName() . '.' . $extension,
+					'extension' => $extension,
+					'options'   => $options,
 				] );
 				$this->storage->put( $this->model->path . '/' . $this->model->file, $fs->read( $file ) );
 				DB::commit();
 			} catch ( Throwable $e ) {
 				DB::rollBack();
-				throw new AliciaException( 'Making resource from file failed! ' . $e->getMessage(),
-					AliciaErrorCode::UPLOAD_FAILED );
+				throw new AliciaException(
+					'Making resource from file failed! ' . $e->getMessage(),
+					AliciaErrorCode::UPLOAD_FAILED
+				);
 			}
 
 			return $this;

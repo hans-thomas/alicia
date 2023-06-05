@@ -7,6 +7,7 @@
 	use Illuminate\Http\UploadedFile;
 
 	class BatchUploadTest extends TestCase {
+
 		/**
 		 * @test
 		 *

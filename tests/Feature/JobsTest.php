@@ -47,19 +47,22 @@
 		 */
 		public function VideoJobs() {
 			$this->withoutExceptionHandling();
-			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'VideoJobs' ] ), [
-				'VideoJobs' => \Illuminate\Http\UploadedFile::fake()
-				                                            ->createWithContent( 'video.mp4',
-					                                            file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
-			] );
+			$response = $this->postJson(
+				route( 'alicia.test.upload', [ 'field' => 'VideoJobs' ] ),
+				[
+					'VideoJobs' => UploadedFile::fake()
+					                           ->createWithContent( 'video.mp4',
+						                           file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
+				]
+			)
+			                 ->assertJsonStructure( [
+				                 'id',
+				                 'path',
+				                 'file',
+				                 'extension',
+				                 'options'
+			                 ] );
 
-			$response->assertJsonStructure( [
-				'id',
-				'path',
-				'file',
-				'extension',
-				'options'
-			] );
 			$data = json_decode( $response->content() );
 			$this->assertDatabaseHas( ResourceModel::class, [
 				'id' => $data->id

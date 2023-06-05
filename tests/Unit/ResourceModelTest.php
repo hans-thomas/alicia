@@ -25,11 +25,21 @@
 			$data     = json_decode( $response->content() );
 			$this->assertDatabaseHas( ResourceModel::class, [ 'id' => $data->id ] );
 			$model = ResourceModel::findOrFail( $data->id );
-			$this->assertEquals( substr( $link = URL::temporarySignedRoute( 'alicia.download',
-				now()->addMinutes( $this->getConfig( 'expiration', '30' ) ), [
-					'resource' => $model->id,
-					'hash'     => $this->signature->create()
-				] ), 0, strpos( $link, '?' ) ), substr( $link = $model->url, 0, strpos( $link, '?' ) ) );
+			$this->assertEquals(
+				substr(
+					$link = URL::temporarySignedRoute(
+						'alicia.download',
+						now()->addMinutes( alicia_config( 'expiration', '30' ) ),
+						[
+							'resource' => $model->id,
+							'hash'     => $this->signature->create()
+						]
+					),
+					0,
+					strpos( $link, '?' )
+				),
+				substr( $link = $model->url, 0, strpos( $link, '?' ) )
+			);
 
 			$this->assertTrue( $this->alicia->delete( $data->id ) );
 		}
@@ -63,8 +73,10 @@
 			$this->withoutExceptionHandling();
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'generateHlsUrl' ] ), [
 				'generateHlsUrl' => UploadedFile::fake()
-				                                ->createWithContent( 'video.mp4',
-					                                file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
+				                                ->createWithContent(
+					                                'video.mp4',
+					                                file_get_contents( __DIR__ . '/../resources/video.mp4' )
+				                                )
 			] );
 			$response->assertCreated();
 			$data = json_decode( $response->content() );
@@ -82,14 +94,19 @@
 		 * @return void
 		 */
 		public function getDirectLinkIfHlsIsDisabled() {
-			// $this->withoutExceptionHandling();
 			$this->app[ 'config' ]->set( 'alicia.hls.enable', false );
-			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'generateHlsUrl' ] ), [
-				'generateHlsUrl' => UploadedFile::fake()
-				                                ->createWithContent( 'video.mp4',
-					                                file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
-			] );
-			$response->assertCreated();
+			$response = $this->postJson(
+				route( 'alicia.test.upload', [ 'field' => 'generateHlsUrl' ] ),
+				[
+					'generateHlsUrl' => UploadedFile::fake()
+					                                ->createWithContent(
+						                                'video.mp4',
+						                                file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					                                )
+				]
+			)
+			                 ->assertCreated();
+
 			$data = json_decode( $response->content() );
 			$this->assertDatabaseHas( ResourceModel::class, [ 'id' => $data->id ] );
 			$model = ResourceModel::findOrFail( $data->id );

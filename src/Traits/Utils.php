@@ -12,6 +12,7 @@
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
+	use Illuminate\Support\Str;
 	use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 	use Throwable;
@@ -170,7 +171,7 @@
 					$fileName = end( $url );
 
 					return str_replace(
-						$this->getUrlExtension( $file ),
+						$this->getExtension( $file, '.' ),
 						'',
 						str_contains( $fileName, '?' ) ?
 							substr( $fileName, 0, strpos( $fileName, '?' ) ) :
@@ -213,6 +214,13 @@
 		 */
 		private function makeModel( array $data ): ResourceModel {
 			return $this->model = ResourceModel::query()->create( $data )->refresh();
+		}
+
+		/**
+		 * @throws AliciaException
+		 */
+		private function makeFileTitle( UploadedFile|string $file ): string {
+			return Str::of( $this->getFileName( $file ) )->camel()->snake()->toString();
 		}
 
 		/**

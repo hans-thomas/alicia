@@ -99,15 +99,15 @@
 			} )->name( 'alicia.test.upload' );
 
 			$router->post( '/export/{field}', function( string $field ) {
-				return response()->json( $this->alicia->upload( $field )->export()->getData(), 201 );
+				return response()->json( $this->alicia->upload( request()->file( $field ) )->export()->getData(), 201 );
 			} )->name( 'alicia.test.upload.export' );
 
 			$router->post( '/external/{field}', function( string $field ) {
-				return response()->json( $this->alicia->external( $field )->getData(), 201 );
+				return response()->json( $this->alicia->external( request( $field ) )->getData(), 201 );
 			} )->name( 'alicia.test.external' );
 
 			$router->post( '/batch/{field}', function( string $field ) {
-				return response()->json( $this->alicia->batch( $field )->getData(), 201 );
+				return response()->json( $this->alicia->batch( request( $field ) )->getData(), 201 );
 			} )->name( 'alicia.test.batch' );
 		}
 

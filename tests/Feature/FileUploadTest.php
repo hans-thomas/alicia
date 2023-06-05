@@ -145,7 +145,7 @@
 			$data  = json_decode( $response->content() );
 			$model = ResourceModel::findOrFail( $data->id );
 			$this->assertDatabaseHas( $model->getTable(), [
-				'title'     => "does-not-have-hls-file",
+				'title'     => "does_not_have_hls_file",
 				'path'      => $model->path,
 				'external'  => false,
 				'file'      => $model->file,
@@ -194,11 +194,16 @@
 		 * @return void
 		 */
 		public function exportDifferentResolution() {
-			$response = $this->postJson( route( 'alicia.test.upload.export', [ 'field' => 'ExportAPhoto' ] ), [
-				'ExportAPhoto' => UploadedFile::fake()
-				                              ->createWithContent( 'posty.jpg',
-					                              file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
-			] )->assertCreated();
+			$this->withoutExceptionHandling();
+			$response = $this->postJson(
+				route( 'alicia.test.upload.export', [ 'field' => 'ExportAPhoto' ] ),
+				[
+					'ExportAPhoto' => UploadedFile::fake()
+					                              ->createWithContent( 'posty.jpg',
+						                              file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
+				]
+			)
+			                 ->assertCreated();
 			$content  = (array) json_decode( $response->getContent() );
 
 			$parent = Arr::get( $content, 'parents.0' );

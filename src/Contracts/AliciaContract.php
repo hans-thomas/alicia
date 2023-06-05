@@ -9,9 +9,9 @@
 	interface AliciaContract {
 		public function upload( UploadedFile $file ): self;
 
-		public function external( string $field, array $rules = null ): self;
+		public function external( string $file ): self;
 
-		public function batch( string $field, array $uploadRules = null, array $externalRules = null ): self;
+		public function batch( array $files ): self;
 
 		public function deleteFile( string $path ): bool;
 
