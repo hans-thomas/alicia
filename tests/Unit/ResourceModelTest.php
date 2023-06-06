@@ -75,10 +75,10 @@
 			$this->withoutExceptionHandling();
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'generateHlsUrl' ] ), [
 				'generateHlsUrl' => UploadedFile::fake()
-					->createWithContent(
-						'video.mp4',
-						file_get_contents( __DIR__ . '/../resources/video.mp4' )
-					)
+				                                ->createWithContent(
+					                                'video.mp4',
+					                                file_get_contents( __DIR__ . '/../resources/video.mp4' )
+				                                )
 			] );
 			$response->assertCreated();
 			$data = json_decode( $response->content() );
@@ -101,10 +101,10 @@
 				route( 'alicia.test.upload', [ 'field' => 'generateHlsUrl' ] ),
 				[
 					'generateHlsUrl' => UploadedFile::fake()
-						->createWithContent(
-							'video.mp4',
-							file_get_contents( __DIR__ . '/../resources/video.mp4' )
-						)
+					                                ->createWithContent(
+						                                'video.mp4',
+						                                file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					                                )
 				]
 			)
 			                 ->assertCreated();
@@ -149,6 +149,6 @@
 			] )->assertCreated();
 			$data     = json_decode( $response->content() );
 			$model    = ResourceModel::findOrFail( $data->id );
-			$this->assertTrue( $this->storage->fileExists( $model->address ) );
+			$this->assertTrue( alicia_storage()->fileExists( $model->address ) );
 		}
 	}

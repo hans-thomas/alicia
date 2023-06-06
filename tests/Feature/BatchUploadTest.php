@@ -67,9 +67,9 @@
 				'file'      => $item->file,
 				'extension' => $item->extension
 			] );
-			$this->assertDirectoryExists( $this->storage->path( $item->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $item->path ) );
 			$this->assertEquals( $item->path . '/' . $item->file, $model->address );
-			$this->assertFileExists( $this->storage->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->address ) );
 
 			$this->assertTrue( Alicia::delete( $model->id ) );
 		}

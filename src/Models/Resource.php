@@ -4,13 +4,12 @@
 	namespace Hans\Alicia\Models;
 
 
-	use Hans\Alicia\Contracts\SignatureContract;
+	use Hans\Alicia\Facades\Signature;
 	use Hans\Alicia\Traits\FFMpegPreConfig;
 	use Illuminate\Database\Eloquent\Casts\Attribute;
 	use Illuminate\Database\Eloquent\Model;
 	use Illuminate\Database\Eloquent\Relations\BelongsTo;
 	use Illuminate\Database\Eloquent\Relations\HasMany;
-	use Illuminate\Support\Facades\App;
 	use Illuminate\Support\Facades\URL;
 	use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -42,7 +41,7 @@
 					return URL::temporarySignedRoute( 'alicia.download',
 						now()->addMinutes( alicia_config( 'expiration' ) ), [
 							'resource' => $this->id,
-							'hash'     => App::make( SignatureContract::class )->create()
+							'hash' => Signature::create()
 						] );
 				} else {
 					return route( 'alicia.download', [ 'resource' => $this->id ] );

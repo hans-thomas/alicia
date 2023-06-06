@@ -20,8 +20,8 @@
 		public function ImageJobs() {
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'ImageJobs' ] ), [
 				'ImageJobs' => UploadedFile::fake()
-					->createWithContent( 'posty.jpg',
-						file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
+				                           ->createWithContent( 'posty.jpg',
+					                           file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
 			] );
 			$response->assertJsonStructure( [
 				'id',
@@ -52,8 +52,10 @@
 				route( 'alicia.test.upload', [ 'field' => 'VideoJobs' ] ),
 				[
 					'VideoJobs' => UploadedFile::fake()
-						->createWithContent( 'video.mp4',
-							file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
+					                           ->createWithContent(
+						                           'video.mp4',
+						                           file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					                           )
 				]
 			)
 			                 ->assertJsonStructure( [
@@ -69,7 +71,7 @@
 				'id' => $data->id
 			] );
 
-			$this->assertFileExists( $this->storage->path( $data->path . '/' . $data->hls ) );
+			$this->assertFileExists( alicia_storage()->path( $data->path . '/' . $data->hls ) );
 
 			$this->assertTrue( Alicia::delete( $data->id ) );
 		}
