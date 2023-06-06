@@ -7,6 +7,7 @@
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
+	use Hans\Alicia\Services\Actions\Upload;
 	use Hans\Alicia\Traits\Utils;
 	use Illuminate\Contracts\Filesystem\FileNotFoundException;
 	use Illuminate\Contracts\Filesystem\Filesystem;
@@ -30,8 +31,7 @@
 		private Collection $data;
 
 		public function __construct() {
-			$this->storage = Storage::disk( 'resources' );
-			$this->data    = collect();
+			$this->data = collect();
 		}
 
 		/**
@@ -70,27 +70,7 @@
 		 * @throws AliciaException ()
 		 */
 		public function upload( UploadedFile $file ): self {
-			DB::beginTransaction();
-			try {
-				$this->makeModel( [
-					'title'     => $this->makeFileTitle( $file ),
-					'path'      => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
-					'file'      => $this->generateName() . '.' . $extension = $this->getExtension( $file ),
-					'extension' => $extension,
-					'options'   => $this->getOptions( $file ),
-				] );
-				$this->storeOnDisk( $file );
-			} catch ( Throwable $e ) {
-				DB::rollBack();
-				throw new AliciaException(
-					'Upload failed! ' . $e->getMessage(),
-					AliciaErrorCode::UPLOAD_FAILED
-				);
-			}
-			DB::commit();
-			if ( $this->model->exists ) {
-				$this->processModel( $this->model );
-			}
+			$this->model = Upload::make()->run( $file );
 
 			return $this;
 		}
@@ -132,34 +112,11 @@
 		 * @return string
 		 */
 		public function generateFolder(): string {
-			$folder = alicia_config( 'temp' ) ? : alicia_config( 'classification' );
-			if ( ! $this->storage->exists( $folder ) ) {
+			if ( ! $this->storage->exists( $folder = alicia_config( 'classification' ) ) ) {
 				$this->storage->makeDirectory( $folder );
 			}
 
 			return ltrim( $folder, '/' );
-		}
-
-		/**
-		 * Generate a unique name according to the determined driver
-		 *
-		 * @param string|null $driver
-		 * @param int         $length
-		 *
-		 * @return string
-		 */
-		public function generateName( string $driver = null, int $length = 16 ): string {
-			return match ( $driver ? : alicia_config( 'naming' ) ) {
-				'uuid' => Str::uuid(),
-				'string' => Str::random( $length ),
-				'digits' => substr( str_shuffle( '012345678901234567890123456789' ), 0, $length ),
-				'string_digits' => substr( str_shuffle( '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' ),
-					0, $length ),
-				'symbols' => substr( str_shuffle( '!@#$%^&*(){}><?~' ), 0, $length ),
-				'hash' => substr( bcrypt( time() ), 0, $length ),
-				default => Str::uuid(),
-			};
-
 		}
 
 		/**
