@@ -17,7 +17,6 @@
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Facades\Validator;
 	use Illuminate\Support\Str;
-	use Illuminate\Validation\ValidationException;
 	use Spatie\Image\Exceptions\InvalidManipulation;
 	use Spatie\Image\Image;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -38,13 +37,10 @@
 		/**
 		 * Store the given files and links
 		 *
-		 * @param string     $field
-		 * @param array|null $uploadRules
-		 * @param array|null $externalRules
+		 * @param array $files
 		 *
-		 * @return $this
-		 * @throws AliciaException ()
-		 * @throws ValidationException
+		 * @return self
+		 * @throws AliciaException
 		 */
 		public function batch( array $files ): self {
 			if ( empty( $files ) ) {
@@ -54,7 +50,7 @@
 					ResponseAlias::HTTP_BAD_REQUEST
 				);
 			}
-			foreach ( $files as $key => $file ) {
+			foreach ( $files as $file ) {
 				if ( $file instanceof UploadedFile ) {
 					$this->data->push( $this->upload( $file )->getModel() );
 				} elseif ( is_string( $file ) ) {
