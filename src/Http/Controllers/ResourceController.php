@@ -11,7 +11,6 @@
 	use Illuminate\Routing\Controller;
 	use Illuminate\Support\Arr;
 	use Illuminate\Support\Facades\App;
-	use Illuminate\Support\Facades\Storage;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 	class ResourceController extends Controller {
@@ -43,11 +42,11 @@
 					'Content-Type'   => $resource->getOptions()[ 'mimeType' ],
 					'Content-Length' => $resource->getOptions()[ 'size' ],
 				] ) :
-				Storage::disk( 'resources' )
-				       ->response(
-					       $resource->address,
-					       $resource->title . $resource->extension
-				       );
+				alicia_storage()
+					->response(
+						$resource->address,
+						$resource->title . $resource->extension
+					);
 		}
 
 		private function getConfig( string $key, $default = null ) {

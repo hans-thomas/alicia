@@ -6,13 +6,11 @@
 
 	use Hans\Alicia\Contracts\SignatureContract;
 	use Hans\Alicia\Traits\FFMpegPreConfig;
-	use Illuminate\Contracts\Filesystem\Filesystem;
 	use Illuminate\Database\Eloquent\Casts\Attribute;
 	use Illuminate\Database\Eloquent\Model;
 	use Illuminate\Database\Eloquent\Relations\BelongsTo;
 	use Illuminate\Database\Eloquent\Relations\HasMany;
 	use Illuminate\Support\Facades\App;
-	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Facades\URL;
 	use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -33,13 +31,6 @@
 			'options'  => 'array',
 			'external' => 'boolean'
 		];
-
-		private Filesystem $storage;
-
-		public function __construct( array $attributes = [] ) {
-			parent::__construct( $attributes );
-			$this->storage       = Storage::disk( 'resources' );
-		}
 
 		public function url(): Attribute {
 			return new Attribute( get: function() {
@@ -62,7 +53,7 @@
 		public function hlsUrl(): Attribute {
 			return new Attribute( get: function() {
 				if ( in_array( $this->extension, alicia_config( 'extensions.audios' ) ) ) {
-					$response = new BinaryFileResponse( $this->storage->path( $this->address ) );
+					$response = new BinaryFileResponse( alicia_storage()->path( $this->address ) );
 					BinaryFileResponse::trustXSendfileTypeHeader();
 
 					return $response;
@@ -81,7 +72,7 @@
 		}
 
 		public function storagePath(): Attribute {
-			return new Attribute( get: fn() => $this->storage->path( $this->address ) );
+			return new Attribute( get: fn() => alicia_storage()->path( $this->address ) );
 		}
 
 		public function isExternal(): bool {

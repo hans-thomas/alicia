@@ -112,8 +112,8 @@
 		 * @return string
 		 */
 		public function generateFolder(): string {
-			if ( ! $this->storage->exists( $folder = alicia_config( 'classification' ) ) ) {
-				$this->storage->makeDirectory( $folder );
+			if ( ! alicia_storage()->exists( $folder = alicia_config( 'classification' ) ) ) {
+				alicia_storage()->makeDirectory( $folder );
 			}
 
 			return ltrim( $folder, '/' );
@@ -127,8 +127,8 @@
 		 * @return bool
 		 */
 		public function deleteFile( string $path ): bool {
-			if ( $this->storage->exists( $path ) ) {
-				return $this->storage->delete( $path );
+			if ( alicia_storage()->exists( $path ) ) {
+				return alicia_storage()->delete( $path );
 			}
 
 			return false;
@@ -161,8 +161,8 @@
 			$model = $model instanceof Resource ? $model : Resource::findOrFail( $model );
 			DB::beginTransaction();
 			try {
-				if ( ! $model->isExternal() and $this->storage->exists( $model->path ) ) {
-					$this->storage->deleteDirectory( $model->path );
+				if ( ! $model->isExternal() and alicia_storage()->exists( $model->path ) ) {
+					alicia_storage()->deleteDirectory( $model->path );
 				}
 				if ( $model->children()->exists() ) {
 					foreach ( $model->children as $child ) {
@@ -214,8 +214,8 @@
 				foreach ( $resolutions ? : alicia_config( 'export' ) as $height => $width ) {
 					$fileName = Str::remove( '.' . $model->extension,
 							$model->file ) . "-{$height}x{$width}." . $model->extension;
-					$filePath = $this->storage->path( $model->path . '/' . $fileName );
-					Image::load( $this->storage->path( $model->address ) )
+					$filePath = alicia_storage()->path( $model->path . '/' . $fileName );
+					Image::load( alicia_storage()->path( $model->address ) )
 					     ->optimize()
 					     ->height( $height )
 					     ->width( $width )
@@ -303,7 +303,7 @@
 					'extension' => $extension,
 					'options'   => $options,
 				] );
-				$this->storage->put( $this->model->path . '/' . $this->model->file, $fs->read( $file ) );
+				alicia_storage()->put( $this->model->path . '/' . $this->model->file, $fs->read( $file ) );
 				DB::commit();
 			} catch ( Throwable $e ) {
 				DB::rollBack();

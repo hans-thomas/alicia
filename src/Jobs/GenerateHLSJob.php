@@ -5,7 +5,6 @@
 
 
 	use FFMpeg\Format\Video\X264;
-	use Hans\Alicia\Contracts\AliciaContract;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Bus\Queueable;
 	use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,7 +32,7 @@
 		 *
 		 * @return void
 		 */
-		public function handle( AliciaContract $alicia ) {
+		public function handle() {
 			if ( alicia_config( 'enable' ) ) {
 				$export = $this->model->ffmpeg()->exportForHLS();
 
@@ -43,7 +42,7 @@
 
 				$export->setSegmentLength( alicia_config( 'setSegmentLength' ) ) // optional
 				       ->setKeyFrameInterval( alicia_config( 'setKeyFrameInterval' ) ) // optional
-				       ->save( $this->model->path . ( $hls = '/hls/' . $alicia->generateName() . '.m3u8' ) );
+				       ->save( $this->model->path . ( $hls = '/hls/' . generate_file_name() . '.m3u8' ) );
 
 				$this->model->update( [ 'hls' => ltrim( $hls, '/' ) ] );
 			}

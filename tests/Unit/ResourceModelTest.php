@@ -4,6 +4,8 @@
 	namespace Hans\Alicia\Tests\Unit;
 
 
+	use Hans\Alicia\Facades\Alicia;
+	use Hans\Alicia\Facades\Signature;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
@@ -32,7 +34,7 @@
 						now()->addMinutes( alicia_config( 'expiration', '30' ) ),
 						[
 							'resource' => $model->id,
-							'hash'     => $this->signature->create()
+							'hash'     => Signature::create()
 						]
 					),
 					0,
@@ -41,7 +43,7 @@
 				substr( $link = $model->url, 0, strpos( $link, '?' ) )
 			);
 
-			$this->assertTrue( $this->alicia->delete( $data->id ) );
+			$this->assertTrue( Alicia::delete( $data->id ) );
 		}
 
 		/**
@@ -60,7 +62,7 @@
 			$model = ResourceModel::findOrFail( $data->id );
 			$this->assertEquals( route( 'alicia.download', [ 'resource' => $model ] ), $model->url );
 
-			$this->assertTrue( $this->alicia->delete( $data->id ) );
+			$this->assertTrue( Alicia::delete( $data->id ) );
 		}
 
 		/**
@@ -73,10 +75,10 @@
 			$this->withoutExceptionHandling();
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'generateHlsUrl' ] ), [
 				'generateHlsUrl' => UploadedFile::fake()
-				                                ->createWithContent(
-					                                'video.mp4',
-					                                file_get_contents( __DIR__ . '/../resources/video.mp4' )
-				                                )
+					->createWithContent(
+						'video.mp4',
+						file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					)
 			] );
 			$response->assertCreated();
 			$data = json_decode( $response->content() );
@@ -84,7 +86,7 @@
 			$model = ResourceModel::findOrFail( $data->id );
 			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->hls ), $model->hlsUrl );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 		/**
@@ -99,10 +101,10 @@
 				route( 'alicia.test.upload', [ 'field' => 'generateHlsUrl' ] ),
 				[
 					'generateHlsUrl' => UploadedFile::fake()
-					                                ->createWithContent(
-						                                'video.mp4',
-						                                file_get_contents( __DIR__ . '/../resources/video.mp4' )
-					                                )
+						->createWithContent(
+							'video.mp4',
+							file_get_contents( __DIR__ . '/../resources/video.mp4' )
+						)
 				]
 			)
 			                 ->assertCreated();
@@ -112,7 +114,7 @@
 			$model = ResourceModel::findOrFail( $data->id );
 			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->file ), $model->hlsUrl );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 		/**
@@ -132,7 +134,7 @@
 			$this->assertTrue( $model->isExternal() );
 			$this->assertEquals( $link, $model->url );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 		/**

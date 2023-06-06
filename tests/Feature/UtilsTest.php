@@ -2,6 +2,7 @@
 
 	namespace Hans\Alicia\Tests\Feature;
 
+	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
@@ -21,10 +22,10 @@
 			$response->assertCreated();
 			$data  = json_decode( $response->getContent() );
 			$model = ResourceModel::findOrFail( $data->id );
-			$this->assertTrue( $this->storage->exists( $model->address ) );
-			$this->alicia->deleteFile( $model->address );
-			$this->assertFalse( $this->storage->exists( $model->address ) );
-			$this->alicia->delete( $model->id );
+			$this->assertTrue( alicia_storage()->exists( $model->address ) );
+			Alicia::deleteFile( $model->address );
+			$this->assertFalse( alicia_storage()->exists( $model->address ) );
+			Alicia::delete( $model->id );
 		}
 
 		/**
@@ -48,10 +49,10 @@
 				'path' => $data->path,
 				'file' => $data->file,
 			] );
-			$this->assertFileExists( $this->storage->path( $address = $data->path . '/' . $data->file ) );
-			$this->alicia->delete( $data->id );
+			$this->assertFileExists( alicia_storage()->path( $address = $data->path . '/' . $data->file ) );
+			Alicia::delete( $data->id );
 			$this->assertDatabaseMissing( ResourceModel::class, $attributes );
-			$this->assertFileDoesNotExist( $this->storage->path( $address ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $address ) );
 
 			// second request
 			$data = json_decode( $secondResponse->getContent() );
@@ -60,8 +61,8 @@
 				'path' => $data->path,
 				'file' => $data->file,
 			] );
-			$this->assertFileExists( $this->storage->path( $address = $data->path . '/' . $data->file ) );
-			$this->alicia->delete( $data->id );
+			$this->assertFileExists( alicia_storage()->path( $address = $data->path . '/' . $data->file ) );
+			Alicia::delete( $data->id );
 		}
 
 		/**
@@ -71,7 +72,7 @@
 		 * @return void
 		 */
 		public function batchDeleteModels() {
-			$response       = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'uploadAZipedFile' ] ), [
+			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'uploadAZipedFile' ] ), [
 				'uploadAZipedFile' => UploadedFile::fake()->create( 'ziped.file.zip', 10230, 'application/zip' )
 			] );
 			$secondResponse = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'uploadAZipedFile' ] ), [
@@ -82,21 +83,21 @@
 			$secondModel = json_decode( $secondResponse->getContent() );
 
 
-			$this->alicia->batchDelete( [ $firstModel->id, $secondModel->id ] );
+			Alicia::batchDelete( [ $firstModel->id, $secondModel->id ] );
 			// first model assertion
 			$this->assertDatabaseMissing( ResourceModel::class, [
 				'id'   => $firstModel->id,
 				'path' => $firstModel->path,
 				'file' => $firstModel->file,
 			] );
-			$this->assertFileDoesNotExist( $this->storage->path( $firstModel->path . '/' . $firstModel->file ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $firstModel->path . '/' . $firstModel->file ) );
 			// second model assertion
 			$this->assertDatabaseMissing( ResourceModel::class, [
 				'id'   => $secondModel->id,
 				'path' => $secondModel->path,
 				'file' => $secondModel->file,
 			] );
-			$this->assertFileDoesNotExist( $this->storage->path( $secondModel->path . '/' . $secondModel->file ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $secondModel->path . '/' . $secondModel->file ) );
 
 		}
 	}

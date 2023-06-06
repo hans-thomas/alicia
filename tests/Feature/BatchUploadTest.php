@@ -2,6 +2,7 @@
 
 	namespace Hans\Alicia\Tests\Feature;
 
+	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
@@ -16,24 +17,28 @@
 		 */
 		public function batchUpload() {
 			//$this->withoutExceptionHandling();
-			$response = $this->postJson( route( 'alicia.test.batch', [ 'field' => 'batchUpload' ] ), [
-				'batchUpload' => [
-					//UploadedFile::fake()->create( 'video.mp4', 10230,'video/mp4' ),
-					UploadedFile::fake()->image( 'imagefile.png', 512, 512 ),
-					UploadedFile::fake()->create( 'ziped.zip', 10230, 'application/zip' ),
-					$link = 'http://laravel.com/img/homepage/vapor.jpg',
-				],
-			] );
-			$response->assertCreated()->assertJsonStructure( [
+			$response = $this->postJson(
+				route( 'alicia.test.batch', [ 'field' => 'batchUpload' ] ),
 				[
-					'id',
-					'path',
-					'file',
-					'extension',
-					'options'
+					'batchUpload' => [
+						//UploadedFile::fake()->create( 'video.mp4', 10230,'video/mp4' ),
+						UploadedFile::fake()->image( 'imagefile.png', 512, 512 ),
+						UploadedFile::fake()->create( 'ziped.zip', 10230, 'application/zip' ),
+						'http://laravel.com/img/homepage/vapor.jpg',
+					],
 				]
-			] );
-			$data = json_decode( $response->content() );
+			)
+			                 ->assertCreated()
+			                 ->assertJsonStructure( [
+				                 [
+					                 'id',
+					                 'path',
+					                 'file',
+					                 'extension',
+					                 'options'
+				                 ]
+			                 ] );
+			$data     = json_decode( $response->content() );
 			collect( $data )->each( fn( $item ) => match ( $item->external ) {
 				true => $this->checkExternals( $item ),
 				false => $this->checkFiles( $item )
@@ -50,7 +55,7 @@
 				'file'      => $item->file,
 				'extension' => $item->extension
 			] );
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 		private function checkFiles( object $item ): void {
@@ -66,6 +71,6 @@
 			$this->assertEquals( $item->path . '/' . $item->file, $model->address );
 			$this->assertFileExists( $this->storage->path( $model->address ) );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 	}

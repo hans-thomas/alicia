@@ -4,6 +4,7 @@
 	namespace Hans\Alicia\Tests\Feature;
 
 
+	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
@@ -18,6 +19,7 @@
 		 * @return void
 		 */
 		public function uploadAZipedFile() {
+			$this->withoutExceptionHandling();
 			$response = $this->postJson(
 				route( 'alicia.test.upload', [ 'field' => 'uploadAZipedFile' ] ),
 				[
@@ -42,11 +44,11 @@
 				'extension' => 'zip'
 			] );
 			$model = ResourceModel::query()->findOrFail( $data[ 'id' ] );
-			$this->assertDirectoryExists( $this->storage->path( $data[ 'path' ] ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $data[ 'path' ] ) );
 			$this->assertEquals( $data[ 'path' ] . '/' . $data[ 'file' ], $model->address );
-			$this->assertFileExists( $this->storage->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->address ) );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 		/**
@@ -76,11 +78,11 @@
 				'file'      => $model->file,
 				'extension' => 'png'
 			] );
-			$this->assertDirectoryExists( $this->storage->path( $model->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
 			$this->assertEquals( $model->path . '/' . $model->file, $model->address );
-			$this->assertFileExists( $this->storage->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->address ) );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 		/**
@@ -92,10 +94,10 @@
 		public function uploadAVideo() {
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'UploadAVideo' ] ), [
 				'UploadAVideo' => UploadedFile::fake()
-				                              ->createWithContent(
-					                              'video.mp4',
-					                              file_get_contents( __DIR__ . '/../resources/video.mp4' )
-				                              )
+					->createWithContent(
+						'video.mp4',
+						file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					)
 			] )
 			                 ->assertCreated()
 			                 ->assertJsonStructure( [
@@ -114,12 +116,12 @@
 				'file'      => $model->file,
 				'extension' => 'mp4'
 			] );
-			$this->assertFileExists( $this->storage->path( $model->path . '/' . $model->hls ) );
-			$this->assertDirectoryExists( $this->storage->path( $model->path ) );
+			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
 			$this->assertEquals( $model->path . '/' . $model->file, $model->address );
-			$this->assertFileExists( $this->storage->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->address ) );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 		/**
@@ -132,8 +134,8 @@
 			$this->app[ 'config' ]->set( 'alicia.hls.enable', false );
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'UploadAVideo' ] ), [
 				'UploadAVideo' => UploadedFile::fake()
-				                              ->createWithContent( 'does-not-have-hls-file.mp4',
-					                              file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
+					->createWithContent( 'does-not-have-hls-file.mp4',
+						file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
 			] );
 			$response->assertCreated()->assertJsonStructure( [
 				'id',
@@ -153,9 +155,9 @@
 			] );
 			$this->assertNull( $model->hls );
 			$this->assertDirectoryDoesNotExist( $model->path . '/hls/' );
-			$this->assertFileExists( $this->storage->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->address ) );
 
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 		}
 
 
@@ -174,17 +176,17 @@
 			$data     = json_decode( $response->content() );
 			$model    = ResourceModel::findOrFail( $data->id );
 
-			$this->assertFileExists( $this->storage->path( $model->path . '/' . $model->hls ) );
-			$this->assertDirectoryExists( $this->storage->path( $model->path ) );
+			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
 			$this->assertEquals( $model->path . '/' . $model->file, $model->address );
-			$this->assertFileExists( $this->storage->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->address ) );
 
 			$duplicated = clone $model;
-			$this->assertTrue( $this->alicia->delete( $model->id ) );
+			$this->assertTrue( Alicia::delete( $model->id ) );
 
-			$this->assertFileDoesNotExist( $this->storage->path( $duplicated->path . '/' . $duplicated->hls ) );
-			$this->assertDirectoryDoesNotExist( $this->storage->path( $duplicated->path ) );
-			$this->assertFileDoesNotExist( $this->storage->path( $duplicated->address ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $duplicated->path . '/' . $duplicated->hls ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $duplicated->path ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $duplicated->address ) );
 		}
 
 		/**
@@ -199,8 +201,8 @@
 				route( 'alicia.test.upload.export', [ 'field' => 'ExportAPhoto' ] ),
 				[
 					'ExportAPhoto' => UploadedFile::fake()
-					                              ->createWithContent( 'posty.jpg',
-						                              file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
+						->createWithContent( 'posty.jpg',
+							file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
 				]
 			)
 			                 ->assertCreated();
@@ -212,8 +214,8 @@
 				$this->assertEquals( $parent->path, $model->path );
 				$this->assertEquals( $parent->id, $model->parent_id );
 
-				$this->assertDirectoryExists( $this->storage->path( $model->path ) );
-				$this->assertFileExists( $this->storage->path( $model->address ) );
+				$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
+				$this->assertFileExists( alicia_storage()->path( $model->address ) );
 			}
 
 		}

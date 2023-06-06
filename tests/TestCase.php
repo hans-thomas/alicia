@@ -3,35 +3,14 @@
 	namespace Hans\Alicia\Tests;
 
 	use Hans\Alicia\AliciaServiceProvider;
-	use Hans\Alicia\Contracts\AliciaContract;
-	use Hans\Alicia\Contracts\SignatureContract;
-	use Illuminate\Contracts\Filesystem\Filesystem;
+	use Hans\Alicia\Facades\Alicia;
 	use Illuminate\Foundation\Application;
 	use Illuminate\Foundation\Testing\RefreshDatabase;
 	use Illuminate\Routing\Router;
-	use Illuminate\Support\Facades\Storage;
 	use Orchestra\Testbench\TestCase as BaseTestCase;
 
 	class TestCase extends BaseTestCase {
 		use RefreshDatabase;
-
-		public AliciaContract $alicia;
-		public SignatureContract $signature;
-		public Filesystem $storage;
-
-		/**
-		 * Setup the test environment.
-		 */
-		protected function setUp(): void {
-			// Code before application created.
-
-			parent::setUp();
-
-			// Code after application created.
-			$this->alicia    = app( AliciaContract::class );
-			$this->signature = app( SignatureContract::class );
-			$this->storage   = Storage::disk( 'resources' );
-		}
 
 		/**
 		 * Get application timezone.
@@ -95,19 +74,19 @@
 		 */
 		protected function defineRoutes( $router ) {
 			$router->post( '/upload/{field}', function( string $field ) {
-				return response()->json( $this->alicia->upload( request()->file( $field ) )->getData(), 201 );
+				return response()->json( Alicia::upload( request()->file( $field ) )->getData(), 201 );
 			} )->name( 'alicia.test.upload' );
 
 			$router->post( '/export/{field}', function( string $field ) {
-				return response()->json( $this->alicia->upload( request()->file( $field ) )->export()->getData(), 201 );
+				return response()->json( Alicia::upload( request()->file( $field ) )->export()->getData(), 201 );
 			} )->name( 'alicia.test.upload.export' );
 
 			$router->post( '/external/{field}', function( string $field ) {
-				return response()->json( $this->alicia->external( request( $field ) )->getData(), 201 );
+				return response()->json( Alicia::external( request( $field ) )->getData(), 201 );
 			} )->name( 'alicia.test.external' );
 
 			$router->post( '/batch/{field}', function( string $field ) {
-				return response()->json( $this->alicia->batch( request( $field ) )->getData(), 201 );
+				return response()->json( Alicia::batch( request( $field ) )->getData(), 201 );
 			} )->name( 'alicia.test.batch' );
 		}
 

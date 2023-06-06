@@ -4,6 +4,7 @@
 	namespace Hans\Alicia\Tests\Feature;
 
 
+	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
@@ -19,8 +20,8 @@
 		public function ImageJobs() {
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'ImageJobs' ] ), [
 				'ImageJobs' => UploadedFile::fake()
-				                           ->createWithContent( 'posty.jpg',
-					                           file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
+					->createWithContent( 'posty.jpg',
+						file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
 			] );
 			$response->assertJsonStructure( [
 				'id',
@@ -36,7 +37,7 @@
 			] );
 			$this->assertGreaterThanOrEqual( $data->options->size, filesize( __DIR__ . '/../resources/posty.jpg' ) );
 
-			$this->assertTrue( $this->alicia->delete( $data->id ) );
+			$this->assertTrue( Alicia::delete( $data->id ) );
 		}
 
 		/**
@@ -51,8 +52,8 @@
 				route( 'alicia.test.upload', [ 'field' => 'VideoJobs' ] ),
 				[
 					'VideoJobs' => UploadedFile::fake()
-					                           ->createWithContent( 'video.mp4',
-						                           file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
+						->createWithContent( 'video.mp4',
+							file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
 				]
 			)
 			                 ->assertJsonStructure( [
@@ -70,6 +71,6 @@
 
 			$this->assertFileExists( $this->storage->path( $data->path . '/' . $data->hls ) );
 
-			$this->assertTrue( $this->alicia->delete( $data->id ) );
+			$this->assertTrue( Alicia::delete( $data->id ) );
 		}
 	}
