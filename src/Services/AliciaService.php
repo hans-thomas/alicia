@@ -7,12 +7,11 @@
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
+	use Hans\Alicia\Services\Actions\Delete;
 	use Hans\Alicia\Services\Actions\Export;
 	use Hans\Alicia\Services\Actions\External;
 	use Hans\Alicia\Services\Actions\Upload;
-	use Hans\Alicia\Traits\Utils;
 	use Illuminate\Contracts\Filesystem\FileNotFoundException;
-	use Illuminate\Contracts\Filesystem\Filesystem;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
 	use Illuminate\Support\Collection;
@@ -24,9 +23,7 @@
 	use Throwable;
 
 	class AliciaService {
-		use Utils;
 
-		private Filesystem $storage;
 		private Resource $model;
 		private Collection $data;
 
@@ -43,6 +40,7 @@
 		 * @throws AliciaException
 		 */
 		public function batch( array $files ): self {
+			// TODO: remove exception
 			if ( empty( $files ) ) {
 				throw new AliciaException(
 					'Empty request! the passed files array is empty.',
@@ -90,16 +88,55 @@
 		}
 
 		/**
-		 * Create the folder to store the uploaded file
-		 *
-		 * @return string
+		 * @throws AliciaException
 		 */
-		public function generateFolder(): string {
-			if ( ! alicia_storage()->exists( $folder = alicia_config( 'classification' ) ) ) {
-				alicia_storage()->makeDirectory( $folder );
+		public function export( array $resolutions = null ): self {
+			$exports = collect( $data = Arr::wrap( $this->getData() ) );
+			foreach ( $data as $model ) {
+				$exports->push( ( new Export( $model, $resolutions ) )->run()->toArray() );
 			}
 
-			return ltrim( $folder, '/' );
+			$this->data = $exports->flatten( 1 )
+			                      ->groupBy(
+				                      fn( $item, $key ) => $item[ 'parent_id' ] ?
+					                      $item[ 'parent_id' ] . '-children' :
+					                      'parents'
+			                      );
+
+			return $this;
+		}
+
+		/**
+		 * Delete a specific resource include source file, hls etc
+		 *
+		 * @param Resource|int $model
+		 *
+		 * @return bool
+		 * @throws AliciaException
+		 */
+		public function delete( Resource|int $model ): bool {
+			$model = $model instanceof Resource ? $model : Resource::query()->findOrFail( $model );
+
+			( new Delete( $model ) )->run();
+
+			return true;
+		}
+
+		/**
+		 * Delete resources in batch mode
+		 *
+		 * @param array $ids
+		 *
+		 * @return array
+		 * @throws AliciaException
+		 */
+		public function batchDelete( array $ids ): array {
+			$results = collect();
+			foreach ( $ids as $id ) {
+				$results->put( $id, $this->delete( $id ) );
+			}
+
+			return $results->toArray();
 		}
 
 		/**
@@ -115,87 +152,6 @@
 			}
 
 			return false;
-		}
-
-		/**
-		 * Delete resources in batch mode
-		 *
-		 * @param array $ids
-		 *
-		 * @return array
-		 */
-		public function batchDelete( array $ids ): array {
-			$results = collect();
-			foreach ( $ids as $id ) {
-				$results->put( $id, $this->delete( $id ) );
-			}
-
-			return $results->toArray();
-		}
-
-		/**
-		 * Delete a specific resource include source file, hls etc
-		 *
-		 * @param Resource|int $model
-		 *
-		 * @return bool
-		 * @throws AliciaException
-		 */
-		public function delete( Resource|int $model ): bool {
-			$model = $model instanceof Resource ? $model : Resource::findOrFail( $model );
-			DB::beginTransaction();
-			try {
-				if ( ! $model->isExternal() and alicia_storage()->exists( $model->path ) ) {
-					alicia_storage()->deleteDirectory( $model->path );
-				}
-				if ( $model->children()->exists() ) {
-					foreach ( $model->children as $child ) {
-						$this->delete( $child );
-					}
-				}
-				$model->delete();
-			} catch ( Throwable $e ) {
-				DB::rollBack();
-
-				throw new AliciaException(
-					'Failed to delete resource! ' . $e->getMessage(),
-					AliciaErrorCode::FAILED_TO_DELETE_RESOURCE_MODEL
-				);
-			}
-			DB::commit();
-
-			return true;
-		}
-
-		/**
-		 * Return created Model(s)
-		 *
-		 * @return Resource|Collection
-		 */
-		public function getData(): Resource|Collection {
-			return match ( $this->data->isEmpty() ) {
-				true => $this->getModel(),
-				default => $this->data,
-			};
-		}
-
-		/**
-		 * @throws AliciaException
-		 */
-		public function export( array $resolutions = null ): self {
-			if ( ! ( alicia_config( 'export' ) or $resolutions ) ) {
-				throw new AliciaException( 'No resolution sets for exporting!', AliciaErrorCode::EXPORT_CONFIG_NOT_SET,
-					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
-			}
-			$exports = collect( $data = Arr::wrap( $this->getData() ) );
-			foreach ( $data as $model ) {
-				$exports->push( ( new Export( $model, $resolutions ) )->run()->toArray() );
-			}
-
-			$this->data = $exports->flatten( 1 )
-			                      ->groupBy( fn( $item, $key ) => $item[ 'parent_id' ] ? $item[ 'parent_id' ] . '-children' : 'parents' );
-
-			return $this;
 		}
 
 		public function makeExternal( Resource $resource, string $url, bool $deleteFile = false ): Resource {
@@ -274,6 +230,28 @@
 			}
 
 			return $this;
+		}
+
+		/**
+		 * Return created Model(s)
+		 *
+		 * @return Resource|Collection|null
+		 */
+		public function getData(): Resource|Collection|null {
+			return match ( $this->data->isEmpty() ) {
+				true => $this->getModel(),
+				default => $this->data,
+			};
+		}
+
+
+		/**
+		 * Return created model instance
+		 *
+		 * @return Resource|null
+		 */
+		protected function getModel(): ?Resource {
+			return $this->model->refresh() ?? null;
 		}
 
 	}

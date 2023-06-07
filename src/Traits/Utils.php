@@ -252,12 +252,4 @@
 			}
 		}
 
-		/**
-		 * Return created model instance
-		 *
-		 * @return ResourceModel
-		 */
-		private function getModel(): ResourceModel {
-			return $this->model->refresh();
-		}
 	}

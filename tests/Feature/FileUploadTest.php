@@ -48,7 +48,9 @@
 			$this->assertEquals( $data[ 'path' ] . '/' . $data[ 'file' ], $model->address );
 			$this->assertFileExists( alicia_storage()->path( $model->address ) );
 
+			// TODO: write test for delete
 			$this->assertTrue( Alicia::delete( $model->id ) );
+			self::assertFileDoesNotExist( $model->address );
 		}
 
 		/**
