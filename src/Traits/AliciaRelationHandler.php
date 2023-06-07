@@ -4,9 +4,8 @@
 	namespace Hans\Alicia\Traits;
 
 
-	use Hans\Alicia\Contracts\AliciaContract;
+	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Models\Resource as ResourceModel;
-	use function app;
 
 	trait AliciaRelationHandler {
 
@@ -14,7 +13,7 @@
 			$ids = $this->uploads()->select( 'id' )->pluck( 'id' );
 			$this->uploads()->detach( $ids );
 
-			return app( AliciaContract::class )->batchDelete( $ids );
+			return Alicia::batchDelete( $ids );
 		}
 
 		public function uploads() {
