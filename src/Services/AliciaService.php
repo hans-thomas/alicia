@@ -4,7 +4,6 @@
 	namespace Hans\Alicia\Services;
 
 
-	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
 	use Hans\Alicia\Services\Actions\Delete;
@@ -13,11 +12,9 @@
 	use Hans\Alicia\Services\Actions\FromFile;
 	use Hans\Alicia\Services\Actions\MakeExternal;
 	use Hans\Alicia\Services\Actions\Upload;
-	use Illuminate\Contracts\Filesystem\FileNotFoundException;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
 	use Illuminate\Support\Collection;
-	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 	class AliciaService {
 
@@ -37,14 +34,6 @@
 		 * @throws AliciaException
 		 */
 		public function batch( array $files ): self {
-			// TODO: remove exception
-			if ( empty( $files ) ) {
-				throw new AliciaException(
-					'Empty request! the passed files array is empty.',
-					AliciaErrorCode::KEY_IS_NULL,
-					ResponseAlias::HTTP_BAD_REQUEST
-				);
-			}
 			foreach ( $files as $file ) {
 				if ( $file instanceof UploadedFile ) {
 					$this->data->push( $this->upload( $file )->getModel() );
