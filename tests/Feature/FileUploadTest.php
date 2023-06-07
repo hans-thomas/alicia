@@ -94,10 +94,10 @@
 		public function uploadAVideo() {
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'UploadAVideo' ] ), [
 				'UploadAVideo' => UploadedFile::fake()
-					->createWithContent(
-						'video.mp4',
-						file_get_contents( __DIR__ . '/../resources/video.mp4' )
-					)
+				                              ->createWithContent(
+					                              'video.mp4',
+					                              file_get_contents( __DIR__ . '/../resources/video.mp4' )
+				                              )
 			] )
 			                 ->assertCreated()
 			                 ->assertJsonStructure( [
@@ -134,8 +134,8 @@
 			$this->app[ 'config' ]->set( 'alicia.hls.enable', false );
 			$response = $this->postJson( route( 'alicia.test.upload', [ 'field' => 'UploadAVideo' ] ), [
 				'UploadAVideo' => UploadedFile::fake()
-					->createWithContent( 'does-not-have-hls-file.mp4',
-						file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
+				                              ->createWithContent( 'does-not-have-hls-file.mp4',
+					                              file_get_contents( __DIR__ . '/../resources/video.mp4' ) )
 			] );
 			$response->assertCreated()->assertJsonStructure( [
 				'id',
@@ -201,18 +201,20 @@
 				route( 'alicia.test.upload.export', [ 'field' => 'ExportAPhoto' ] ),
 				[
 					'ExportAPhoto' => UploadedFile::fake()
-						->createWithContent( 'posty.jpg',
-							file_get_contents( __DIR__ . '/../resources/posty.jpg' ) )
+					                              ->createWithContent(
+						                              'posty.jpg',
+						                              file_get_contents( __DIR__ . '/../resources/posty.jpg' )
+					                              )
 				]
 			)
 			                 ->assertCreated();
-			$content  = (array) json_decode( $response->getContent() );
+			$content  = json_decode( $response->getContent(), true );
 
 			$parent = Arr::get( $content, 'parents.0' );
-			foreach ( $content[ $parent->id . '-children' ] as $data ) {
-				$model = ResourceModel::query()->findOrFail( $data->id );
-				$this->assertEquals( $parent->path, $model->path );
-				$this->assertEquals( $parent->id, $model->parent_id );
+			foreach ( $content[ $parent[ 'id' ] . '-children' ] as $data ) {
+				$model = ResourceModel::query()->findOrFail( $data[ 'id' ] );
+				$this->assertEquals( $parent[ 'path' ], $model->path );
+				$this->assertEquals( $parent[ 'id' ], $model->parent_id );
 
 				$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
 				$this->assertFileExists( alicia_storage()->path( $model->address ) );

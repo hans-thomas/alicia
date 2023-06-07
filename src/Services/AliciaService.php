@@ -187,11 +187,13 @@
 				throw new AliciaException( 'No resolution sets for exporting!', AliciaErrorCode::EXPORT_CONFIG_NOT_SET,
 					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
-			$exports = collect();
-			foreach ( Arr::wrap( $this->getData() ) as $model ) {
-				$exports->push( ( new Export( $model, $resolutions ) )->run() );
+			$exports = collect( $data = Arr::wrap( $this->getData() ) );
+			foreach ( $data as $model ) {
+				$exports->push( ( new Export( $model, $resolutions ) )->run()->toArray() );
 			}
-			$this->data = $exports->groupBy( fn( $item, $key ) => $item[ 'parent_id' ] ? $item[ 'parent_id' ] . '-children' : 'parents' );
+
+			$this->data = $exports->flatten( 1 )
+			                      ->groupBy( fn( $item, $key ) => $item[ 'parent_id' ] ? $item[ 'parent_id' ] . '-children' : 'parents' );
 
 			return $this;
 		}
