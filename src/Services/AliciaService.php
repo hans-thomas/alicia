@@ -10,17 +10,14 @@
 	use Hans\Alicia\Services\Actions\Delete;
 	use Hans\Alicia\Services\Actions\Export;
 	use Hans\Alicia\Services\Actions\External;
+	use Hans\Alicia\Services\Actions\FromFile;
 	use Hans\Alicia\Services\Actions\MakeExternal;
 	use Hans\Alicia\Services\Actions\Upload;
 	use Illuminate\Contracts\Filesystem\FileNotFoundException;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
 	use Illuminate\Support\Collection;
-	use Illuminate\Support\Facades\DB;
-	use Illuminate\Support\Facades\Storage;
-	use Illuminate\Support\Str;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-	use Throwable;
 
 	class AliciaService {
 
@@ -154,14 +151,14 @@
 			return false;
 		}
 
+		/**
+		 * @param Resource $model
+		 * @param string   $url
+		 *
+		 * @return $this
+		 * @throws AliciaException
+		 */
 		public function makeExternal( Resource $model, string $url ): self {
-			if ( $model->isExternal() ) {
-				throw new AliciaException(
-					"Model is external already!",
-					AliciaErrorCode::MODEL_IS_EXTERNAL_ALREADY
-				);
-			}
-
 			( new MakeExternal( $model, $url ) )->run();
 
 			return $this;
@@ -172,41 +169,11 @@
 		 *
 		 * @param string $path
 		 *
-		 * @return $this
+		 * @return self
 		 * @throws AliciaException ()
-		 * @throws FileNotFoundException ()
 		 */
-		public function makeFromFile( string $path ): self {
-			$fs        = Storage::build( Str::beforeLast( $path, '/' ) );
-			$file      = Str::afterLast( $path, '/' );
-			$extension = Str::afterLast( $path, '.' );
-			if ( ! $fs->fileExists( $file ) ) {
-				throw new FileNotFoundException( 'file not found!' );
-			}
-			$options[ 'size' ]     = $fs->size( $file );
-			$options[ 'mimeType' ] = $fs->mimeType( $file );
-			if ( $dimensions = getimagesize( $path ) ) {
-				$options[ 'width' ]  = $dimensions[ 0 ];
-				$options[ 'height' ] = $dimensions[ 1 ];
-			}
-			try {
-				DB::beginTransaction();
-				$this->model = $this->makeModel( [
-					'title'     => Str::beforeLast( $file, '.' ),
-					'path'      => $this->generateFolder() . '/' . $this->generateName( 'string', 8 ),
-					'file'      => $this->generateName() . '.' . $extension,
-					'extension' => $extension,
-					'options'   => $options,
-				] );
-				alicia_storage()->put( $this->model->path . '/' . $this->model->file, $fs->read( $file ) );
-				DB::commit();
-			} catch ( Throwable $e ) {
-				DB::rollBack();
-				throw new AliciaException(
-					'Making resource from file failed! ' . $e->getMessage(),
-					AliciaErrorCode::UPLOAD_FAILED
-				);
-			}
+		public function fromFile( string $path ): self {
+			$this->model = ( new FromFile( $path ) )->run();
 
 			return $this;
 		}

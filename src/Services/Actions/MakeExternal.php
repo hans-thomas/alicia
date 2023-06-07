@@ -20,6 +20,12 @@
 
 		public function run(): Resource {
 			// TODO: not tested
+			if ( $this->model->isExternal() ) {
+				throw new AliciaException(
+					"Model is external already!",
+					AliciaErrorCode::MODEL_IS_EXTERNAL_ALREADY
+				);
+			}
 			$address = $this->model->address;
 
 			DB::beginTransaction();

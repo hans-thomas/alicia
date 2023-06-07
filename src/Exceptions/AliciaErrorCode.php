@@ -21,4 +21,6 @@
 		public const INVALID_MODEL_TO_EXPORT = 5017;
 		public const MODEL_IS_EXTERNAL_ALREADY = 5018;
 		public const FAILED_TO_MAKE_MODEL_EXTERNAL = 5019;
+		public const FILE_DOEST_NOT_EXIST = 5020;
+		public const FAILED_TO_MAKE_RESOURCE_FROM_FILE = 5021;
 	}
