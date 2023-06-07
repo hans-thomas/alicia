@@ -10,6 +10,7 @@
 	use Hans\Alicia\Services\Actions\Delete;
 	use Hans\Alicia\Services\Actions\Export;
 	use Hans\Alicia\Services\Actions\External;
+	use Hans\Alicia\Services\Actions\MakeExternal;
 	use Hans\Alicia\Services\Actions\Upload;
 	use Illuminate\Contracts\Filesystem\FileNotFoundException;
 	use Illuminate\Http\UploadedFile;
@@ -17,7 +18,6 @@
 	use Illuminate\Support\Collection;
 	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\Storage;
-	use Illuminate\Support\Facades\Validator;
 	use Illuminate\Support\Str;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 	use Throwable;
@@ -154,38 +154,17 @@
 			return false;
 		}
 
-		public function makeExternal( Resource $resource, string $url, bool $deleteFile = false ): Resource {
-			if ( $resource->isExternal() ) {
-				return $resource;
+		public function makeExternal( Resource $model, string $url ): self {
+			if ( $model->isExternal() ) {
+				throw new AliciaException(
+					"Model is external already!",
+					AliciaErrorCode::MODEL_IS_EXTERNAL_ALREADY
+				);
 			}
 
-			$validator = Validator::make( [
-				'url' => $url
-			], [ 'url' => [ 'required', 'url' ] ] );
+			( new MakeExternal( $model, $url ) )->run();
 
-			if ( $validator->fails() ) {
-				throw new AliciaException( 'url is not valid!', AliciaErrorCode::URL_IS_INVALID );
-			}
-
-			$address = $resource->address;
-
-			DB::beginTransaction();
-			try {
-				$resource->update( [
-					'link'     => $url,
-					'external' => true,
-				] );
-			} catch ( Throwable $e ) {
-				DB::rollBack();
-				throw $e;
-			}
-			DB::commit();
-
-			if ( $deleteFile ) {
-				$this->deleteFile( $address );
-			}
-
-			return $resource;
+			return $this;
 		}
 
 		/**
