@@ -17,4 +17,6 @@
 		public const FAILED_TO_ACCESS_MODEL = 5013;
 		public const URL_IS_INVALID = 5014;
 		public const FAILED_TO_PROCESS_MODEL = 5015;
+		public const FAILED_TO_DELETE_RESOURCE_MODEL = 5016;
+		public const INVALID_MODEL_TO_EXPORT = 5017;
 	}

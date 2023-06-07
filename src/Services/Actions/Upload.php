@@ -12,20 +12,25 @@
 
 	class Upload extends Actions {
 
+		public function __construct(
+			protected readonly UploadedFile $file
+		) {
+		}
+
 		/**
 		 * @throws AliciaException
 		 */
-		public function run( UploadedFile|string $file ): Resource {
+		public function run(): Resource {
 			DB::beginTransaction();
 			try {
-				$this->model = $this->storeOnDB( [
-					'title'     => $this->makeFileTitle( $file ),
+				$model = $this->storeOnDB( [
+					'title'     => $this->makeFileTitle( $this->file ),
 					'path'      => get_classified_folder() . '/' . generate_file_name( 'string', 8 ),
-					'file'      => generate_file_name() . '.' . $extension = $this->getExtension( $file ),
+					'file'      => generate_file_name() . '.' . $extension = $this->getExtension( $this->file ),
 					'extension' => $extension,
-					'options'   => $this->getOptions( $file ),
+					'options'   => $this->getOptions( $this->file ),
 				] );
-				$this->storeOnDisk( $file );
+				$this->storeOnDisk( $model, $this->file );
 			} catch ( Throwable $e ) {
 				DB::rollBack();
 				throw new AliciaException(
@@ -35,9 +40,9 @@
 			}
 			DB::commit();
 
-			$this->processModel( $this->model );
+			$this->processModel( $model );
 
-			return $this->model;
+			return $model;
 
 		}
 

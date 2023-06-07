@@ -19,18 +19,8 @@
 
 	abstract class Actions {
 
-		protected Resource $model;
-		protected Collection $data;
 
-		public function __construct() {
-			$this->data = collect();
-		}
-
-		public static function make(): static {
-			return new static();
-		}
-
-		abstract public function run( UploadedFile|string $file ): Resource;
+		abstract public function run(): Resource|Collection;
 
 
 		/**
@@ -180,7 +170,7 @@
 		 * @return array
 		 * @throws AliciaException
 		 */
-		public function getOptions( UploadedFile $file ): array {
+		protected function getOptions( UploadedFile $file ): array {
 			$data = [
 				'size'     => $file->getSize(),
 				'mimeType' => $file->getMimeType()
@@ -220,12 +210,13 @@
 		/**
 		 * Store the uploaded file in defined folder
 		 *
-		 * @param UploadedFile $file
+		 * @param ResourceModel $model
+		 * @param UploadedFile  $file
 		 *
 		 * @return string
 		 */
-		protected function storeOnDisk( UploadedFile $file ): string {
-			return alicia_storage()->putFileAs( $this->model->path, $file, $this->model->file );
+		protected function storeOnDisk( Resource $model, UploadedFile $file ): string {
+			return alicia_storage()->putFileAs( $model->path, $file, $model->file );
 		}
 
 		/**

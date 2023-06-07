@@ -7,6 +7,7 @@
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
+	use Hans\Alicia\Services\Actions\Export;
 	use Hans\Alicia\Services\Actions\External;
 	use Hans\Alicia\Services\Actions\Upload;
 	use Hans\Alicia\Traits\Utils;
@@ -19,8 +20,6 @@
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Facades\Validator;
 	use Illuminate\Support\Str;
-	use Spatie\Image\Exceptions\InvalidManipulation;
-	use Spatie\Image\Image;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 	use Throwable;
 
@@ -71,7 +70,7 @@
 		 * @throws AliciaException ()
 		 */
 		public function upload( UploadedFile $file ): self {
-			$this->model = Upload::make()->run( $file );
+			$this->model = ( new Upload( $file ) )->run();
 
 			return $this;
 		}
@@ -85,7 +84,7 @@
 		 * @throws AliciaException ()
 		 */
 		public function external( string $file ): self {
-			$this->model = External::make()->run( $file );
+			$this->model = ( new External( $file ) )->run();
 
 			return $this;
 		}
@@ -140,6 +139,7 @@
 		 * @param Resource|int $model
 		 *
 		 * @return bool
+		 * @throws AliciaException
 		 */
 		public function delete( Resource|int $model ): bool {
 			$model = $model instanceof Resource ? $model : Resource::findOrFail( $model );
@@ -157,7 +157,10 @@
 			} catch ( Throwable $e ) {
 				DB::rollBack();
 
-				return false;
+				throw new AliciaException(
+					'Failed to delete resource! ' . $e->getMessage(),
+					AliciaErrorCode::FAILED_TO_DELETE_RESOURCE_MODEL
+				);
 			}
 			DB::commit();
 
@@ -168,7 +171,6 @@
 		 * Return created Model(s)
 		 *
 		 * @return Resource|Collection
-		 * @throws AliciaException
 		 */
 		public function getData(): Resource|Collection {
 			return match ( $this->data->isEmpty() ) {
@@ -179,45 +181,17 @@
 
 		/**
 		 * @throws AliciaException
-		 * @throws InvalidManipulation
 		 */
 		public function export( array $resolutions = null ): self {
 			if ( ! ( alicia_config( 'export' ) or $resolutions ) ) {
 				throw new AliciaException( 'No resolution sets for exporting!', AliciaErrorCode::EXPORT_CONFIG_NOT_SET,
 					ResponseAlias::HTTP_INTERNAL_SERVER_ERROR );
 			}
-			$data = collect();
-			foreach ( $this->getData() instanceof Collection ? $this->getData() : Arr::wrap( $this->getData() ) as $model ) {
-				$data->push( $model );
-				if (
-					$model->isExternal() or
-					! in_array( $model->extension, alicia_config( 'extensions.images' ) )
-				) {
-					continue;
-				}
-				foreach ( $resolutions ? : alicia_config( 'export' ) as $height => $width ) {
-					$fileName = Str::remove( '.' . $model->extension,
-							$model->file ) . "-{$height}x{$width}." . $model->extension;
-					$filePath = alicia_storage()->path( $model->path . '/' . $fileName );
-					Image::load( alicia_storage()->path( $model->address ) )
-					     ->optimize()
-					     ->height( $height )
-					     ->width( $width )
-					     ->save( $filePath );
-					$child = $this->makeModel( [
-						'title'     => $model->title . "-{$height}x{$width}",
-						'path'      => $model->path,
-						'file'      => $fileName,
-						'extension' => $model->extension,
-						'options'   => array_merge( $model->options,
-							[ 'size' => filesize( $filePath ), 'width' => $width, 'height' => $height ] ),
-						'external'  => $model->external,
-					] );
-					$child->parent()->associate( $model )->save();
-					$data->push( $child->withoutRelations() );
-				}
+			$exports = collect();
+			foreach ( Arr::wrap( $this->getData() ) as $model ) {
+				$exports->push( ( new Export( $model, $resolutions ) )->run() );
 			}
-			$this->data = $data->groupBy( fn( $item, $key ) => $item[ 'parent_id' ] ? $item[ 'parent_id' ] . '-children' : 'parents' );
+			$this->data = $exports->groupBy( fn( $item, $key ) => $item[ 'parent_id' ] ? $item[ 'parent_id' ] . '-children' : 'parents' );
 
 			return $this;
 		}
