@@ -18,7 +18,6 @@
 
 	class AliciaService {
 
-		private Resource $model;
 		private Collection $data;
 
 		public function __construct() {
@@ -36,9 +35,9 @@
 		public function batch( array $files ): self {
 			foreach ( $files as $file ) {
 				if ( $file instanceof UploadedFile ) {
-					$this->data->push( $this->upload( $file )->getModel() );
+					$this->upload( $file )->getData();
 				} elseif ( is_string( $file ) ) {
-					$this->data->push( $this->external( $file )->getModel() );
+					$this->external( $file )->getData();
 				}
 			}
 
@@ -54,7 +53,7 @@
 		 * @throws AliciaException ()
 		 */
 		public function upload( UploadedFile $file ): self {
-			$this->model = ( new Upload( $file ) )->run();
+			$this->data->push( ( new Upload( $file ) )->run() );
 
 			return $this;
 		}
@@ -68,7 +67,7 @@
 		 * @throws AliciaException ()
 		 */
 		public function external( string $file ): self {
-			$this->model = ( new External( $file ) )->run();
+			$this->data->push( ( new External( $file ) )->run() );
 
 			return $this;
 		}
@@ -148,7 +147,7 @@
 		 * @throws AliciaException
 		 */
 		public function makeExternal( Resource $model, string $url ): self {
-			$this->model = ( new MakeExternal( $model, $url ) )->run();
+			$this->data->push( ( new MakeExternal( $model, $url ) )->run() );
 
 			return $this;
 		}
@@ -162,7 +161,7 @@
 		 * @throws AliciaException ()
 		 */
 		public function fromFile( string $path ): self {
-			$this->model = ( new FromFile( $path ) )->run();
+			$this->data->push( ( new FromFile( $path ) )->run() );
 
 			return $this;
 		}
@@ -173,20 +172,15 @@
 		 * @return Resource|Collection|null
 		 */
 		public function getData(): Resource|Collection|null {
-			return match ( $this->data->isEmpty() ) {
-				true => $this->getModel(),
-				default => $this->data,
-			};
-		}
+			if ( $this->data->isEmpty() ) {
+				return null;
+			}
 
+			if ( $this->data->count() == 1 ) {
+				return $this->data->first();
+			}
 
-		/**
-		 * Return created model instance
-		 *
-		 * @return Resource|null
-		 */
-		protected function getModel(): ?Resource {
-			return $this->model->refresh() ?? null;
+			return $this->data;
 		}
 
 	}
