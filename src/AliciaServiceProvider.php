@@ -17,7 +17,7 @@
 		 */
 		public function register() {
 			$this->app->singleton( 'signature-service', fn() => new SignatureService( alicia_config( 'secret' ) ) );
-			$this->app->bind( 'alicia-service', AliciaService::class );
+			$this->app->singleton( 'alicia-service', AliciaService::class );
 
 			// register FFMpeg
 			$this->app->register( 'ProtoneMedia\LaravelFFMpeg\Support\ServiceProvider' );

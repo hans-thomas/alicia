@@ -7,7 +7,7 @@
 	use Hans\Alicia\Tests\TestCase;
 
 
-	class ExternalLinkStoreTest extends TestCase {
+	class ExternalActionTest extends TestCase {
 
 		/**
 		 * @test

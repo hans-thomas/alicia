@@ -15,16 +15,14 @@
 	class OptimizeVideoJob implements ShouldQueue {
 		use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-		public ResourceModel $model;
-
 		/**
 		 * Create a new job instance.
 		 *
 		 * @return void
 		 */
-		public function __construct( ResourceModel $model ) {
-			$this->model = $model;
-
+		public function __construct(
+			protected ResourceModel $model
+		) {
 		}
 
 		/**

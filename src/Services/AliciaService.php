@@ -6,6 +6,7 @@
 
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
+	use Hans\Alicia\Services\Actions\BatchUpload;
 	use Hans\Alicia\Services\Actions\Delete;
 	use Hans\Alicia\Services\Actions\Export;
 	use Hans\Alicia\Services\Actions\External;
@@ -30,16 +31,9 @@
 		 * @param array $files
 		 *
 		 * @return self
-		 * @throws AliciaException
 		 */
 		public function batch( array $files ): self {
-			foreach ( $files as $file ) {
-				if ( $file instanceof UploadedFile ) {
-					$this->upload( $file )->getData();
-				} elseif ( is_string( $file ) ) {
-					$this->external( $file )->getData();
-				}
-			}
+			$this->data = ( new BatchUpload( $files ) )->run();
 
 			return $this;
 		}
@@ -87,6 +81,33 @@
 					                      $item[ 'parent_id' ] . '-children' :
 					                      'parents'
 			                      );
+
+			return $this;
+		}
+
+		/**
+		 * @param Resource $model
+		 * @param string   $url
+		 *
+		 * @return $this
+		 * @throws AliciaException
+		 */
+		public function makeExternal( Resource $model, string $url ): self {
+			$this->data->push( ( new MakeExternal( $model, $url ) )->run() );
+
+			return $this;
+		}
+
+		/**
+		 * Validate the request and upload the file
+		 *
+		 * @param string $path
+		 *
+		 * @return self
+		 * @throws AliciaException ()
+		 */
+		public function fromFile( string $path ): self {
+			$this->data->push( ( new FromFile( $path ) )->run() );
 
 			return $this;
 		}
@@ -140,33 +161,6 @@
 		}
 
 		/**
-		 * @param Resource $model
-		 * @param string   $url
-		 *
-		 * @return $this
-		 * @throws AliciaException
-		 */
-		public function makeExternal( Resource $model, string $url ): self {
-			$this->data->push( ( new MakeExternal( $model, $url ) )->run() );
-
-			return $this;
-		}
-
-		/**
-		 * Validate the request and upload the file
-		 *
-		 * @param string $path
-		 *
-		 * @return self
-		 * @throws AliciaException ()
-		 */
-		public function fromFile( string $path ): self {
-			$this->data->push( ( new FromFile( $path ) )->run() );
-
-			return $this;
-		}
-
-		/**
 		 * Return created Model(s)
 		 *
 		 * @return Resource|Collection|null
@@ -176,11 +170,13 @@
 				return null;
 			}
 
-			if ( $this->data->count() == 1 ) {
-				return $this->data->first();
-			}
+			$result = $this->data->count() == 1 ?
+				$this->data->first() :
+				$this->data;
 
-			return $this->data;
+			$this->data = collect();
+
+			return $result;
 		}
 
 	}

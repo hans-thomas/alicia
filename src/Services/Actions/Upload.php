@@ -42,7 +42,7 @@
 
 			$this->processModel( $model );
 
-			return $model;
+			return $model->refresh();
 
 		}
 

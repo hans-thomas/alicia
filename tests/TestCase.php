@@ -73,21 +73,7 @@
 		 * @return void
 		 */
 		protected function defineRoutes( $router ) {
-			$router->post( '/upload/{field}', function( string $field ) {
-				return response()->json( Alicia::upload( request()->file( $field ) )->getData(), 201 );
-			} )->name( 'alicia.test.upload' );
-
-			$router->post( '/export/{field}', function( string $field ) {
-				return response()->json( Alicia::upload( request()->file( $field ) )->export()->getData(), 201 );
-			} )->name( 'alicia.test.upload.export' );
-
-			$router->post( '/external/{field}', function( string $field ) {
-				return response()->json( Alicia::external( request( $field ) )->getData(), 201 );
-			} )->name( 'alicia.test.external' );
-
-			$router->post( '/batch/{field}', function( string $field ) {
-				return response()->json( Alicia::batch( request( $field ) )->getData(), 201 );
-			} )->name( 'alicia.test.batch' );
+			//
 		}
 
 	}
