@@ -13,6 +13,26 @@
 	use Illuminate\Support\Facades\URL;
 	use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
+	/**
+	 * Fillables:
+	 * @property int    $id
+	 * @property string $title
+	 * @property string $path
+	 * @property string $file
+	 * @property string $hls
+	 * @property string $link
+	 * @property string $extension
+	 * @property array  $options
+	 * @property bool   $external
+	 *
+	 * Attributes:
+	 * @property string $url
+	 * @property string $hlsUrl
+	 * @property string $address
+	 * @property string $fullAddress
+	 *
+	 * @mixin Model
+	 */
 	class Resource extends Model {
 		use FFMpegPreConfig;
 

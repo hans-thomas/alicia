@@ -9,6 +9,7 @@
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Facades\URL;
+	use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
 	class ResourceModelTest extends TestCase {
@@ -16,10 +17,21 @@
 		/**
 		 * @test
 		 *
+		 * @return void
+		 */
+		public function urlAsExternal(): void {
+			$model = Alicia::external( $link = 'https://laravel.com/img/homepage/vapor.jpg' )->getData();
+
+			$this->assertStringEqualsStringIgnoringLineEndings( $link, $model->url );
+			$this->assertStringEqualsStringIgnoringLineEndings( $link, $model->link );
+		}
+
+		/**
+		 * @test
 		 *
 		 * @return void
 		 */
-		public function generateSignedUrl() {
+		public function urlAsSigned(): void {
 			$model = Alicia::upload(
 				UploadedFile::fake()->image( 'g-eazy.png', 1080, 1080 )
 			)
@@ -46,10 +58,9 @@
 		/**
 		 * @test
 		 *
-		 *
 		 * @return void
 		 */
-		public function generateNotSignedUrl() {
+		public function urlAsNotSigned(): void {
 			config()->set( 'alicia.signed', false );
 
 			$model = Alicia::upload(
@@ -63,10 +74,9 @@
 		/**
 		 * @test
 		 *
-		 *
 		 * @return void
 		 */
-		public function generateHlsUrl() {
+		public function hlsUrl(): void {
 			$model = Alicia::upload(
 				UploadedFile::fake()
 				            ->createWithContent(
@@ -82,10 +92,9 @@
 		/**
 		 * @test
 		 *
-		 *
 		 * @return void
 		 */
-		public function getDirectLinkIfHlsIsDisabled() {
+		public function hlsUrlAsHlsDisabled(): void {
 			config()->set( 'alicia.hls.enable', false );
 
 			$model = Alicia::upload(
@@ -103,14 +112,26 @@
 		/**
 		 * @test
 		 *
-		 *
 		 * @return void
 		 */
-		public function getExternalLink() {
-			$model = Alicia::external( $link = 'https://laravel.com/img/homepage/vapor.jpg' )->getData();
+		public function hlsUrlAsAudioFile(): void {
+			$model = Alicia::upload(
+				UploadedFile::fake()
+				            ->createWithContent(
+					            'g-eazy-freestyle.mp3',
+					            file_get_contents( __DIR__ . '/../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
+				            )
+			)
+			               ->getData();
 
-			$this->assertStringEqualsStringIgnoringLineEndings( $link, $model->url );
-			$this->assertStringEqualsStringIgnoringLineEndings( $link, $model->link );
+			$this->assertInstanceOf(
+				BinaryFileResponse::class,
+				$model->hlsUrl
+			);
+			self::assertStringEqualsStringIgnoringLineEndings(
+				$model->fullAddress,
+				$model->hlsUrl->getFile()->getPath() . '/' . $model->hlsUrl->getFile()->getFilename()
+			);
 		}
 
 		/**
@@ -118,7 +139,22 @@
 		 *
 		 * @return void
 		 */
-		public function getFullAddress() {
+		public function address(): void {
+			$model = Alicia::upload(
+				UploadedFile::fake()->create( 'ziped.file.zip', 10230, 'application/zip' )
+			)
+			               ->getData();
+
+			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
+			$this->assertStringEqualsStringIgnoringLineEndings( $model->path . '/' . $model->file, $model->address );
+		}
+
+		/**
+		 * @test
+		 *
+		 * @return void
+		 */
+		public function fullAddress() {
 			$model = Alicia::upload(
 				UploadedFile::fake()->image( 'g-eazy.png', 1080, 1080 )
 			)
