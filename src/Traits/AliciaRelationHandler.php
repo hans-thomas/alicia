@@ -5,7 +5,7 @@
 
 
 	use Hans\Alicia\Facades\Alicia;
-	use Hans\Alicia\Models\Resource as ResourceModel;
+	use Hans\Alicia\Models\Resource;
 
 	trait AliciaRelationHandler {
 
@@ -17,7 +17,7 @@
 		}
 
 		public function uploads() {
-			return $this->morphToMany( ResourceModel::class, 'resourcable' );
+			return $this->morphToMany( Resource::class, 'resourcable' );
 		}
 
 	}

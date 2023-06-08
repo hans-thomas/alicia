@@ -21,6 +21,7 @@
 		}
 
 		public function run(): Resource {
+			// TODO: not tested
 			$fs        = Storage::build( Str::beforeLast( $this->path, '/' ) );
 			$file      = Str::afterLast( $this->path, '/' );
 			$extension = Str::afterLast( $this->path, '.' );

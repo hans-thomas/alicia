@@ -19,9 +19,7 @@
 
 	abstract class Actions {
 
-
 		abstract public function run(): Resource|Collection;
-
 
 		/**
 		 * Save and return file as a eloquent model

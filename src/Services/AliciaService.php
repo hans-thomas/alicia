@@ -148,7 +148,7 @@
 		 * @throws AliciaException
 		 */
 		public function makeExternal( Resource $model, string $url ): self {
-			( new MakeExternal( $model, $url ) )->run();
+			$this->model = ( new MakeExternal( $model, $url ) )->run();
 
 			return $this;
 		}

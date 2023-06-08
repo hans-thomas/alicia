@@ -33,19 +33,18 @@
 		 * @return void
 		 */
 		public function handle() {
-			// optimization
 			$oldFile = $this->model->address;
 			$this->model->ffmpeg()
 			            ->export()
 			            ->inFormat( new X264 )
 			            ->save( $this->model->path . '/' . $newFile = generate_file_name() . '.' . $this->model->extension );
-			// update file
+
 			$this->model->update( [
 				'file' => $newFile
 			] );
-			// update file's size
-			$this->model->setOptions( [ 'size' => alicia_storage()->size( $this->model->address ) ] );
-			// delete old file
+
+			$this->model->updateOptions( [ 'size' => alicia_storage()->size( $this->model->address ) ] );
+
 			Alicia::deleteFile( $oldFile );
 		}
 	}
