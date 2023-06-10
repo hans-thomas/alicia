@@ -32,7 +32,7 @@
 	 * @property string $fullAddress
 	 *
 	 * Foreign keys:
-	 * @property int $parent_id
+	 * @property int    $parent_id
 	 *
 	 * @mixin Model
 	 */
@@ -54,13 +54,13 @@
 			'external' => 'boolean'
 		];
 
-		public function url(): Attribute {
+		public function url(): Attribute { // TODO: rename to download
 			return new Attribute(
 				get: function() {
 					if ( alicia_config( 'signed' ) ) {
 						return URL::temporarySignedRoute(
 							'alicia.download',
-							now()->addMinutes( alicia_config( 'expiration' ) ),
+							now()->addMinutes( alicia_config( 'expiration', 30 ) ),
 							[
 								'resource' => $this->id,
 								'hash'     => Signature::create()
