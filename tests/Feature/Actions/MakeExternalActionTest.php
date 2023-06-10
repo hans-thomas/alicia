@@ -18,7 +18,7 @@
 				UploadedFile::fake()
 				            ->createWithContent(
 					            'posty.jpg',
-					            file_get_contents( __DIR__ . '/../resources/posty.jpg' )
+					            file_get_contents( __DIR__ . '/../../resources/posty.jpg' )
 				            )
 			)
 			               ->getData();
@@ -37,7 +37,7 @@
 				$link,
 				$model->link
 			);
-			self::assertNull( $model->path );
+			self::assertNull( $model->directory );
 			self::assertNull( $model->file );
 		}
 

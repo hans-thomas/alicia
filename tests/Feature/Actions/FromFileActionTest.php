@@ -13,7 +13,7 @@
 		 * @return void
 		 */
 		public function fromFile(): void {
-			$file = __DIR__ . '/../resources/posty.jpg';
+			$file = __DIR__ . '/../../resources/posty.jpg';
 
 			$model = Alicia::fromFile( $file )->getData();
 

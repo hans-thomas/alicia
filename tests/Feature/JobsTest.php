@@ -59,7 +59,7 @@
 			)
 			               ->getData();
 
-			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
 
 			Bus::assertChained( [
 				OptimizeVideoJob::class,
@@ -117,7 +117,7 @@
 			)
 			               ->getData();
 
-			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
 
 			Bus::assertDispatched( GenerateHLSJob::class );
 
@@ -146,7 +146,7 @@
 			)
 			               ->getData();
 
-			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
 
 			Bus::assertNotDispatched( OptimizeVideoJob::class );
 			Bus::assertNotDispatched( GenerateHLSJob::class );

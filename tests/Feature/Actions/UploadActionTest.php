@@ -22,7 +22,7 @@
 			               ->getData();
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'zip', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 		}
 
@@ -38,7 +38,7 @@
 			               ->getData();
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'png', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 		}
 
@@ -52,16 +52,16 @@
 				UploadedFile::fake()
 				            ->createWithContent(
 					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					            file_get_contents( __DIR__ . '/../../resources/video.mp4' )
 				            )
 			)
 			               ->getData();
 
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'mp4', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $model->path ) );
-			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
 		}
 
 		/**
@@ -74,13 +74,13 @@
 				UploadedFile::fake()
 				            ->createWithContent(
 					            'g-eazy-freestyle.mp3',
-					            file_get_contents( __DIR__ . '/../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
+					            file_get_contents( __DIR__ . '/../../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
 				            )
 			)
 			               ->getData();
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'mp3', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 		}
 

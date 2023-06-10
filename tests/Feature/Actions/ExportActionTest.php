@@ -22,7 +22,7 @@
 				UploadedFile::fake()
 				            ->createWithContent(
 					            'posty.jpg',
-					            file_get_contents( __DIR__ . '/../resources/posty.jpg' )
+					            file_get_contents( __DIR__ . '/../../resources/posty.jpg' )
 				            )
 			)
 			                 ->export()
@@ -31,7 +31,7 @@
 			$parent = Arr::get( $content, 'parents.0' );
 			foreach ( $content[ $parent[ 'id' ] . '-children' ] as $data ) {
 				$model = ResourceModel::query()->findOrFail( $data[ 'id' ] );
-				$this->assertEquals( $parent[ 'path' ], $model->path );
+				$this->assertEquals( $parent[ 'directory' ], $model->directory );
 				$this->assertEquals( $parent[ 'id' ], $model->parent_id );
 
 				$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );

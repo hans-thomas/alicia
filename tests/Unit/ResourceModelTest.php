@@ -95,7 +95,7 @@
 			)
 			               ->getData();
 
-			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->hls ), $model->streamUrl );
+			$this->assertEquals( url( 'resources/' . $model->directory . '/' . $model->hls ), $model->streamUrl );
 		}
 
 		/**
@@ -115,7 +115,7 @@
 			)
 			               ->getData();
 
-			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->file ), $model->streamUrl );
+			$this->assertEquals( url( 'resources/' . $model->directory . '/' . $model->file ), $model->streamUrl );
 		}
 
 		/**
@@ -148,14 +148,14 @@
 		 *
 		 * @return void
 		 */
-		public function address(): void {
+		public function path(): void {
 			$model = Alicia::upload(
 				UploadedFile::fake()->create( 'ziped.file.zip', 10230, 'application/zip' )
 			)
 			               ->getData();
 
-			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-			$this->assertStringEqualsStringIgnoringLineEndings( $model->path . '/' . $model->file, $model->path );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
+			$this->assertStringEqualsStringIgnoringLineEndings( $model->directory . '/' . $model->file, $model->path );
 		}
 
 		/**
@@ -163,13 +163,13 @@
 		 *
 		 * @return void
 		 */
-		public function fullAddress(): void {
+		public function fullPath(): void {
 			$model = Alicia::upload(
 				UploadedFile::fake()->image( 'g-eazy.png', 1080, 1080 )
 			)
 			               ->getData();
 
-			self::assertTrue( alicia_storage()->fileExists( $model->path ) );
+			self::assertFileExists( alicia_storage()->path( $model->directory ) );
 			self::assertStringEqualsStringIgnoringLineEndings(
 				alicia_storage()->path( $model->path ),
 				$model->fullPath

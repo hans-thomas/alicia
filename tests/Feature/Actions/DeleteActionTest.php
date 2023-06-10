@@ -18,23 +18,23 @@
 				UploadedFile::fake()
 				            ->createWithContent(
 					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					            file_get_contents( __DIR__ . '/../../resources/video.mp4' )
 				            )
 			)
 			               ->getData();
 
-			$this->assertDirectoryExists( alicia_storage()->path( $model->path . '/hls' ) );
-			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->directory . '/hls' ) );
+			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
 
-			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 
 			$this->assertTrue( Alicia::delete( $model->id ) );
 
-			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $model->path . '/hls' ) );
-			$this->assertFileDoesNotExist( alicia_storage()->path( $model->path . '/' . $model->hls ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $model->directory . '/hls' ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
 
-			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $model->path ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $model->directory ) );
 			$this->assertFileDoesNotExist( alicia_storage()->path( $model->path ) );
 		}
 
@@ -48,27 +48,27 @@
 				UploadedFile::fake()
 				            ->createWithContent(
 					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../resources/video.mp4' )
+					            file_get_contents( __DIR__ . '/../../resources/video.mp4' )
 				            )
 			)
 			                ->getData();
 
-			$this->assertDirectoryExists( alicia_storage()->path( $modelA->path . '/hls' ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $modelA->directory . '/hls' ) );
 			$this->assertFileExists( alicia_storage()->path( $modelA->path . '/' . $modelA->hls ) );
 
-			$this->assertDirectoryExists( alicia_storage()->path( $modelA->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $modelA->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $modelA->path ) );
 
 			$modelB = Alicia::upload(
 				UploadedFile::fake()
 				            ->createWithContent(
 					            'g-eazy-freestyle.mp3',
-					            file_get_contents( __DIR__ . '/../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
+					            file_get_contents( __DIR__ . '/../../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
 				            )
 			)
 			                ->getData();
 
-			$this->assertDirectoryExists( alicia_storage()->path( $modelB->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $modelB->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $modelB->path ) );
 
 			$modelC = Alicia::upload(
@@ -76,7 +76,7 @@
 			)
 			                ->getData();
 
-			$this->assertDirectoryExists( alicia_storage()->path( $modelC->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $modelC->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $modelC->path ) );
 
 			$modelD = Alicia::upload(
@@ -84,7 +84,7 @@
 			)
 			                ->getData();
 
-			$this->assertDirectoryExists( alicia_storage()->path( $modelD->path ) );
+			$this->assertDirectoryExists( alicia_storage()->path( $modelD->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $modelD->path ) );
 
 			$this->assertIsArray(
@@ -99,20 +99,20 @@
 			self::assertTrue( collect( $result )->every( fn( $item ) => $item === true ) );
 
 			// modelA
-			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelA->path . '/hls' ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelA->directory . '/hls' ) );
 			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->path . '/' . $modelA->hls ) );
 
-			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelA->path ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelA->directory ) );
 			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->path ) );
 
 			// modelB
-			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelB->path ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelB->directory ) );
 			$this->assertFileDoesNotExist( alicia_storage()->path( $modelB->path ) );
 			// modelC
-			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelC->path ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelC->directory ) );
 			$this->assertFileDoesNotExist( alicia_storage()->path( $modelC->path ) );
 			// modelD
-			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelD->path ) );
+			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelD->directory ) );
 			$this->assertFileDoesNotExist( alicia_storage()->path( $modelD->path ) );
 
 		}
