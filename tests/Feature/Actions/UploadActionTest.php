@@ -1,16 +1,14 @@
 <?php
 
 
-	namespace Hans\Alicia\Tests\Feature;
+	namespace Hans\Alicia\Tests\Feature\Actions;
 
 
 	use Hans\Alicia\Facades\Alicia;
-	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Hans\Alicia\Tests\TestCase;
 	use Illuminate\Http\UploadedFile;
-	use Illuminate\Support\Arr;
 
-	class uploadActionTest extends TestCase {
+	class UploadActionTest extends TestCase {
 
 		/**
 		 * @test

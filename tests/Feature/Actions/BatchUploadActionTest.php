@@ -1,6 +1,6 @@
 <?php
 
-	namespace Hans\Alicia\Tests\Feature;
+	namespace Hans\Alicia\Tests\Feature\Actions;
 
 	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Tests\TestCase;
