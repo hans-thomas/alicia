@@ -19,7 +19,6 @@
 		}
 
 		public function run(): Resource {
-			// TODO: not tested
 			if ( $this->model->isExternal() ) {
 				throw new AliciaException(
 					"Model is external already!",
@@ -31,6 +30,8 @@
 			DB::beginTransaction();
 			try {
 				$this->model->update( [
+					'path'     => null,
+					'file'     => null,
 					'link'     => $this->url,
 					'external' => true,
 				] );
