@@ -57,10 +57,6 @@
 		public function url(): Attribute {
 			return new Attribute(
 				get: function() {
-					if ( $this->isExternal() ) {
-						return $this->link;
-					}
-
 					if ( alicia_config( 'signed' ) ) {
 						return URL::temporarySignedRoute(
 							'alicia.download',

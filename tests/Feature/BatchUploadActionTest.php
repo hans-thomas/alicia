@@ -62,7 +62,7 @@
 
 			$this->assertStringEqualsStringIgnoringLineEndings(
 				$url,
-				$link->url
+				$link->link
 			);
 
 		}
