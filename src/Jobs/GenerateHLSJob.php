@@ -41,7 +41,7 @@
 
 			$export->setSegmentLength( alicia_config( 'hls.setSegmentLength' ) ) // optional
 			       ->setKeyFrameInterval( alicia_config( 'hls.setKeyFrameInterval' ) ) // optional
-			       ->save( $this->model->path . ( $hls = '/hls/' . generate_file_name() . '.m3u8' ) );
+			       ->save( $this->model->directory . ( $hls = '/hls/' . generate_file_name() . '.m3u8' ) );
 
 			$this->model->update( [ 'hls' => ltrim( $hls, '/' ) ] );
 		}

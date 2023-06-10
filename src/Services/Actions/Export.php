@@ -32,7 +32,7 @@
 			foreach ( $this->resolutions ? : alicia_config( 'export' ) as $height => $width ) {
 				$fileName = Str::remove( '.' . $this->model->extension, $this->model->file ) .
 				            "-{$height}x{$width}." . $this->model->extension;
-				$filePath = alicia_storage()->path( $this->model->path . '/' . $fileName );
+				$filePath = alicia_storage()->path( $this->model->directory . '/' . $fileName );
 				Image::load( alicia_storage()->path( $this->model->address ) )
 				     ->optimize()
 				     ->height( $height )
@@ -40,7 +40,7 @@
 				     ->save( $filePath );
 				$child = $this->storeOnDB( [
 					'title'     => $this->model->title . "-{$height}x{$width}",
-					'path'      => $this->model->path,
+					'directory' => $this->model->directory,
 					'file'      => $fileName,
 					'extension' => $this->model->extension,
 					'options'   => array_merge(

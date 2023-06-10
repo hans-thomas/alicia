@@ -25,7 +25,7 @@
 
 
 			$this->getJson(
-				uri: $model->url
+				uri: $model->downloadUrl
 			)
 			     ->assertOk()
 			     ->assertDownload( "{$model->title}.{$model->extension}" );
@@ -44,7 +44,7 @@
 			               ->getData();
 
 			$this->getJson(
-				uri: $model->url
+				uri: $model->downloadUrl
 			)
 			     ->assertOk()
 			     ->assertDownload( "{$model->title}.{$model->extension}" );
@@ -68,7 +68,7 @@
 			               ->getData();
 
 			$this->getJson(
-				uri: $model->url . 'sdfsdf4534s'
+				uri: $model->downloadUrl . 'sdfsdf4534s'
 			)
 			     ->assertBadRequest();
 		}
@@ -89,7 +89,7 @@
 			               ->getData();
 
 			$this->getJson(
-				uri: $model->url,
+				uri: $model->downloadUrl,
 				headers: [
 					'User-Agent' => fake()->userAgent()
 				]

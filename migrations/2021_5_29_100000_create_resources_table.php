@@ -17,7 +17,7 @@
 				$table->foreignId( 'parent_id' )->nullable()->constrained()->cascadeOnDelete();
 
 				$table->string( 'title' );
-				$table->string( 'path' )->nullable();
+				$table->string( 'directory' )->nullable();
 				$table->string( 'file' )->nullable();
 				$table->string( 'hls' )->nullable();
 				$table->string( 'link' )->nullable();

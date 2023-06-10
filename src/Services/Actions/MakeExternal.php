@@ -30,10 +30,10 @@
 			DB::beginTransaction();
 			try {
 				$this->model->update( [
-					'path'     => null,
-					'file'     => null,
-					'link'     => $this->url,
-					'external' => true,
+					'directory' => null,
+					'file'      => null,
+					'link'      => $this->url,
+					'external'  => true,
 				] );
 				Alicia::deleteFile( $address );
 			} catch ( Throwable $e ) {

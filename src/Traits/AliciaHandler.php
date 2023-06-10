@@ -11,7 +11,7 @@
 	trait AliciaHandler {
 
 		public function deleteAttachments(): array {
-			$ids = $this->attachments()->select( [ 'id', 'path', 'external' ] )->pluck( 'id' )->toArray();
+			$ids = $this->attachments()->select( [ 'id', 'directory', 'external' ] )->pluck( 'id' )->toArray();
 			$this->attachments()->detach( $ids );
 
 			return Alicia::batchDelete( $ids );

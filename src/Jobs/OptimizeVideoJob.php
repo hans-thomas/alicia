@@ -35,7 +35,7 @@
 			$this->model->ffmpeg()
 			            ->export()
 			            ->inFormat( new X264 )
-			            ->save( $this->model->path . '/' . $newFile = generate_file_name() . '.' . $this->model->extension );
+			            ->save( $this->model->directory . '/' . $newFile = generate_file_name() . '.' . $this->model->extension );
 
 			$this->model->update( [
 				'file' => $newFile

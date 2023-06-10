@@ -216,7 +216,7 @@
 		 * @return string
 		 */
 		protected function storeOnDisk( Resource $model, UploadedFile $file ): string {
-			return alicia_storage()->putFileAs( $model->path, $file, $model->file );
+			return alicia_storage()->putFileAs( $model->directory, $file, $model->file );
 		}
 
 		/**

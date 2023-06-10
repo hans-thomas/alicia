@@ -32,7 +32,7 @@
 					'hash'     => Signature::create()
 				]
 			);
-			$this->assertStringEqualsStringIgnoringLineEndings( $url, $model->url );
+			$this->assertStringEqualsStringIgnoringLineEndings( $url, $model->downloadUrl );
 		}
 
 		/**
@@ -59,7 +59,7 @@
 					0,
 					strpos( $link, '?' )
 				),
-				substr( $url = $model->url, 0, strpos( $url, '?' ) )
+				substr( $url = $model->downloadUrl, 0, strpos( $url, '?' ) )
 			);
 
 		}
@@ -77,7 +77,7 @@
 			)
 			               ->getData();
 
-			$this->assertEquals( route( 'alicia.download', [ 'resource' => $model ] ), $model->url );
+			$this->assertEquals( route( 'alicia.download', [ 'resource' => $model ] ), $model->downloadUrl );
 		}
 
 		/**
@@ -95,7 +95,7 @@
 			)
 			               ->getData();
 
-			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->hls ), $model->hlsUrl );
+			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->hls ), $model->streamUrl );
 		}
 
 		/**
@@ -115,7 +115,7 @@
 			)
 			               ->getData();
 
-			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->file ), $model->hlsUrl );
+			$this->assertEquals( url( 'resources/' . $model->path . '/' . $model->file ), $model->streamUrl );
 		}
 
 		/**
@@ -135,11 +135,11 @@
 
 			$this->assertInstanceOf(
 				BinaryFileResponse::class,
-				$model->hlsUrl
+				$model->streamUrl
 			);
 			self::assertStringEqualsStringIgnoringLineEndings(
 				$model->fullAddress,
-				$model->hlsUrl->getFile()->getPath() . '/' . $model->hlsUrl->getFile()->getFilename()
+				$model->streamUrl->getFile()->getPath() . '/' . $model->streamUrl->getFile()->getFilename()
 			);
 		}
 

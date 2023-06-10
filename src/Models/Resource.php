@@ -17,7 +17,7 @@
 	 * Fillables:
 	 * @property int    $id
 	 * @property string $title
-	 * @property string $path
+	 * @property string $directory
 	 * @property string $file
 	 * @property string $hls
 	 * @property string $link
@@ -26,8 +26,8 @@
 	 * @property bool   $external
 	 *
 	 * Attributes:
-	 * @property string $url
-	 * @property string $hlsUrl
+	 * @property string $downloadUrl
+	 * @property string $streamUrl
 	 * @property string $address
 	 * @property string $fullAddress
 	 *
@@ -41,7 +41,7 @@
 
 		protected $fillable = [
 			'title',
-			'path',
+			'directory',
 			'file',
 			'hls',
 			'link',
@@ -54,7 +54,7 @@
 			'external' => 'boolean'
 		];
 
-		public function url(): Attribute { // TODO: rename to download
+		public function downloadUrl(): Attribute {
 			return new Attribute(
 				get: function() {
 					if ( alicia_config( 'signed' ) ) {
@@ -73,7 +73,7 @@
 			);
 		}
 
-		public function hlsUrl(): Attribute {
+		public function streamUrl(): Attribute {
 			return new Attribute(
 				get: function() {
 					if ( in_array( $this->extension, alicia_config( 'extensions.audios' ) ) ) {
@@ -84,19 +84,21 @@
 					}
 
 					if ( alicia_config( 'hls.enable' ) and $this->hls ) {
-						return url( 'resources/' . $this->path . '/' . $this->hls );
+						return url( 'resources/' . $this->directory . '/' . $this->hls );
 					} else {
-						return url( 'resources/' . $this->path . '/' . $this->file );
+						return url( 'resources/' . $this->directory . '/' . $this->file );
 					}
 				}
 			);
 		}
 
 		public function address(): Attribute {
-			return new Attribute( get: fn() => $this->path . '/' . $this->file );
+			// TODO: rename to path
+			return new Attribute( get: fn() => $this->directory . '/' . $this->file );
 		}
 
 		public function fullAddress(): Attribute {
+			// TODO: rename to fullPath
 			return new Attribute( get: fn() => alicia_storage()->path( $this->address ) );
 		}
 

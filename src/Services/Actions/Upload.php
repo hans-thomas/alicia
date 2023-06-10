@@ -25,7 +25,7 @@
 			try {
 				$model = $this->storeOnDB( [
 					'title'     => $this->makeFileTitle( $this->file ),
-					'path'      => get_classified_folder() . '/' . generate_file_name( 'string', 8 ),
+					'directory' => get_classified_folder() . '/' . generate_file_name( 'string', 8 ),
 					'file'      => generate_file_name() . '.' . $extension = $this->getExtension( $this->file ),
 					'extension' => $extension,
 					'options'   => $this->getOptions( $this->file ),
