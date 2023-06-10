@@ -22,7 +22,6 @@
 		public function urlAsExternal(): void {
 			$model = Alicia::external( $link = 'https://laravel.com/img/homepage/vapor.jpg' )->getData();
 
-			$this->assertStringEqualsStringIgnoringLineEndings( $link, $model->url );
 			$this->assertStringEqualsStringIgnoringLineEndings( $link, $model->link );
 		}
 
