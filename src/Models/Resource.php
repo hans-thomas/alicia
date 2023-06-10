@@ -31,6 +31,9 @@
 	 * @property string $address
 	 * @property string $fullAddress
 	 *
+	 * Foreign keys:
+	 * @property int $parent_id
+	 *
 	 * @mixin Model
 	 */
 	class Resource extends Model {
