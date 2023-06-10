@@ -3,7 +3,7 @@
 
 	namespace Hans\Alicia\Tests\Feature;
 
-	use Hans\Alicia\Models\Resource as ResourceModel;
+	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Tests\TestCase;
 
 
@@ -12,26 +12,17 @@
 		/**
 		 * @test
 		 *
-		 *
 		 * @return void
 		 */
-		public function externalLinkStore() {
-			$this->postJson( route( 'alicia.test.external', [ 'field' => 'link' ] ), [
-				'link' => $link = 'http://laravel.com/img/homepage/vapor.jpg'
-			] )
-			     ->assertCreated()
-			     ->assertJsonStructure( [
-				     'id',
-				     'path',
-				     'file',
-				     'extension',
-				     'options'
-			     ] )
-			     ->content();
+		public function external(): void {
+			$model = Alicia::external(
+				$link = 'http://laravel.com/img/homepage/vapor.jpg'
+			)
+			               ->getData();
 
-
+			$this->assertModelExists( $model );
 			$this->assertDatabaseHas(
-				ResourceModel::class,
+				$model->getTable(),
 				[
 					'title'     => 'vapor',
 					'link'      => $link,
