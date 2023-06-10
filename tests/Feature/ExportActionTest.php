@@ -11,7 +11,6 @@
 
 	class ExportActionTest extends TestCase {
 
-
 		/**
 		 * @test
 		 *

@@ -13,7 +13,7 @@
 		 *
 		 * @return void
 		 */
-		public function delete(): void {
+		public function deleteResource(): void {
 			$model = Alicia::upload(
 				UploadedFile::fake()
 				            ->createWithContent(
