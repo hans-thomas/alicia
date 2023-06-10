@@ -7,7 +7,7 @@
 	use Hans\Alicia\Facades\Alicia;
 	use Hans\Alicia\Models\Resource;
 
-	trait AliciaRelationHandler {
+	trait AliciaHandler {
 
 		public function removeUploads(): array {
 			$ids = $this->uploads()->select( 'id' )->pluck( 'id' );
