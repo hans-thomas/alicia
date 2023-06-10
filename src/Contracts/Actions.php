@@ -12,6 +12,7 @@
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
 	use Illuminate\Support\Collection;
+	use Illuminate\Support\Facades\Bus;
 	use Illuminate\Support\Str;
 	use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -233,12 +234,17 @@
 				) {
 					OptimizePictureJob::dispatch( $model );
 				} else if (
-					alicia_config( 'optimization.videos' ) and
 					in_array( $model->extension, alicia_config( 'extensions.videos' ) )
 				) {
-					OptimizeVideoJob::withChain( [
-						new GenerateHLSJob( $model )
-					] )->dispatch( $model );
+					if ( alicia_config( 'optimization.videos' ) ) {
+						$jobs[] = new OptimizeVideoJob( $model );
+					}
+					if ( alicia_config( 'hls.enable' ) ) {
+						$jobs[] = new GenerateHLSJob( $model );
+					}
+
+
+					! isset( $jobs ) ? : Bus::chain( $jobs )->dispatch();
 				}
 			} catch ( Throwable $e ) {
 				throw new AliciaException(
