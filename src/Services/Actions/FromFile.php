@@ -6,7 +6,6 @@
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
-	use Illuminate\Support\Collection;
 	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Str;
@@ -21,7 +20,6 @@
 		}
 
 		public function run(): Resource {
-			// TODO: not tested
 			$fs        = Storage::build( Str::beforeLast( $this->path, '/' ) );
 			$file      = Str::afterLast( $this->path, '/' );
 			$extension = Str::afterLast( $this->path, '.' );

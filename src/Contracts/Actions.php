@@ -15,6 +15,7 @@
 	use Illuminate\Support\Facades\Bus;
 	use Illuminate\Support\Str;
 	use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
+	use Symfony\Component\HttpFoundation\File\File;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 	use Throwable;
 
@@ -164,12 +165,12 @@
 		/**
 		 * Get the uploaded file's details
 		 *
-		 * @param UploadedFile $file
+		 * @param File $file
 		 *
 		 * @return array
 		 * @throws AliciaException
 		 */
-		protected function getOptions( UploadedFile $file ): array {
+		protected function getOptions( File $file ): array {
 			$data = [
 				'size'     => $file->getSize(),
 				'mimeType' => $file->getMimeType()
