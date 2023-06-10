@@ -139,7 +139,7 @@
 		 *
 		 * @return void
 		 */
-		public function removeAttachments(): void {
+		public function deleteAttachments(): void {
 			$modelB = Alicia::upload(
 				UploadedFile::fake()
 				            ->createWithContent(
