@@ -31,4 +31,27 @@
 				]
 			);
 		}
+
+		/**
+		 * @test
+		 *
+		 * @return void
+		 */
+		public function externalWithQueryString(): void {
+			$model = Alicia::external(
+				$link = 'http://laravel.com/img/homepage/vapor.jpg?query-string=true'
+			)
+			               ->getData();
+
+			$this->assertModelExists( $model );
+			$this->assertDatabaseHas(
+				$model->getTable(),
+				[
+					'title'     => 'vapor',
+					'link'      => $link,
+					'extension' => 'jpg',
+					'external'  => true,
+				]
+			);
+		}
 	}
