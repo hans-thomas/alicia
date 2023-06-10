@@ -54,7 +54,7 @@
 			                ->getData();
 
 			$this->assertDirectoryExists( alicia_storage()->path( $modelA->directory . '/hls' ) );
-			$this->assertFileExists( alicia_storage()->path( $modelA->path . '/' . $modelA->hls ) );
+			$this->assertFileExists( alicia_storage()->path( $modelA->directory . '/' . $modelA->hls ) );
 
 			$this->assertDirectoryExists( alicia_storage()->path( $modelA->directory ) );
 			$this->assertFileExists( alicia_storage()->path( $modelA->path ) );
@@ -100,7 +100,7 @@
 
 			// modelA
 			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelA->directory . '/hls' ) );
-			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->path . '/' . $modelA->hls ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->directory . '/' . $modelA->hls ) );
 
 			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelA->directory ) );
 			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->path ) );
