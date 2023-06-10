@@ -75,7 +75,8 @@
 					'resourcable_id'   => 1,
 					'resource_id'      => 1,
 					'resourcable_type' => Post::class,
-					'key'              => null
+					'key'              => null,
+					'attached_at'      => now()
 				],
 				$this->post->attachment()->toArray()[ 'pivot' ]
 			);
@@ -100,7 +101,8 @@
 					'resourcable_id'   => 1,
 					'resource_id'      => 1,
 					'resourcable_type' => Post::class,
-					'key'              => $key
+					'key'              => $key,
+					'attached_at'      => now()
 				],
 				$this->post->attachment()->toArray()[ 'pivot' ]
 			);

@@ -200,7 +200,10 @@
 					                            ->getDurationInSeconds();
 					alicia_storage()->delete( $tempFile );
 				} catch ( Throwable $e ) {
-					// TODO: taking a frame from video failed
+					throw new AliciaException(
+						"Failed to take a frame from video file! " . $e->getMessage(),
+						AliciaErrorCode::FAILED_TO_TAKE_A_FRAME_FROM_VIDEO
+					);
 				}
 			}
 
