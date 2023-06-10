@@ -33,20 +33,17 @@
 		 * @return void
 		 */
 		public function handle() {
-			if ( alicia_config( 'hls.enable' ) ) {
-				$export = $this->model->ffmpeg()->exportForHLS();
+			$export = $this->model->ffmpeg()->exportForHLS();
 
-				foreach ( Arr::wrap( alicia_config( 'hls.bitrate' ) ) as $bitrate ) {
-					$export->addFormat( ( new X264 )->setKiloBitrate( $bitrate ) );
-				}
-
-				$export->setSegmentLength( alicia_config( 'hls.setSegmentLength' ) ) // optional
-				       ->setKeyFrameInterval( alicia_config( 'hls.setKeyFrameInterval' ) ) // optional
-				       ->save( $this->model->path . ( $hls = '/hls/' . generate_file_name() . '.m3u8' ) );
-
-				$this->model->update( [ 'hls' => ltrim( $hls, '/' ) ] );
+			foreach ( Arr::wrap( alicia_config( 'hls.bitrate' ) ) as $bitrate ) {
+				$export->addFormat( ( new X264 )->setKiloBitrate( $bitrate ) );
 			}
 
+			$export->setSegmentLength( alicia_config( 'hls.setSegmentLength' ) ) // optional
+			       ->setKeyFrameInterval( alicia_config( 'hls.setKeyFrameInterval' ) ) // optional
+			       ->save( $this->model->path . ( $hls = '/hls/' . generate_file_name() . '.m3u8' ) );
+
+			$this->model->update( [ 'hls' => ltrim( $hls, '/' ) ] );
 		}
 
 	}
