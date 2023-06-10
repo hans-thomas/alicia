@@ -17,10 +17,10 @@
 
 			$model = Alicia::fromFile( $file )->getData();
 
-			self::assertFileExists( $model->fullAddress );
+			self::assertFileExists( $model->fullPath );
 			self::assertFileEquals(
 				$file,
-				$model->fullAddress
+				$model->fullPath
 			);
 
 		}

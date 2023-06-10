@@ -29,7 +29,7 @@
 	 * @property string $downloadUrl
 	 * @property string $streamUrl
 	 * @property string $path
-	 * @property string $fullAddress
+	 * @property string $fullPath
 	 *
 	 * Foreign keys:
 	 * @property int    $parent_id
@@ -96,8 +96,7 @@
 			return new Attribute( get: fn() => $this->directory . '/' . $this->file );
 		}
 
-		public function fullAddress(): Attribute {
-			// TODO: rename to fullPath
+		public function fullPath(): Attribute {
 			return new Attribute( get: fn() => alicia_storage()->path( $this->path ) );
 		}
 

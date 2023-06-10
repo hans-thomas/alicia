@@ -24,7 +24,7 @@
 			               ->getData();
 
 			self::assertTrue( $model->isNotExternal() );
-			self::assertFileExists( $fullAddress = $model->fullAddress );
+			self::assertFileExists( $fullAddress = $model->fullPath );
 			self::assertNull( $model->link );
 
 			$link = 'http://laravel.com/img/homepage/vapor.jpg';

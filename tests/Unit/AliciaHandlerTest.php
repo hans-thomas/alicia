@@ -165,8 +165,8 @@
 				$result
 			);
 
-			self::assertFileDoesNotExist( $modelA->fullAddress );
-			self::assertFileDoesNotExist( $modelB->fullAddress );
+			self::assertFileDoesNotExist( $modelA->fullPath );
+			self::assertFileDoesNotExist( $modelB->fullPath );
 
 		}
 

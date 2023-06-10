@@ -138,7 +138,7 @@
 				$model->streamUrl
 			);
 			self::assertStringEqualsStringIgnoringLineEndings(
-				$model->fullAddress,
+				$model->fullPath,
 				$model->streamUrl->getFile()->getPath() . '/' . $model->streamUrl->getFile()->getFilename()
 			);
 		}
@@ -163,7 +163,7 @@
 		 *
 		 * @return void
 		 */
-		public function fullAddress() {
+		public function fullAddress(): void {
 			$model = Alicia::upload(
 				UploadedFile::fake()->image( 'g-eazy.png', 1080, 1080 )
 			)
@@ -172,7 +172,7 @@
 			self::assertTrue( alicia_storage()->fileExists( $model->path ) );
 			self::assertStringEqualsStringIgnoringLineEndings(
 				alicia_storage()->path( $model->path ),
-				$model->fullAddress
+				$model->fullPath
 			);
 		}
 
