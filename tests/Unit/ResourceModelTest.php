@@ -23,6 +23,16 @@
 			$model = Alicia::external( $link = 'https://laravel.com/img/homepage/vapor.jpg' )->getData();
 
 			$this->assertStringEqualsStringIgnoringLineEndings( $link, $model->link );
+
+			$url = URL::temporarySignedRoute(
+				'alicia.download',
+				now()->addMinutes( alicia_config( 'expiration', '30' ) ),
+				[
+					'resource' => $model->id,
+					'hash'     => Signature::create()
+				]
+			);
+			$this->assertStringEqualsStringIgnoringLineEndings( $url, $model->url );
 		}
 
 		/**
@@ -221,6 +231,33 @@
 				],
 				$model->getOptions()
 			);
+		}
+
+		/**
+		 * @test
+		 *
+		 * @return void
+		 */
+		public function isExternal(): void {
+			$model = Alicia::external( 'https://laravel.com/img/homepage/vapor.jpg' )->getData();
+
+			self::assertTrue( $model->isExternal() );
+			self::assertFalse( $model->isNotExternal() );
+		}
+
+		/**
+		 * @test
+		 *
+		 * @return void
+		 */
+		public function isNotExternal(): void {
+			$model = Alicia::upload(
+				UploadedFile::fake()->image( 'g-eazy.png', 1080, 1080 )
+			)
+			               ->getData();
+
+			self::assertTrue( $model->isNotExternal() );
+			self::assertFalse( $model->isExternal() );
 		}
 
 	}
