@@ -1,129 +1,246 @@
 # Alicia
 
-it is an uploader that has below features:
+It's a file uploader and manager with below features:
 
-- easy-to-use
-- customizable
-- upload pictures and videos and files
-- store external links
+- Upload pictures and videos and files
+- Store external links
 - HLS support
-- collect file details
-
-# Table of contents
-
-- [configuration](#configuration)
-- [installation](#installation)
-- [usage](#usage)
-
-## Configuration
-
-- `base` : is a place that Alicia stores all files and directories.
-- `temp` : the temp is an address of a temporary folder that files stores there before classification and optimization
-  applies. (set `false` to disable this feature)
-- `classification` : Alicia let you determine how to classify your files.
-- `extensions` : you can define your allowed file extensions base on file types.
-- `sizes` : specifies the valid size of files based on their types.
-- `validation` : Alicia validates the files, but you can add more validation rules.
-- `optimization` : optimizes pictures and videos by default, however you can enable/disable the optimization for each
-  file type
-- `naming` : there are several drivers to determine that how to generate files name
-- `link` : you can customize download link.
-
-> notice: you should not add or remove any parameter
-
-- `signed` : this option creates a signed route with a hash key and an expiration time. this option prevent users
-  sharing download links. (if you want a permanent link, just set this `false`)
-
-> info: hash key will create using user's ip and user-agent
-
-- `secret`: the string that hash key encrypts and decrypts.
-- `expiration`: expiration time for signed routes.
-- `attributes`: custom attributes for download link. for example, you can add a middleware.
-- `onlyPublishedFiles`: files will not publish until classification and optimization jobs be done. so, if you want to
-  show only published files, you need to set this option `true`.
-- `hls`: you can en/disable hls and customize hls exporter's parameter.
-- `export`: custom resolutions to export from images.
+- Collect file's detail
+- Classification for files
 
 ## Installation
 
-1. install the package via composer:
+Install the package via composer
 
 ```shell
 composer require hans-thomas/alicia
 ```
 
-2. publish config file
+Publish config file using
 
 ```shell
 php artisan vendor:publish --tag alicia-config
 ```
 
+In the end, use `AliciaHandler` trait to your model.
+
+```php
+use Hans\Alicia\Traits\AliciaHandler;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model {
+    use AliciaHandler;
+    
+    // ...
+}
+```
+
 ## Usage
 
-1. upload an image
+### Alicia facade
+
+#### batch
+
+Uploads and stores files and links at once.
 
 ```php
-app( AliciaContract::class )->upload($inputName);
+use Hans\Alicia\Facades\Alicia;
+
+Alicia::batch( request()->input('files') )->getData();
 ```
 
-you can override default validation and pass your rules
+> `files` input can contain files and links.
+
+#### upload
+
+Uploads a single file on the server.
 
 ```php
-app( AliciaContract::class )->upload($inputName,[
-                    'image',
-                    'mimes:jpg,jpeg,png',
-                    'max:' . (string) 1 * 1024
-                ]);
+use Hans\Alicia\Facades\Alicia;
+
+Alicia::upload( request()->file('file') )->getData();
 ```
 
-2. get the created resource(s)
+#### external
+
+Stores an external link on the database.
 
 ```php
-app( AliciaContract::class )->upload($inputName)->getData();
+use Hans\Alicia\Facades\Alicia;
+
+Alicia::external( request()->input('link') )->getData();
 ```
 
-3. export different resolutions of uploaded image
+#### export
+
+Creates different versions of uploaded image.
 
 ```php
-app( AliciaContract::class )->upload($inputName)->export()->getData();
+use Hans\Alicia\Facades\Alicia;
+
+Alicia::upload( request()->file('file') )->export()->getData();
 ```
 
-you can override export settings in config file and set your resolutions.
+#### delete
+
+Delete a model instance and its related files.
 
 ```php
-app( AliciaContract::class )->upload($inputName)->export([960  => 540])->getData();
+use Hans\Alicia\Facades\Alicia;
+
+$model = Alicia::upload( request()->file('file') )->getData();
+
+Alicia::delete($model);
 ```
 
-4. store an external link
+#### batchDelete
+
+Delete several models and their related files at once.
 
 ```php
-app( AliciaContract::class )->external($inputName)->getData();
+use Hans\Alicia\Facades\Alicia;
+
+$modelA = Alicia::upload( request()->file('file') )->getData();
+$modelB = Alicia::upload( request()->file('file') )->getData();
+
+Alicia::batchDelete( [$modelA,$modelB->id] );
 ```
 
-you can pass your rules as second argument.
+#### makeExternal
 
-5. batch upload
-
-if you want to upload one or more files or links, you can use
+Sometimes you need to move your file to another server and access it using a link.
 
 ```php
-app( AliciaContract::class )->batch($inputName)->getData();
+use Hans\Alicia\Facades\Alicia;
+
+$model = Alicia::upload( request()->file('file') )->getData();
+// Upload given file on another server and get its link
+$link = 'https://www.file-server.dev/files/file-name.extension';
+
+Alicia::makeExternal( $model,$link );
 ```
 
-you can pass your rules for files as second argument and for links as third argument.
+> This make it easy to move your files to another server without doing heavy updates or re-creating you resources.
 
-6. delete a resource
+#### fromFile
+
+If you have your file on the server and want to store it on database, you can use `fromFile` method.
 
 ```php
-app( AliciaContract::class )->delete($model);
+use Hans\Alicia\Facades\Alicia;
+
+$file = '/path/to/file.extension';
+
+$model = Alicia::fromFile( $file )->getData();
 ```
 
-$model can be a resource model object or a resource id.
+#### getData
 
-7. batch delete
+After you create a resource, you can call `getData` method to get your created resources. if your action created one
+model instance, this method returns a single model instance. for instance, when we upload a single file.
 
 ```php
-app( AliciaContract::class )->batchDelete($models);
+use Hans\Alicia\Facades\Alicia;
+
+Alicia::upload( request()->file('file') )->getData();
 ```
 
-$models can be a collection of resource model objects or resource ids.
+But, if we call `export` method after uploading an image or using `batch` method, the created models could be more than
+one instance, so `getData` method returns a collection of created models.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+Alicia::upload( request()->file('file') )->export()->getData();
+```
+
+### AliciaHandler
+
+This trait contains relationships with resource model and a bunch of helper methods.
+
+#### attachments
+
+The relationship definition to `Hans\Alicia\Models\Resource` model.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+$model = Alicia::upload( request()->file('file') )->getData();
+$post->attachments()->sync( $model );
+```
+
+#### attachment
+
+Returns the oldest attached file.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+$modelB = Alicia::external( 'https://www.file-server.dev/files/file-name.extension' )->getData();
+$modelA = Alicia::upload( request()->file('file') )->getData();
+
+$post->attachTo( $modelA );
+$post->attachTo( $modelB );
+
+$post->attachment(); // returns $modelA
+```
+
+#### deleteAttachments
+
+Detaches and deletes all related resources.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+$modelB = Alicia::external( 'https://www.file-server.dev/files/file-name.extension' )->getData();
+$modelA = Alicia::upload( request()->file('file') )->getData();
+
+$post->attachTo( $modelA );
+$post->attachTo( $modelB );
+
+$post->deleteAttachments();
+```
+
+#### attachTo
+
+Using this method, you can attach a resource to your model instance.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+$model = Alicia::upload( request()->file('file') )->getData();
+
+$post->attachTo( $model );
+```
+
+By the way, you can set a key for your attachments.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+$model = Alicia::upload( request()->file('file') )->getData();
+
+$post->attachTo( $model,'avatar' );
+```
+
+#### attachManyTo
+
+It's like `attachTo` method but you can attach multiple resources at once.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+$modelB = Alicia::external( 'https://www.file-server.dev/files/file-name.extension' )->getData();
+$modelA = Alicia::upload( request()->file('file') )->getData();
+
+$post->attachManyTo( [
+    $modelA->id,
+    $modelB->id => [ 'key' => $key = 'avatar' ],
+] );
+```
+
+Support
+-------
+
+- [Report bugs](https://github.com/hans-thomas/alicia/issues)
+
