@@ -27,7 +27,7 @@
 			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
 
 			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-			$this->assertFileExists( alicia_storage()->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 
 			$this->assertTrue( Alicia::delete( $model->id ) );
 
@@ -35,7 +35,7 @@
 			$this->assertFileDoesNotExist( alicia_storage()->path( $model->path . '/' . $model->hls ) );
 
 			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $model->path ) );
-			$this->assertFileDoesNotExist( alicia_storage()->path( $model->address ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $model->path ) );
 		}
 
 		/**
@@ -57,7 +57,7 @@
 			$this->assertFileExists( alicia_storage()->path( $modelA->path . '/' . $modelA->hls ) );
 
 			$this->assertDirectoryExists( alicia_storage()->path( $modelA->path ) );
-			$this->assertFileExists( alicia_storage()->path( $modelA->address ) );
+			$this->assertFileExists( alicia_storage()->path( $modelA->path ) );
 
 			$modelB = Alicia::upload(
 				UploadedFile::fake()
@@ -69,7 +69,7 @@
 			                ->getData();
 
 			$this->assertDirectoryExists( alicia_storage()->path( $modelB->path ) );
-			$this->assertFileExists( alicia_storage()->path( $modelB->address ) );
+			$this->assertFileExists( alicia_storage()->path( $modelB->path ) );
 
 			$modelC = Alicia::upload(
 				UploadedFile::fake()->create( 'post-malone-chemical.zip', 10230, 'application/zip' )
@@ -77,7 +77,7 @@
 			                ->getData();
 
 			$this->assertDirectoryExists( alicia_storage()->path( $modelC->path ) );
-			$this->assertFileExists( alicia_storage()->path( $modelC->address ) );
+			$this->assertFileExists( alicia_storage()->path( $modelC->path ) );
 
 			$modelD = Alicia::upload(
 				UploadedFile::fake()->image( 'eminem.png', 512, 512 )
@@ -85,7 +85,7 @@
 			                ->getData();
 
 			$this->assertDirectoryExists( alicia_storage()->path( $modelD->path ) );
-			$this->assertFileExists( alicia_storage()->path( $modelD->address ) );
+			$this->assertFileExists( alicia_storage()->path( $modelD->path ) );
 
 			$this->assertIsArray(
 				$result = Alicia::batchDelete( [
@@ -103,17 +103,17 @@
 			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->path . '/' . $modelA->hls ) );
 
 			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelA->path ) );
-			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->address ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $modelA->path ) );
 
 			// modelB
 			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelB->path ) );
-			$this->assertFileDoesNotExist( alicia_storage()->path( $modelB->address ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $modelB->path ) );
 			// modelC
 			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelC->path ) );
-			$this->assertFileDoesNotExist( alicia_storage()->path( $modelC->address ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $modelC->path ) );
 			// modelD
 			$this->assertDirectoryDoesNotExist( alicia_storage()->path( $modelD->path ) );
-			$this->assertFileDoesNotExist( alicia_storage()->path( $modelD->address ) );
+			$this->assertFileDoesNotExist( alicia_storage()->path( $modelD->path ) );
 
 		}
 

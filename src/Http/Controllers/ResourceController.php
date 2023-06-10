@@ -52,7 +52,7 @@
 
 			return alicia_storage()
 				->download(
-					path: $resource->address,
+					path: $resource->path,
 					name: "{$resource->title}.{$resource->extension}",
 				);
 		}

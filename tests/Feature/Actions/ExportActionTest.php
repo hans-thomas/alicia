@@ -34,8 +34,8 @@
 				$this->assertEquals( $parent[ 'path' ], $model->path );
 				$this->assertEquals( $parent[ 'id' ], $model->parent_id );
 
-				$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-				$this->assertFileExists( alicia_storage()->path( $model->address ) );
+				$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
+				$this->assertFileExists( alicia_storage()->path( $model->path ) );
 			}
 
 		}

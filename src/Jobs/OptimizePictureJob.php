@@ -32,7 +32,7 @@
 		 */
 		public function handle() {
 			$settings = require __DIR__ . '/../../config/image-optimizer.php';
-			OptimizerChainFactory::create( $settings )->optimize( alicia_storage()->path( $this->model->address ) );
-			$this->model->updateOptions( [ 'size' => alicia_storage()->size( $this->model->address ) ] );
+			OptimizerChainFactory::create( $settings )->optimize( alicia_storage()->path( $this->model->path ) );
+			$this->model->updateOptions( [ 'size' => alicia_storage()->size( $this->model->path ) ] );
 		}
 	}

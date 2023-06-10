@@ -155,7 +155,7 @@
 			               ->getData();
 
 			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-			$this->assertStringEqualsStringIgnoringLineEndings( $model->path . '/' . $model->file, $model->address );
+			$this->assertStringEqualsStringIgnoringLineEndings( $model->path . '/' . $model->file, $model->path );
 		}
 
 		/**
@@ -169,9 +169,9 @@
 			)
 			               ->getData();
 
-			self::assertTrue( alicia_storage()->fileExists( $model->address ) );
+			self::assertTrue( alicia_storage()->fileExists( $model->path ) );
 			self::assertStringEqualsStringIgnoringLineEndings(
-				alicia_storage()->path( $model->address ),
+				alicia_storage()->path( $model->path ),
 				$model->fullAddress
 			);
 		}

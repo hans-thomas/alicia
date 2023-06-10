@@ -41,22 +41,22 @@
 			$this->assertFileExists( alicia_storage()->path( $video->path . '/' . $video->hls ) );
 
 			$this->assertDirectoryExists( alicia_storage()->path( $video->path ) );
-			$this->assertFileExists( alicia_storage()->path( $video->address ) );
+			$this->assertFileExists( alicia_storage()->path( $video->path ) );
 
 			$image = $data[ 1 ];
 
 			$this->assertDirectoryExists( alicia_storage()->path( $image->path ) );
-			$this->assertFileExists( alicia_storage()->path( $image->address ) );
+			$this->assertFileExists( alicia_storage()->path( $image->path ) );
 
 			$file = $data[ 2 ];
 
 			$this->assertDirectoryExists( alicia_storage()->path( $file->path ) );
-			$this->assertFileExists( alicia_storage()->path( $file->address ) );
+			$this->assertFileExists( alicia_storage()->path( $file->path ) );
 
 			$audio = $data[ 3 ];
 
 			$this->assertDirectoryExists( alicia_storage()->path( $audio->path ) );
-			$this->assertFileExists( alicia_storage()->path( $audio->address ) );
+			$this->assertFileExists( alicia_storage()->path( $audio->path ) );
 
 			$link = $data[ 4 ];
 

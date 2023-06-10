@@ -25,7 +25,7 @@
 					AliciaErrorCode::MODEL_IS_EXTERNAL_ALREADY
 				);
 			}
-			$address = $this->model->address;
+			$path = $this->model->path;
 
 			DB::beginTransaction();
 			try {
@@ -35,7 +35,7 @@
 					'link'      => $this->url,
 					'external'  => true,
 				] );
-				Alicia::deleteFile( $address );
+				Alicia::deleteFile( $path );
 			} catch ( Throwable $e ) {
 				DB::rollBack();
 				throw new AliciaException(

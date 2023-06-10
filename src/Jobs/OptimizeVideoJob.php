@@ -31,7 +31,7 @@
 		 * @return void
 		 */
 		public function handle() {
-			$oldFile = $this->model->address;
+			$oldFile = $this->model->path;
 			$this->model->ffmpeg()
 			            ->export()
 			            ->inFormat( new X264 )
@@ -41,7 +41,7 @@
 				'file' => $newFile
 			] );
 
-			$this->model->updateOptions( [ 'size' => alicia_storage()->size( $this->model->address ) ] );
+			$this->model->updateOptions( [ 'size' => alicia_storage()->size( $this->model->path ) ] );
 
 			Alicia::deleteFile( $oldFile );
 		}

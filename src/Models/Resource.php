@@ -28,7 +28,7 @@
 	 * Attributes:
 	 * @property string $downloadUrl
 	 * @property string $streamUrl
-	 * @property string $address
+	 * @property string $path
 	 * @property string $fullAddress
 	 *
 	 * Foreign keys:
@@ -77,7 +77,7 @@
 			return new Attribute(
 				get: function() {
 					if ( in_array( $this->extension, alicia_config( 'extensions.audios' ) ) ) {
-						$response = new BinaryFileResponse( alicia_storage()->path( $this->address ) );
+						$response = new BinaryFileResponse( alicia_storage()->path( $this->path ) );
 						BinaryFileResponse::trustXSendfileTypeHeader();
 
 						return $response;
@@ -92,14 +92,13 @@
 			);
 		}
 
-		public function address(): Attribute {
-			// TODO: rename to path
+		public function path(): Attribute {
 			return new Attribute( get: fn() => $this->directory . '/' . $this->file );
 		}
 
 		public function fullAddress(): Attribute {
 			// TODO: rename to fullPath
-			return new Attribute( get: fn() => alicia_storage()->path( $this->address ) );
+			return new Attribute( get: fn() => alicia_storage()->path( $this->path ) );
 		}
 
 		public function isExternal(): bool {

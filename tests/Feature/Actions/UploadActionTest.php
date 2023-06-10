@@ -23,7 +23,7 @@
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'zip', $model->extension );
 			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-			$this->assertFileExists( alicia_storage()->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 		}
 
 		/**
@@ -39,7 +39,7 @@
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'png', $model->extension );
 			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-			$this->assertFileExists( alicia_storage()->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 		}
 
 		/**
@@ -60,7 +60,7 @@
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'mp4', $model->extension );
 			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-			$this->assertFileExists( alicia_storage()->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 			$this->assertFileExists( alicia_storage()->path( $model->path . '/' . $model->hls ) );
 		}
 
@@ -81,7 +81,7 @@
 
 			$this->assertStringEqualsStringIgnoringLineEndings( 'mp3', $model->extension );
 			$this->assertDirectoryExists( alicia_storage()->path( $model->path ) );
-			$this->assertFileExists( alicia_storage()->path( $model->address ) );
+			$this->assertFileExists( alicia_storage()->path( $model->path ) );
 		}
 
 	}

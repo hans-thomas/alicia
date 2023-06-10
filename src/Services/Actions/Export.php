@@ -33,7 +33,7 @@
 				$fileName = Str::remove( '.' . $this->model->extension, $this->model->file ) .
 				            "-{$height}x{$width}." . $this->model->extension;
 				$filePath = alicia_storage()->path( $this->model->directory . '/' . $fileName );
-				Image::load( alicia_storage()->path( $this->model->address ) )
+				Image::load( alicia_storage()->path( $this->model->path ) )
 				     ->optimize()
 				     ->height( $height )
 				     ->width( $width )

@@ -8,6 +8,6 @@
 
 	trait FFMpegPreConfig {
 		public function ffmpeg() {
-			return FFMpeg::fromDisk( alicia_storage() )->open( $this->address );
+			return FFMpeg::fromDisk( alicia_storage() )->open( $this->path );
 		}
 	}
