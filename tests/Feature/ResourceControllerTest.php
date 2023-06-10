@@ -38,7 +38,6 @@
 		 * @return void
 		 */
 		public function downloadExternal(): void {
-			$this->withoutExceptionHandling();
 			$model = Alicia::external(
 				'http://laravel.com/img/homepage/vapor.jpg'
 			)
@@ -52,5 +51,51 @@
 
 			self::assertCount( 1, alicia_storage()->files( 'temp' ) );
 		}
+
+		/**
+		 * @test
+		 *
+		 * @return void
+		 */
+		public function requestHasNotValidSignature(): void {
+			$model = Alicia::upload(
+				UploadedFile::fake()
+				            ->createWithContent(
+					            'g-eazy-freestyle.mp3',
+					            file_get_contents( __DIR__ . '/../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
+				            )
+			)
+			               ->getData();
+
+			$this->getJson(
+				uri: $model->url . 'sdfsdf4534s'
+			)
+			     ->assertBadRequest();
+		}
+
+		/**
+		 * @test
+		 *
+		 * @return void
+		 */
+		public function requestHasNotValidHash(): void {
+			$model = Alicia::upload(
+				UploadedFile::fake()
+				            ->createWithContent(
+					            'g-eazy-freestyle.mp3',
+					            file_get_contents( __DIR__ . '/../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
+				            )
+			)
+			               ->getData();
+
+			$this->getJson(
+				uri: $model->url,
+				headers: [
+					'User-Agent' => fake()->userAgent()
+				]
+			)
+			     ->assertUnauthorized();
+		}
+
 
 	}
