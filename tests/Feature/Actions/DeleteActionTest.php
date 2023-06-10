@@ -89,7 +89,7 @@
 
 			$this->assertIsArray(
 				$result = Alicia::batchDelete( [
-					$modelA->id,
+					$modelA,
 					$modelB->id,
 					$modelC->id,
 					$modelD->id

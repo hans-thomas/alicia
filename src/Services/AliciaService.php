@@ -121,7 +121,11 @@
 		 * @throws AliciaException
 		 */
 		public function delete( Resource|int $model ): bool {
-			$model = $model instanceof Resource ? $model : Resource::query()->findOrFail( $model );
+			$model = $model instanceof Resource ?
+				$model :
+				Resource::query()
+				        ->select( [ 'id', 'directory', 'external' ] )
+				        ->findOrFail( $model );
 
 			( new Delete( $model ) )->run();
 
@@ -139,7 +143,10 @@
 		public function batchDelete( array $ids ): array {
 			$results = collect();
 			foreach ( $ids as $id ) {
-				$results->put( $id, $this->delete( $id ) );
+				$key = $id instanceof Resource ?
+					$id->id :
+					$id;
+				$results->put( $key, $this->delete( $id ) );
 			}
 
 			return $results->toArray();
