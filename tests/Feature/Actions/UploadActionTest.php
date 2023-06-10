@@ -17,7 +17,7 @@
 		 */
 		public function uploadAZipedFile(): void {
 			$model = Alicia::upload(
-				UploadedFile::fake()->create( 'ziped.file.zip', 10230, 'application/zip' )
+				UploadedFile::fake()->create( 'zipped-file.zip', 10230, 'application/zip' )
 			)
 			               ->getData();
 

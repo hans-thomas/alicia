@@ -3,7 +3,6 @@
 	namespace Hans\Alicia\Tests;
 
 	use Hans\Alicia\AliciaServiceProvider;
-	use Hans\Alicia\Facades\Alicia;
 	use Illuminate\Foundation\Application;
 	use Illuminate\Foundation\Testing\RefreshDatabase;
 	use Illuminate\Routing\Router;
@@ -11,6 +10,18 @@
 
 	class TestCase extends BaseTestCase {
 		use RefreshDatabase;
+
+		/**
+		 * Setup the test environment.
+		 *
+		 * @return void
+		 */
+		protected function setUp(): void {
+			parent::setUp();
+
+			$this->loadMigrationsFrom( __DIR__ . '/Core/migrations' );
+		}
+
 
 		/**
 		 * Get application timezone.

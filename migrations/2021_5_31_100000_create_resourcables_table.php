@@ -17,6 +17,7 @@
 				$table->morphs( 'resourcable' );
 
 				$table->string( 'key' )->nullable();
+				$table->timestamp( 'attached_at' )->useCurrent();
 			} );
 		}
 
