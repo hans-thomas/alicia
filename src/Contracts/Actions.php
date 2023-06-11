@@ -21,10 +21,15 @@
 
 	abstract class Actions {
 
+		/**
+		 * Contain action's logic
+		 *
+		 * @return ResourceModel|Collection
+		 */
 		abstract public function run(): Resource|Collection;
 
 		/**
-		 * Save and return file as a eloquent model
+		 * Store resource using given data on database
 		 *
 		 * @param array $data
 		 *
@@ -36,6 +41,11 @@
 
 
 		/**
+		 * Normalize uploaded file name
+		 *
+		 * @param UploadedFile|string $file
+		 *
+		 * @return string
 		 * @throws AliciaException
 		 */
 		protected function makeFileTitle( UploadedFile|string $file ): string {
@@ -43,7 +53,7 @@
 		}
 
 		/**
-		 * Get the file name ( file or link )
+		 * Get the file name from uploaded file or link
 		 *
 		 * @param UploadedFile|string $file
 		 *
@@ -51,42 +61,39 @@
 		 * @throws AliciaException
 		 */
 		private function getFileName( UploadedFile|string $file ): string {
-			$fieldType = $this->getFieldType( $file );
-			switch ( $fieldType ) {
-				case 'file' :
-					$fileName = str_replace(
+			return match ( $file instanceof UploadedFile ) {
+				true => str_replace(
+					'.',
+					'-',
+					str_replace(
 						'.' . $file->getClientOriginalExtension(),
 						'',
 						$file->getClientOriginalName()
-					);
-
-					return str_replace( '.', '-', $fileName );
-				case 'link' :
-					$url      = explode( '/', $file );
-					$fileName = end( $url );
-
-					return str_replace(
-						$this->getExtension( $file, '.' ),
-						'',
-						str_contains( $fileName, '?' ) ?
-							substr( $fileName, 0, strpos( $fileName, '?' ) ) :
-							$fileName
-					);
-				default:
-					return generate_file_name() . $this->getExtension( $file, '.' );
-			}
+					)
+				),
+				false => str_replace(
+					$this->getExtension( $file, '.' ),
+					'',
+					str_contains(
+						$fileName = Arr::last( explode( '/', $file ) ),
+						'?'
+					) ?
+						substr( $fileName, 0, strpos( $fileName, '?' ) ) :
+						$fileName
+				)
+			};
 		}
 
 
 		/**
-		 * Determine that the field's data is what
+		 * Determine the given file's schema
 		 *
 		 * @param UploadedFile|string $file
 		 *
 		 * @return string
 		 * @throws AliciaException
 		 */
-		private function getFieldType( UploadedFile|string $file ): string {
+		private function getSchema( UploadedFile|string $file ): string {
 			return match ( true ) {
 				$file instanceof UploadedFile => 'file',
 				is_string( $file ) => 'link',
@@ -99,7 +106,7 @@
 		}
 
 		/**
-		 * Determine the file type by the file's extension
+		 * Determine file type by file's extension
 		 *
 		 * @param UploadedFile|string $file
 		 *
@@ -123,7 +130,7 @@
 		}
 
 		/**
-		 * Get the file's extension based-on request type
+		 * Get file's extension based-on given file's schema
 		 *
 		 * @param UploadedFile|string $file
 		 * @param string              $prefix
@@ -132,7 +139,7 @@
 		 * @throws AliciaException
 		 */
 		protected function getExtension( UploadedFile|string $file, string $prefix = '' ): string {
-			$type = $this->getFieldType( $file );
+			$type = $this->getSchema( $file );
 
 			return match ( true ) {
 				$type == 'file' => $prefix . $file->getClientOriginalExtension(),
@@ -163,7 +170,7 @@
 		}
 
 		/**
-		 * Get the uploaded file's details
+		 * Get the uploaded file's detail
 		 *
 		 * @param File $file
 		 *
@@ -223,7 +230,7 @@
 		}
 
 		/**
-		 * Apply related jobs on model
+		 * Apply jobs on model
 		 *
 		 * @param ResourceModel $model
 		 *
