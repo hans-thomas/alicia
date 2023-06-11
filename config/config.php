@@ -20,7 +20,7 @@
 		| classification
 		|--------------------------------------------------------------------------
 		|
-		| the method to organization uploaded files
+		| the method of organization uploaded files
 		|
 		*/
 		'classification' => Str::slug( Carbon::now()->toFormattedDateString() ),

@@ -10,12 +10,13 @@
 	use Illuminate\Support\ServiceProvider;
 
 	class AliciaServiceProvider extends ServiceProvider {
+
 		/**
 		 * Register any application services.
 		 *
 		 * @return void
 		 */
-		public function register() {
+		public function register(): void {
 			$this->app->singleton( 'signature-service', fn() => new SignatureService( alicia_config( 'secret' ) ) );
 			$this->app->singleton( 'alicia-service', AliciaService::class );
 
@@ -32,8 +33,9 @@
 		 *
 		 * @return void
 		 */
-		public function boot() {
+		public function boot(): void {
 			$this->mergeConfigFrom( __DIR__ . '/../config/config.php', 'alicia' );
+			$this->registerRoutes();
 
 			config( [
 				'filesystems.disks' => array_merge( config( 'filesystems.disks' ), [
@@ -50,8 +52,6 @@
 				] )
 			] );
 
-			$this->registerRoutes();
-
 			if ( $this->app->runningInConsole() ) {
 				$this->publishes(
 					[
@@ -64,7 +64,7 @@
 		}
 
 		/**
-		 * Define routes setup.
+		 * Register routes
 		 *
 		 * @return void
 		 */

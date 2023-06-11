@@ -16,7 +16,7 @@ Install the package via composer
 composer require hans-thomas/alicia
 ```
 
-Publish config file using
+Then, publish config file using
 
 ```shell
 php artisan vendor:publish --tag alicia-config
@@ -225,7 +225,7 @@ $post->attachTo( $model,'avatar' );
 
 #### attachManyTo
 
-It's like `attachTo` method but you can attach multiple resources at once.
+It's like `attachTo` method but, you can attach multiple resources at once.
 
 ```php
 use Hans\Alicia\Facades\Alicia;
