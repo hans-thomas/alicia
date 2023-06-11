@@ -16,6 +16,7 @@
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Arr;
 	use Illuminate\Support\Collection;
+	use Spatie\Image\Exceptions\InvalidManipulation;
 
 	class AliciaService {
 
@@ -36,6 +37,7 @@
 		 * @param array $files
 		 *
 		 * @return self
+		 * @throws AliciaException
 		 */
 		public function batch( array $files ): self {
 			$this->data = ( new BatchUpload( $files ) )->run();
@@ -77,7 +79,7 @@
 		 * @param array|null $resolutions
 		 *
 		 * @return AliciaService
-		 * @throws AliciaException
+		 * @throws AliciaException|InvalidManipulation
 		 */
 		public function export( array $resolutions = null ): self {
 			// TODO: write test for batch()->export()

@@ -1,0 +1,28 @@
+@media (max-width: 460px) {
+  .method {
+    width: 100%;
+  }
+}
+
+@media (min-width: 460px) {
+  .method {
+    width: 50%;
+  }
+}
+
+@media (min-width: 600px) {
+  .method {
+    width: 33.33%;
+  }
+}
+
+.methods-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  margin: 2rem 0;
+}
+
+.method {
+  margin: .6rem 0;
+}

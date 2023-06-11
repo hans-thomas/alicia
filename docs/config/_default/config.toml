@@ -9,6 +9,7 @@ paginate = 7
 rssLimit = 10
 
 # Multilingual
+multilingualMode = false
 defaultContentLanguage = "en"
 disableLanguages = ["de", "nl"]
 # defaultContentLanguageInSubdir = true
