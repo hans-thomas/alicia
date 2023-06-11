@@ -1,16 +1,14 @@
 ---
 title: "Introduction"
-description: "Doks is a Hugo theme for building secure, fast, and SEO-ready documentation websites, which you can easily
-update and customize."
-lead: "Doks is a Hugo theme for building secure, fast, and SEO-ready documentation websites, which you can easily update
-and customize."
+description: "Doks is a Hugo theme for building secure, fast, and SEO-ready documentation websites, which you can easily update and customize."
+lead: "Doks is a Hugo theme for building secure, fast, and SEO-ready documentation websites, which you can easily update and customize."
 date: 2020-10-06T08:48:57+00:00
 lastmod: 2020-10-06T08:48:57+00:00
 draft: false
 images: []
 menu:
-docs:
-parent: "prologue"
+  docs:
+    parent: "prologue"
 weight: 100
 toc: true
 ---
@@ -37,18 +35,15 @@ Recipes, Reference Guides, Extensions, and Showcase.
 
 ### Recipes
 
-Get instructions on how to accomplish common tasks with
-Doks. [Recipes →](https://getdoks.org/docs/recipes/project-configuration/)
+Get instructions on how to accomplish common tasks with Doks. [Recipes →](https://getdoks.org/docs/recipes/project-configuration/)
 
 ### Reference Guides
 
-Learn how to customize Doks to fully make it your
-own. [Reference Guides →](https://getdoks.org/docs/reference-guides/security/)
+Learn how to customize Doks to fully make it your own. [Reference Guides →](https://getdoks.org/docs/reference-guides/security/)
 
 ### Extensions
 
-Get instructions on how to add even more to
-Doks. [Extensions →](https://getdoks.org/docs/extensions/breadcrumb-navigation/)
+Get instructions on how to add even more to Doks. [Extensions →](https://getdoks.org/docs/extensions/breadcrumb-navigation/)
 
 ### Showcase
 

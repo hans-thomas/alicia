@@ -7,8 +7,8 @@ lastmod: 2020-11-16T13:59:39+01:00
 draft: false
 images: []
 menu:
-docs:
-parent: "prologue"
+  docs:
+    parent: "prologue"
 weight: 110
 toc: true
 ---
@@ -19,8 +19,7 @@ toc: true
 - [Node.js](https://nodejs.org/) — latest LTS version or newer
 
 {{< details "Why Node.js?" >}}
-Doks uses npm (included with Node.js) to centralize dependency management, making it [easy to update]({{< relref "
-how-to-update" >}}) resources, build tooling, plugins, and build scripts.
+Doks uses npm (included with Node.js) to centralize dependency management, making it [easy to update]({{< relref "how-to-update" >}}) resources, build tooling, plugins, and build scripts.
 {{< /details >}}
 
 ## Start a new Doks project
@@ -35,8 +34,7 @@ Doks is available as a child theme and a starter theme.
 
 - Intended for novice to intermediate users
 - Intended for minor customizations
-- [Easily update npm packages]({{< relref "how-to-update" >}}) — __including
-  __ [Doks](https://www.npmjs.com/package/@hyas/doks)
+- [Easily update npm packages]({{< relref "how-to-update" >}}) — __including__ [Doks](https://www.npmjs.com/package/@hyas/doks)
 
 ```bash
 git clone https://github.com/h-enk/doks-child-theme.git my-doks-site
@@ -74,8 +72,7 @@ npm install
 npm run start
 ```
 
-Doks will start the Hugo development webserver accessible by default at `http://localhost:1313`. Saved changes will live
-reload in the browser.
+Doks will start the Hugo development webserver accessible by default at `http://localhost:1313`. Saved changes will live reload in the browser.
 
 ## Other commands
 

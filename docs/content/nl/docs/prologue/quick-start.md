@@ -7,16 +7,15 @@ lastmod: 2020-11-16T13:59:39+01:00
 draft: false
 images: []
 menu:
-docs:
-parent: "prologue"
+  docs:
+    parent: "prologue"
 weight: 110
 toc: true
 ---
 
 ## Requirements
 
-Doks uses npm to centralize dependency management, making it [easy to update]({{< relref "how-to-update" >}}) resources,
-build tooling, plugins, and build scripts:
+Doks uses npm to centralize dependency management, making it [easy to update]({{< relref "how-to-update" >}}) resources, build tooling, plugins, and build scripts:
 
 - Download and install [Node.js](https://nodejs.org/) (it includes npm) for your platform.
 
@@ -63,8 +62,7 @@ npm install
 npm run start
 ```
 
-Doks will start the Hugo development webserver accessible by default at `http://localhost:1313`. Saved changes will live
-reload in the browser.
+Doks will start the Hugo development webserver accessible by default at `http://localhost:1313`. Saved changes will live reload in the browser.
 
 ## Other commands
 

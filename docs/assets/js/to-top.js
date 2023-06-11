@@ -3,7 +3,7 @@ var topbutton = document.getElementById('toTop');
 if (topbutton !== null) {
 
   topbutton.style.display = 'none';
-  window.onscroll = function () {
+  window.onscroll = function() {
     scrollFunction()
   };
 
