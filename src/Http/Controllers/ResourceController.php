@@ -10,13 +10,19 @@
 	use Hans\Alicia\Facades\Signature;
 	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Routing\Controller;
+	use Symfony\Component\HttpFoundation\BinaryFileResponse;
 	use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+	use Symfony\Component\HttpFoundation\StreamedResponse;
 
 	class ResourceController extends Controller {
 
 		/**
 		 * Serve the file if request is valid
 		 *
+		 * @param ResourceModel $resource
+		 * @param string        $hash
+		 *
+		 * @return BinaryFileResponse|StreamedResponse
 		 * @throws AliciaException
 		 */
 		public function download( ResourceModel $resource, string $hash = '' ) {
