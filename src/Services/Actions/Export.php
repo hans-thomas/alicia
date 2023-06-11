@@ -8,6 +8,7 @@
 	use Hans\Alicia\Models\Resource;
 	use Illuminate\Support\Collection;
 	use Illuminate\Support\Str;
+	use Spatie\Image\Exceptions\InvalidManipulation;
 	use Spatie\Image\Image;
 
 	class Export extends Actions {
@@ -18,6 +19,13 @@
 		) {
 		}
 
+		/**
+		 * Contain action's logic
+		 *
+		 * @return Collection
+		 * @throws AliciaException
+		 * @throws InvalidManipulation
+		 */
 		public function run(): Collection {
 			if (
 				$this->model->isExternal() or

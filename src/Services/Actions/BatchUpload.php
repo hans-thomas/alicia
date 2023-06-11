@@ -3,7 +3,9 @@
 	namespace Hans\Alicia\Services\Actions;
 
 	use Hans\Alicia\Contracts\Actions;
+	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
+	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Http\UploadedFile;
 	use Illuminate\Support\Collection;
 
@@ -14,6 +16,12 @@
 		) {
 		}
 
+		/**
+		 * Contain action's logic
+		 *
+		 * @return ResourceModel|Collection
+		 * @throws AliciaException
+		 */
 		public function run(): Resource|Collection {
 			$data = collect();
 			foreach ( $this->files as $file ) {

@@ -19,6 +19,11 @@
 
 	class AliciaService {
 
+		/**
+		 * Store created data by actions
+		 *
+		 * @var Collection
+		 */
 		private Collection $data;
 
 		public function __construct() {
@@ -39,7 +44,7 @@
 		}
 
 		/**
-		 * Validate the request and upload the file
+		 * Upload and store given file
 		 *
 		 * @param UploadedFile $file
 		 *
@@ -53,11 +58,11 @@
 		}
 
 		/**
-		 * Store a given external link
+		 * Store a external link
 		 *
 		 * @param string $file
 		 *
-		 * @return $this
+		 * @return self
 		 * @throws AliciaException ()
 		 */
 		public function external( string $file ): self {
@@ -67,9 +72,15 @@
 		}
 
 		/**
+		 * Create different version of uploaded image
+		 *
+		 * @param array|null $resolutions
+		 *
+		 * @return AliciaService
 		 * @throws AliciaException
 		 */
 		public function export( array $resolutions = null ): self {
+			// TODO: write test for batch()->export()
 			$exports = collect( $data = Arr::wrap( $this->getData() ) );
 			foreach ( $data as $model ) {
 				$exports->push( ( new Export( $model, $resolutions ) )->run()->toArray() );
@@ -86,6 +97,8 @@
 		}
 
 		/**
+		 * Make a internal resource to external using given link
+		 *
 		 * @param Resource $model
 		 * @param string   $url
 		 *
@@ -99,12 +112,12 @@
 		}
 
 		/**
-		 * Validate the request and upload the file
+		 * Store resource using given file
 		 *
 		 * @param string $path
 		 *
 		 * @return self
-		 * @throws AliciaException ()
+		 * @throws AliciaException
 		 */
 		public function fromFile( string $path ): self {
 			$this->data->push( ( new FromFile( $path ) )->run() );
@@ -113,7 +126,7 @@
 		}
 
 		/**
-		 * Delete a specific resource include source file, hls etc
+		 * Delete given resource and its file(s)
 		 *
 		 * @param Resource|int $model
 		 *
@@ -153,7 +166,7 @@
 		}
 
 		/**
-		 * Delete a specific file
+		 * Delete a specific file in alicia disk
 		 *
 		 * @param string $path
 		 *

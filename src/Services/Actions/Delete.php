@@ -6,6 +6,7 @@
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
+	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Support\Facades\DB;
 	use Throwable;
 
@@ -16,6 +17,12 @@
 		) {
 		}
 
+		/**
+		 * Contain action's logic
+		 *
+		 * @return ResourceModel
+		 * @throws AliciaException
+		 */
 		public function run(): Resource {
 			DB::beginTransaction();
 			try {

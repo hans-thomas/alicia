@@ -6,6 +6,7 @@
 	use Hans\Alicia\Exceptions\AliciaErrorCode;
 	use Hans\Alicia\Exceptions\AliciaException;
 	use Hans\Alicia\Models\Resource;
+	use Hans\Alicia\Models\Resource as ResourceModel;
 	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Str;
@@ -19,6 +20,12 @@
 		) {
 		}
 
+		/**
+		 * Contain action's logic
+		 *
+		 * @return ResourceModel
+		 * @throws AliciaException
+		 */
 		public function run(): Resource {
 			$fs        = Storage::build( Str::beforeLast( $this->path, '/' ) );
 			$file      = Str::afterLast( $this->path, '/' );
