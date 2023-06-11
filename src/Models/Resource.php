@@ -39,6 +39,11 @@
 	class Resource extends Model {
 		use FFMpegPreConfig;
 
+		/**
+		 * The attributes that are mass assignable.
+		 *
+		 * @var array<string>
+		 */
 		protected $fillable = [
 			'title',
 			'directory',
@@ -49,11 +54,22 @@
 			'options',
 			'external',
 		];
+
+		/**
+		 * The attributes that should be cast.
+		 *
+		 * @var array
+		 */
 		protected $casts = [
 			'options'  => 'array',
 			'external' => 'boolean'
 		];
 
+		/**
+		 * Define downloadUrl accessor
+		 *
+		 * @return Attribute
+		 */
 		public function downloadUrl(): Attribute {
 			return new Attribute(
 				get: function() {
@@ -73,6 +89,11 @@
 			);
 		}
 
+		/**
+		 * Define streamUrl accessor
+		 *
+		 * @return Attribute
+		 */
 		public function streamUrl(): Attribute {
 			return new Attribute(
 				get: function() {
@@ -92,34 +113,76 @@
 			);
 		}
 
+		/**
+		 * Define path accessor
+		 *
+		 * @return Attribute
+		 */
 		public function path(): Attribute {
 			return new Attribute( get: fn() => $this->directory . '/' . $this->file );
 		}
 
+		/**
+		 * Define fullPath accessor
+		 *
+		 * @return Attribute
+		 */
 		public function fullPath(): Attribute {
 			return new Attribute( get: fn() => alicia_storage()->path( $this->path ) );
 		}
 
+		/**
+		 * Determine resource is external
+		 *
+		 * @return bool
+		 */
 		public function isExternal(): bool {
 			return $this->external;
 		}
 
+		/**
+		 * Determine resource is not external
+		 *
+		 * @return bool
+		 */
 		public function isNotExternal(): bool {
 			return ! $this->isExternal();
 		}
 
-		public function updateOptions( array $options ) {
+		/**
+		 * Update options attributes
+		 *
+		 * @param array $options
+		 *
+		 * @return bool
+		 */
+		public function updateOptions( array $options ): bool {
 			return $this->update( [ 'options' => array_merge( $this->getOptions(), $options ) ] );
 		}
 
-		public function getOptions() {
+		/**
+		 * Return options
+		 *
+		 * @return array
+		 */
+		public function getOptions(): array {
 			return $this->options;
 		}
 
+		/**
+		 * Definition of parent relationship
+		 *
+		 * @return BelongsTo
+		 */
 		public function parent(): BelongsTo {
 			return $this->belongsTo( self::class, 'parent_id' );
 		}
 
+		/**
+		 * Definition of children relationship
+		 *
+		 * @return HasMany
+		 */
 		public function children(): HasMany {
 			return $this->hasMany( self::class, 'parent_id' );
 		}
