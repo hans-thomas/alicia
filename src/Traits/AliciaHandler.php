@@ -10,6 +10,31 @@
 
 	trait AliciaHandler {
 
+		/**
+		 * Definition of attachments relationship to resource
+		 *
+		 * @return MorphToMany
+		 */
+		public function attachments(): MorphToMany {
+			return $this->morphToMany( Resource::class, 'resourcable' )
+			            ->orderByPivot( 'attached_at' )
+			            ->withPivot( 'key', 'attached_at' );
+		}
+
+		/**
+		 * Returns oldest attachment
+		 *
+		 * @return Resource|null
+		 */
+		public function attachment(): ?Resource {
+			return $this->attachments()->limit( 1 )->first();
+		}
+
+		/**
+		 * Delete all attached attachments and their file(s)
+		 *
+		 * @return array
+		 */
 		public function deleteAttachments(): array {
 			$ids = $this->attachments()->select( [ 'id', 'directory', 'external' ] )->pluck( 'id' )->toArray();
 			$this->attachments()->detach( $ids );
@@ -17,12 +42,14 @@
 			return Alicia::batchDelete( $ids );
 		}
 
-		public function attachments(): MorphToMany {
-			return $this->morphToMany( Resource::class, 'resourcable' )
-			            ->orderByPivot( 'attached_at' )
-			            ->withPivot( 'key', 'attached_at' );
-		}
-
+		/**
+		 * Attach a resource
+		 *
+		 * @param Resource    $resource
+		 * @param string|null $key
+		 *
+		 * @return array
+		 */
 		public function attachTo( Resource $resource, string $key = null ): array {
 			$data = $key ?
 				[ $resource->id => [ 'key' => $key ] ] :
@@ -31,13 +58,15 @@
 			return $this->attachments()->syncWithoutDetaching( $data );
 		}
 
+		/**
+		 * Attach many resources at once
+		 *
+		 * @param array $ids
+		 *
+		 * @return array
+		 */
 		public function attachManyTo( array $ids ): array {
 			return $this->attachments()->syncWithoutDetaching( $ids );
 		}
-
-		public function attachment(): ?Resource {
-			return $this->attachments()->limit( 1 )->first();
-		}
-
 
 	}
