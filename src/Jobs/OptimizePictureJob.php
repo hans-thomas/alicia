@@ -17,7 +17,7 @@
 		/**
 		 * Create a new job instance.
 		 *
-		 * @return void
+		 * @param ResourceModel $model
 		 */
 		public function __construct(
 			protected ResourceModel $model
@@ -30,7 +30,7 @@
 		 *
 		 * @return void
 		 */
-		public function handle() {
+		public function handle(): void {
 			$settings = require __DIR__ . '/../../config/image-optimizer.php';
 			OptimizerChainFactory::create( $settings )->optimize( alicia_storage()->path( $this->model->path ) );
 			$this->model->updateOptions( [ 'size' => alicia_storage()->size( $this->model->path ) ] );

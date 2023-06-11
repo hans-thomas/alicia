@@ -18,7 +18,7 @@
 		/**
 		 * Create a new job instance.
 		 *
-		 * @return void
+		 * @param ResourceModel $model
 		 */
 		public function __construct(
 			protected ResourceModel $model
@@ -30,7 +30,7 @@
 		 *
 		 * @return void
 		 */
-		public function handle() {
+		public function handle(): void {
 			$oldFile = $this->model->path;
 			$this->model->ffmpeg()
 			            ->export()

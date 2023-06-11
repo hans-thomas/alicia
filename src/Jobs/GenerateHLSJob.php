@@ -21,7 +21,7 @@
 		/**
 		 * Create a new job instance.
 		 *
-		 * @return void
+		 * @param ResourceModel $model
 		 */
 		public function __construct( ResourceModel $model ) {
 			$this->model = $model;
@@ -32,7 +32,7 @@
 		 *
 		 * @return void
 		 */
-		public function handle() {
+		public function handle(): void {
 			$export = $this->model->ffmpeg()->exportForHLS();
 
 			foreach ( Arr::wrap( alicia_config( 'hls.bitrate' ) ) as $bitrate ) {
