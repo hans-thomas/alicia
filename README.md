@@ -7,6 +7,7 @@ It's a file uploader and manager with below features:
 - HLS support
 - Collect file's detail
 - Classification for files
+- Automatic optimization
 
 for more information [see documentation](https://docs-alicia.vercel.app/).
 
