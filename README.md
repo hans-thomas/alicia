@@ -25,7 +25,7 @@ Then, publish config file using
 php artisan vendor:publish --tag alicia-config
 ```
 
-In the end, use `AliciaHandler` trait to your model.
+In the end, use `AliciaHandler` trait on your model.
 
 ```php
 use Hans\Alicia\Traits\AliciaHandler;
