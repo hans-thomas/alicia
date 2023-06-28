@@ -17,6 +17,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: xdebug
+          ini-values: xdebug.mode="coverage"
+          coverage: xdebug
+
+      - name: Install tools
       - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: ffmpeg jpegoptim pngquant webp
@@ -38,4 +47,13 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run test suite
-        run: composer run-script test
+        run: composer run-script test:coverage
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          name: alicia-codecov
+          fail_ci_if_error: true
