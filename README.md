@@ -1,5 +1,10 @@
 # Alicia
 
+[![codecov](https://codecov.io/gh/hans-thomas/alicia/branch/master/graph/badge.svg?token=X1D6I0JLSZ)](https://codecov.io/gh/hans-thomas/alicia)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/hans-thomas/alicia/php.yml)
+![GitHub top language](https://img.shields.io/github/languages/top/hans-thomas/alicia)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/hans-thomas/alicia)
+
 It's a file uploader and manager with below features:
 
 - Upload pictures and videos and files
