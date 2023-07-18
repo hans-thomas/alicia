@@ -1,5 +1,7 @@
 # Alicia
 
+<p align="center"><img alt="Valravn Logo" src="assets/alicia-banner.png"></p>
+
 [![codecov](https://codecov.io/gh/hans-thomas/alicia/branch/master/graph/badge.svg?token=X1D6I0JLSZ)](https://codecov.io/gh/hans-thomas/alicia)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/hans-thomas/alicia/php.yml)
 ![GitHub top language](https://img.shields.io/github/languages/top/hans-thomas/alicia)
@@ -42,6 +44,14 @@ class Post extends Model {
     // ...
 }
 ```
+
+## Contributing
+
+1. Fork it!
+2. Create your feature branch: git checkout -b my-new-feature
+3. Commit your changes: git commit -am 'Add some feature'
+4. Push to the branch: git push origin my-new-feature
+5. Submit a pull request ❤️
 
 Support
 -------
