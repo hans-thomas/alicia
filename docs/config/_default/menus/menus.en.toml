@@ -24,7 +24,7 @@
 
 [[main]]
   name = "Docs"
-  url = "/docs/getting-started/facade/"
+  url = "/docs/getting-started/installation/"
 # url = "/docs/1.0/getting-start/introduction/"
   weight = 10
 
