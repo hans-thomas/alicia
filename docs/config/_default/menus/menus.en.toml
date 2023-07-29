@@ -1,8 +1,8 @@
 [[docs]]
-  name = "Getting start"
+  name = "Getting started"
   weight = 10
-  identifier = "getting-start"
-  url = "/docs/getting-start/"
+  identifier = "getting-started"
+  url = "/docs/getting-started/"
 
 # [[docs]]
 #   name = "Lorem"
@@ -24,7 +24,7 @@
 
 [[main]]
   name = "Docs"
-  url = "/docs/getting-start/facade/"
+  url = "/docs/getting-started/installation/"
 # url = "/docs/1.0/getting-start/introduction/"
   weight = 10
 
