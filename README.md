@@ -1,6 +1,6 @@
 # Alicia
 
-<p align="center"><img alt="Valravn Logo" src="assets/alicia-banner.png"></p>
+<p align="center"><img alt="alicia banner" src="assets/alicia-banner.png"></p>
 
 [![codecov](https://codecov.io/gh/hans-thomas/alicia/branch/master/graph/badge.svg?token=X1D6I0JLSZ)](https://codecov.io/gh/hans-thomas/alicia)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/hans-thomas/alicia/php.yml)
