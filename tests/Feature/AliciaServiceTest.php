@@ -2,20 +2,20 @@
 
 namespace Hans\Alicia\Tests\Feature;
 
-    use Hans\Alicia\Facades\Alicia;
-    use Hans\Alicia\Tests\TestCase;
+use Hans\Alicia\Facades\Alicia;
+use Hans\Alicia\Tests\TestCase;
 
-    class AliciaServiceTest extends TestCase
+class AliciaServiceTest extends TestCase
+{
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function getData(): void
     {
-        /**
-         * @test
-         *
-         * @return void
-         */
-        public function getData(): void
-        {
-            $data = Alicia::getData();
+        $data = Alicia::getData();
 
-            self::assertNull($data);
-        }
+        self::assertNull($data);
     }
+}
