@@ -1,158 +1,155 @@
 <?php
 
+namespace Hans\Alicia\Tests\Feature;
 
-	namespace Hans\Alicia\Tests\Feature;
+    use Hans\Alicia\Facades\Alicia;
+    use Hans\Alicia\Jobs\GenerateHLSJob;
+    use Hans\Alicia\Jobs\OptimizePictureJob;
+    use Hans\Alicia\Jobs\OptimizeVideoJob;
+    use Hans\Alicia\Tests\TestCase;
+    use Illuminate\Http\UploadedFile;
+    use Illuminate\Support\Facades\Bus;
 
+    class JobsTest extends TestCase
+    {
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function ImageJobs(): void
+        {
+            Bus::fake();
 
-	use Hans\Alicia\Facades\Alicia;
-	use Hans\Alicia\Jobs\GenerateHLSJob;
-	use Hans\Alicia\Jobs\OptimizePictureJob;
-	use Hans\Alicia\Jobs\OptimizeVideoJob;
-	use Hans\Alicia\Tests\TestCase;
-	use Illuminate\Http\UploadedFile;
-	use Illuminate\Support\Facades\Bus;
+            $model = Alicia::upload(
+                UploadedFile::fake()
+                            ->createWithContent(
+                                'posty.jpg',
+                                file_get_contents(__DIR__.'/../resources/posty.jpg')
+                            )
+            )
+                           ->getData();
 
-	class JobsTest extends TestCase {
+            $this->assertGreaterThanOrEqual(
+                $model->options['size'],
+                filesize(__DIR__.'/../resources/posty.jpg')
+            );
 
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function ImageJobs(): void {
-			Bus::fake();
+            Bus::assertDispatched(OptimizePictureJob::class);
 
-			$model = Alicia::upload(
-				UploadedFile::fake()
-				            ->createWithContent(
-					            'posty.jpg',
-					            file_get_contents( __DIR__ . '/../resources/posty.jpg' )
-				            )
-			)
-			               ->getData();
+            Bus::assertNotDispatched(OptimizeVideoJob::class);
+            Bus::assertNotDispatched(GenerateHLSJob::class);
+        }
 
-			$this->assertGreaterThanOrEqual(
-				$model->options[ 'size' ],
-				filesize( __DIR__ . '/../resources/posty.jpg' )
-			);
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function VideoJobs(): void
+        {
+            Bus::fake();
 
-			Bus::assertDispatched( OptimizePictureJob::class );
+            $model = Alicia::upload(
+                UploadedFile::fake()
+                            ->createWithContent(
+                                'video.mp4',
+                                file_get_contents(__DIR__.'/../resources/video.mp4')
+                            )
+            )
+                           ->getData();
 
-			Bus::assertNotDispatched( OptimizeVideoJob::class );
-			Bus::assertNotDispatched( GenerateHLSJob::class );
-		}
+            $this->assertFileExists(alicia_storage()->path($model->directory.'/'.$model->hls));
 
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function VideoJobs(): void {
-			Bus::fake();
+            Bus::assertChained([
+                OptimizeVideoJob::class,
+                GenerateHLSJob::class,
+            ]);
 
-			$model = Alicia::upload(
-				UploadedFile::fake()
-				            ->createWithContent(
-					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../resources/video.mp4' )
-				            )
-			)
-			               ->getData();
+            Bus::assertNotDispatched(OptimizePictureJob::class);
+        }
 
-			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function VideoJobsWithHlsDisabled(): void
+        {
+            config()->set('alicia.hls.enable', false);
 
-			Bus::assertChained( [
-				OptimizeVideoJob::class,
-				GenerateHLSJob::class
-			] );
+            Bus::fake();
 
-			Bus::assertNotDispatched( OptimizePictureJob::class );
+            $model = Alicia::upload(
+                UploadedFile::fake()
+                            ->createWithContent(
+                                'video.mp4',
+                                file_get_contents(__DIR__.'/../resources/video.mp4')
+                            )
+            )
+                           ->getData();
 
-		}
+            $this->assertNull($model->hls);
 
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function VideoJobsWithHlsDisabled(): void {
-			config()->set( 'alicia.hls.enable', false );
+            Bus::assertDispatched(OptimizeVideoJob::class);
 
-			Bus::fake();
+            Bus::assertNotDispatched(GenerateHLSJob::class);
+            Bus::assertNotDispatched(OptimizePictureJob::class);
+        }
 
-			$model = Alicia::upload(
-				UploadedFile::fake()
-				            ->createWithContent(
-					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../resources/video.mp4' )
-				            )
-			)
-			               ->getData();
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function VideoJobsWithOptimizationDisabled(): void
+        {
+            config()->set('alicia.optimization.videos', false);
 
-			$this->assertNull( $model->hls );
+            Bus::fake();
 
-			Bus::assertDispatched( OptimizeVideoJob::class );
+            $model = Alicia::upload(
+                UploadedFile::fake()
+                            ->createWithContent(
+                                'video.mp4',
+                                file_get_contents(__DIR__.'/../resources/video.mp4')
+                            )
+            )
+                           ->getData();
 
-			Bus::assertNotDispatched( GenerateHLSJob::class );
-			Bus::assertNotDispatched( OptimizePictureJob::class );
+            $this->assertFileExists(alicia_storage()->path($model->directory.'/'.$model->hls));
 
-		}
+            Bus::assertDispatched(GenerateHLSJob::class);
 
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function VideoJobsWithOptimizationDisabled(): void {
-			config()->set( 'alicia.optimization.videos', false );
+            Bus::assertNotDispatched(OptimizeVideoJob::class);
+            Bus::assertNotDispatched(OptimizePictureJob::class);
+        }
 
-			Bus::fake();
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function VideoJobsWithOptimizationAndHlsDisabled(): void
+        {
+            config()->set('alicia.hls.enable', false);
+            config()->set('alicia.optimization.videos', false);
 
-			$model = Alicia::upload(
-				UploadedFile::fake()
-				            ->createWithContent(
-					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../resources/video.mp4' )
-				            )
-			)
-			               ->getData();
+            Bus::fake();
 
-			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
+            $model = Alicia::upload(
+                UploadedFile::fake()
+                            ->createWithContent(
+                                'video.mp4',
+                                file_get_contents(__DIR__.'/../resources/video.mp4')
+                            )
+            )
+                           ->getData();
 
-			Bus::assertDispatched( GenerateHLSJob::class );
+            $this->assertFileExists(alicia_storage()->path($model->directory.'/'.$model->hls));
 
-			Bus::assertNotDispatched( OptimizeVideoJob::class );
-			Bus::assertNotDispatched( OptimizePictureJob::class );
-
-		}
-
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function VideoJobsWithOptimizationAndHlsDisabled(): void {
-			config()->set( 'alicia.hls.enable', false );
-			config()->set( 'alicia.optimization.videos', false );
-
-			Bus::fake();
-
-			$model = Alicia::upload(
-				UploadedFile::fake()
-				            ->createWithContent(
-					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../resources/video.mp4' )
-				            )
-			)
-			               ->getData();
-
-			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
-
-			Bus::assertNotDispatched( OptimizeVideoJob::class );
-			Bus::assertNotDispatched( GenerateHLSJob::class );
-			Bus::assertNotDispatched( OptimizePictureJob::class );
-
-		}
-
-
-	}
+            Bus::assertNotDispatched(OptimizeVideoJob::class);
+            Bus::assertNotDispatched(GenerateHLSJob::class);
+            Bus::assertNotDispatched(OptimizePictureJob::class);
+        }
+    }

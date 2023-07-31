@@ -1,87 +1,87 @@
 <?php
 
+namespace Hans\Alicia\Tests\Feature\Actions;
 
-	namespace Hans\Alicia\Tests\Feature\Actions;
+    use Hans\Alicia\Facades\Alicia;
+    use Hans\Alicia\Tests\TestCase;
+    use Illuminate\Http\UploadedFile;
 
+    class UploadActionTest extends TestCase
+    {
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function uploadAZipedFile(): void
+        {
+            $model = Alicia::upload(
+                UploadedFile::fake()->create('zipped-file.zip', 10230, 'application/zip')
+            )
+                           ->getData();
 
-	use Hans\Alicia\Facades\Alicia;
-	use Hans\Alicia\Tests\TestCase;
-	use Illuminate\Http\UploadedFile;
+            $this->assertStringEqualsStringIgnoringLineEndings('zip', $model->extension);
+            $this->assertDirectoryExists(alicia_storage()->path($model->directory));
+            $this->assertFileExists(alicia_storage()->path($model->path));
+        }
 
-	class UploadActionTest extends TestCase {
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function uploadAnImage(): void
+        {
+            $model = Alicia::upload(
+                UploadedFile::fake()->image('imagefile.png', 512, 512)
+            )
+                           ->getData();
 
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function uploadAZipedFile(): void {
-			$model = Alicia::upload(
-				UploadedFile::fake()->create( 'zipped-file.zip', 10230, 'application/zip' )
-			)
-			               ->getData();
+            $this->assertStringEqualsStringIgnoringLineEndings('png', $model->extension);
+            $this->assertDirectoryExists(alicia_storage()->path($model->directory));
+            $this->assertFileExists(alicia_storage()->path($model->path));
+        }
 
-			$this->assertStringEqualsStringIgnoringLineEndings( 'zip', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
-			$this->assertFileExists( alicia_storage()->path( $model->path ) );
-		}
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function uploadAVideo(): void
+        {
+            $model = Alicia::upload(
+                UploadedFile::fake()
+                            ->createWithContent(
+                                'video.mp4',
+                                file_get_contents(__DIR__.'/../../resources/video.mp4')
+                            )
+            )
+                           ->getData();
 
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function uploadAnImage(): void {
-			$model = Alicia::upload(
-				UploadedFile::fake()->image( 'imagefile.png', 512, 512 )
-			)
-			               ->getData();
+            $this->assertStringEqualsStringIgnoringLineEndings('mp4', $model->extension);
+            $this->assertDirectoryExists(alicia_storage()->path($model->directory));
+            $this->assertFileExists(alicia_storage()->path($model->path));
+            $this->assertFileExists(alicia_storage()->path($model->directory.'/'.$model->hls));
+        }
 
-			$this->assertStringEqualsStringIgnoringLineEndings( 'png', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
-			$this->assertFileExists( alicia_storage()->path( $model->path ) );
-		}
+        /**
+         * @test
+         *
+         * @return void
+         */
+        public function uploadAnAudio(): void
+        {
+            $model = Alicia::upload(
+                UploadedFile::fake()
+                            ->createWithContent(
+                                'g-eazy-freestyle.mp3',
+                                file_get_contents(__DIR__.'/../../resources/G-Eazy-Break_From_LA_Freestyle.mp3')
+                            )
+            )
+                           ->getData();
 
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function uploadAVideo(): void {
-			$model = Alicia::upload(
-				UploadedFile::fake()
-				            ->createWithContent(
-					            'video.mp4',
-					            file_get_contents( __DIR__ . '/../../resources/video.mp4' )
-				            )
-			)
-			               ->getData();
-
-
-			$this->assertStringEqualsStringIgnoringLineEndings( 'mp4', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
-			$this->assertFileExists( alicia_storage()->path( $model->path ) );
-			$this->assertFileExists( alicia_storage()->path( $model->directory . '/' . $model->hls ) );
-		}
-
-		/**
-		 * @test
-		 *
-		 * @return void
-		 */
-		public function uploadAnAudio(): void {
-			$model = Alicia::upload(
-				UploadedFile::fake()
-				            ->createWithContent(
-					            'g-eazy-freestyle.mp3',
-					            file_get_contents( __DIR__ . '/../../resources/G-Eazy-Break_From_LA_Freestyle.mp3' )
-				            )
-			)
-			               ->getData();
-
-			$this->assertStringEqualsStringIgnoringLineEndings( 'mp3', $model->extension );
-			$this->assertDirectoryExists( alicia_storage()->path( $model->directory ) );
-			$this->assertFileExists( alicia_storage()->path( $model->path ) );
-		}
-
-	}
+            $this->assertStringEqualsStringIgnoringLineEndings('mp3', $model->extension);
+            $this->assertDirectoryExists(alicia_storage()->path($model->directory));
+            $this->assertFileExists(alicia_storage()->path($model->path));
+        }
+    }
