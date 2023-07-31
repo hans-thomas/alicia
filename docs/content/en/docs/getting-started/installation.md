@@ -20,6 +20,7 @@ toc: false
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/hans-thomas/alicia/php.yml)
 ![GitHub top language](https://img.shields.io/github/languages/top/hans-thomas/alicia)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/hans-thomas/alicia)
+![StyleCi](https://github.styleci.io/repos/464456765/shield?style=plastic)
 
 ## Installation
 
