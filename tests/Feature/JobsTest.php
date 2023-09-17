@@ -13,6 +13,18 @@ use Illuminate\Support\Facades\Bus;
 class JobsTest extends TestCase
 {
     /**
+     * Setup the test environment.
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->app['config']->set('alicia.optimization.images', true);
+        $this->app['config']->set('alicia.optimization.videos', true);
+    }
+
+    /**
      * @test
      *
      * @return void

@@ -49,8 +49,8 @@
         |
         */
         'optimization'   => [
-            'images' => true,
-            'videos' => true,
+            'images' => false,
+            'videos' => false,
         ],
 
         /*
