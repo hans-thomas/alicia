@@ -66,7 +66,7 @@ class HlsExportActionTest extends TestCase
         $models = $data->filter(
             fn (Resource $resource) => in_array($resource->extension, alicia_config('extensions.videos'))
         );
-        
+
         self::assertCount(2, $models);
 
         foreach ($models as $model) {
