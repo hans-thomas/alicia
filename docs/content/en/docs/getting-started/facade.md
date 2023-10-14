@@ -48,32 +48,36 @@ will introduce them.
 
 <div class="method">
 
-[batchDelete](#batchDelete)
+[batchDelete](#batchdelete)
 </div>
 
 <div class="method">
 
-[deleteFile](#deleteFile)
+[deleteFile](#deletefile)
 </div>
 
 <div class="method">
 
-[makeExternal](#makeExternal)
+[makeExternal](#makeexternal)
 </div>
 
 <div class="method">
 
-[fromFile](#fromFile)
+[fromFile](#fromfile)
 </div>
 
 <div class="method">
 
-[getData](#getData)
+[hlsExport](#hlsexport)
+</div>
+
+<div class="method">
+
+[getData](#getdata)
 </div>
 
 
 </div>
-
 
 ### batch
 
@@ -169,6 +173,19 @@ $file = '/path/to/file.extension';
 
 $model = Alicia::fromFile( $file )->getData();
 ```
+
+### hlsExport
+
+HLS is disabled by default, but if you want to get a HLS export for your uploaded video file, you can use `hlsExport`
+method.
+
+```php
+use Hans\Alicia\Facades\Alicia;
+
+Alicia::upload( request()->file('file') )->hlsExport()->getData();
+```
+
+This method dispatch a job in the background to get HLS export for your video file.
 
 ### getData
 
