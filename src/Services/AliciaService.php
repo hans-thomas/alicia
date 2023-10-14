@@ -34,11 +34,11 @@ class AliciaService
     /**
      * Store the given files and links.
      *
-     * @param  array  $files
+     * @param array $files
      *
-     * @return self
      * @throws AliciaException
      *
+     * @return self
      */
     public function batch(array $files): self
     {
@@ -50,11 +50,11 @@ class AliciaService
     /**
      * Upload and store given file.
      *
-     * @param  UploadedFile  $file
+     * @param UploadedFile $file
      *
-     * @return self
      * @throws AliciaException ()
      *
+     * @return self
      */
     public function upload(UploadedFile $file): self
     {
@@ -66,11 +66,11 @@ class AliciaService
     /**
      * Store a external link.
      *
-     * @param  string  $file
+     * @param string $file
      *
-     * @return self
      * @throws AliciaException ()
      *
+     * @return self
      */
     public function external(string $file): self
     {
@@ -82,11 +82,11 @@ class AliciaService
     /**
      * Create different version of uploaded image.
      *
-     * @param  array|null  $resolutions
+     * @param array|null $resolutions
      *
-     * @return AliciaService
      * @throws AliciaException|InvalidManipulation
      *
+     * @return AliciaService
      */
     public function export(array $resolutions = null): self
     {
@@ -109,12 +109,12 @@ class AliciaService
     /**
      * Make a internal resource to external using given link.
      *
-     * @param  resource  $model
-     * @param  string    $url
+     * @param resource $model
+     * @param string   $url
      *
-     * @return $this
      * @throws AliciaException
      *
+     * @return $this
      */
     public function makeExternal(Resource $model, string $url): self
     {
@@ -126,11 +126,11 @@ class AliciaService
     /**
      * Store resource using given file.
      *
-     * @param  string  $path
+     * @param string $path
      *
-     * @return self
      * @throws AliciaException
      *
+     * @return self
      */
     public function fromFile(string $path): self
     {
@@ -140,7 +140,7 @@ class AliciaService
     }
 
     /**
-     * Generate Hls export of uploaded video files in the background
+     * Generate Hls export of uploaded video files in the background.
      *
      * @return $this
      */
@@ -156,11 +156,11 @@ class AliciaService
     /**
      * Delete given resource and its file(s).
      *
-     * @param  resource|int  $model
+     * @param resource|int $model
      *
-     * @return bool
      * @throws AliciaException
      *
+     * @return bool
      */
     public function delete(Resource|int $model): bool
     {
@@ -178,11 +178,11 @@ class AliciaService
     /**
      * Delete resources in batch mode.
      *
-     * @param  array  $ids
+     * @param array $ids
      *
-     * @return array
      * @throws AliciaException
      *
+     * @return array
      */
     public function batchDelete(array $ids): array
     {
@@ -200,7 +200,7 @@ class AliciaService
     /**
      * Delete a specific file in alicia disk.
      *
-     * @param  string  $path
+     * @param string $path
      *
      * @return bool
      */
