@@ -13,7 +13,6 @@ use Hans\Alicia\Services\Actions\HlsExport;
 use Hans\Alicia\Services\Actions\MakeExternal;
 use Hans\Alicia\Services\Actions\Upload;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Image\Exceptions\InvalidManipulation;
 
@@ -34,11 +33,11 @@ class AliciaService
     /**
      * Store the given files and links.
      *
-     * @param array $files
-     *
-     * @throws AliciaException
+     * @param  array  $files
      *
      * @return self
+     * @throws AliciaException
+     *
      */
     public function batch(array $files): self
     {
@@ -50,11 +49,11 @@ class AliciaService
     /**
      * Upload and store given file.
      *
-     * @param UploadedFile $file
-     *
-     * @throws AliciaException ()
+     * @param  UploadedFile  $file
      *
      * @return self
+     * @throws AliciaException ()
+     *
      */
     public function upload(UploadedFile $file): self
     {
@@ -66,11 +65,11 @@ class AliciaService
     /**
      * Store a external link.
      *
-     * @param string $file
-     *
-     * @throws AliciaException ()
+     * @param  string  $file
      *
      * @return self
+     * @throws AliciaException ()
+     *
      */
     public function external(string $file): self
     {
@@ -82,21 +81,22 @@ class AliciaService
     /**
      * Create different version of uploaded image.
      *
-     * @param array|null $resolutions
-     *
-     * @throws AliciaException|InvalidManipulation
+     * @param  array|null  $resolutions
      *
      * @return AliciaService
+     * @throws AliciaException|InvalidManipulation
+     *
      */
     public function export(array $resolutions = null): self
     {
-        // TODO: write test for batch()->export()
-        $exports = collect($data = Arr::wrap($this->getData()));
-        foreach ($data as $model) {
-            $exports->push((new Export($model, $resolutions))->run()->toArray());
+        $exports = collect();
+        foreach ($this->data as $model) {
+            $exports->push((new Export($model, $resolutions))->run());
         }
 
-        $this->data = $exports->flatten(1)
+        $this->data = $exports->merge($this->data)
+                              ->flatten(1)
+                              ->filter()
                               ->groupBy(
                                   fn ($item, $key) => $item['parent_id'] ?
                                       $item['parent_id'].'-children' :
@@ -109,12 +109,12 @@ class AliciaService
     /**
      * Make a internal resource to external using given link.
      *
-     * @param resource $model
-     * @param string   $url
-     *
-     * @throws AliciaException
+     * @param  resource  $model
+     * @param  string    $url
      *
      * @return $this
+     * @throws AliciaException
+     *
      */
     public function makeExternal(Resource $model, string $url): self
     {
@@ -126,11 +126,11 @@ class AliciaService
     /**
      * Store resource using given file.
      *
-     * @param string $path
-     *
-     * @throws AliciaException
+     * @param  string  $path
      *
      * @return self
+     * @throws AliciaException
+     *
      */
     public function fromFile(string $path): self
     {
@@ -156,11 +156,11 @@ class AliciaService
     /**
      * Delete given resource and its file(s).
      *
-     * @param resource|int $model
-     *
-     * @throws AliciaException
+     * @param  resource|int  $model
      *
      * @return bool
+     * @throws AliciaException
+     *
      */
     public function delete(Resource|int $model): bool
     {
@@ -178,11 +178,11 @@ class AliciaService
     /**
      * Delete resources in batch mode.
      *
-     * @param array $ids
-     *
-     * @throws AliciaException
+     * @param  array  $ids
      *
      * @return array
+     * @throws AliciaException
+     *
      */
     public function batchDelete(array $ids): array
     {
@@ -200,7 +200,7 @@ class AliciaService
     /**
      * Delete a specific file in alicia disk.
      *
-     * @param string $path
+     * @param  string  $path
      *
      * @return bool
      */
