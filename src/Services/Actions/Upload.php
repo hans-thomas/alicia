@@ -38,6 +38,7 @@ class Upload extends Actions
                 'options'   => $this->getOptions($this->file),
             ]);
             $this->storeOnDisk($model, $this->file);
+            $this->processModel($model);
         } catch (Throwable $e) {
             DB::rollBack();
 
@@ -47,8 +48,6 @@ class Upload extends Actions
             );
         }
         DB::commit();
-
-        $this->processModel($model);
 
         return $model->refresh();
     }
