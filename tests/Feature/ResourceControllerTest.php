@@ -59,6 +59,7 @@ class ResourceControllerTest extends TestCase
      */
     public function requestHasNotValidSignature(): void
     {
+        config()->set('alicia.signed', true);
         $model = Alicia::upload(
             UploadedFile::fake()
                         ->createWithContent(
@@ -81,6 +82,7 @@ class ResourceControllerTest extends TestCase
      */
     public function requestHasNotValidHash(): void
     {
+        config()->set('alicia.signed', true);
         $model = Alicia::upload(
             UploadedFile::fake()
                         ->createWithContent(

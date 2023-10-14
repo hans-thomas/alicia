@@ -13,8 +13,9 @@ class DeleteActionTest extends TestCase
      *
      * @return void
      */
-    public function deleteResource(): void
+    public function deleteResourceWithHls(): void
     {
+        config()->set('alicia.hls.enable', true);
         $model = Alicia::upload(
             UploadedFile::fake()
                         ->createWithContent(
@@ -44,8 +45,9 @@ class DeleteActionTest extends TestCase
      *
      * @return void
      */
-    public function batchDelete(): void
+    public function batchDeleteWithHls(): void
     {
+        config()->set('alicia.hls.enable', true);
         $modelA = Alicia::upload(
             UploadedFile::fake()
                         ->createWithContent(

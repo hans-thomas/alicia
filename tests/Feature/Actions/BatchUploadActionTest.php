@@ -15,6 +15,7 @@ class BatchUploadActionTest extends TestCase
      */
     public function batchUpload()
     {
+        config()->set('alicia.hls.enable', true);
         $data = Alicia::batch(
             [
                 UploadedFile::fake()

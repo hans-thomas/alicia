@@ -22,6 +22,23 @@ class ResourceModelTest extends TestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings($link, $model->link);
 
+        $url = route('alicia.download', [$model]);
+
+        $this->assertStringEqualsStringIgnoringLineEndings($url, $model->downloadUrl);
+    }
+
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function urlAsSignedExternal(): void
+    {
+        config()->set('alicia.signed', true);
+        $model = Alicia::external($link = 'https://laravel.com/img/homepage/vapor.jpg')->getData();
+
+        $this->assertStringEqualsStringIgnoringLineEndings($link, $model->link);
+
         $url = URL::temporarySignedRoute(
             'alicia.download',
             now()->addMinutes(alicia_config('expiration', '30')),
@@ -40,6 +57,7 @@ class ResourceModelTest extends TestCase
      */
     public function urlAsSigned(): void
     {
+        config()->set('alicia.signed', true);
         $model = Alicia::upload(
             UploadedFile::fake()->image('g-eazy.png', 1080, 1080)
         )
@@ -86,6 +104,7 @@ class ResourceModelTest extends TestCase
      */
     public function hlsUrl(): void
     {
+        config()->set('alicia.hls.enable', true);
         $model = Alicia::upload(
             UploadedFile::fake()
                         ->createWithContent(
