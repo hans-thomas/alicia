@@ -13,7 +13,6 @@ class AliciaErrorCode
     public const UNKNOWN_FILE_TYPE = 5007;
     public const FAILED_TO_PROCESS_MODEL = 5008;
     public const FAILED_TO_DELETE_RESOURCE_MODEL = 5009;
-    public const INVALID_MODEL_TO_EXPORT = 5010;
     public const MODEL_IS_EXTERNAL_ALREADY = 5011;
     public const FAILED_TO_MAKE_MODEL_EXTERNAL = 5012;
     public const FILE_DOEST_NOT_EXIST = 5013;

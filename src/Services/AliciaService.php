@@ -9,10 +9,10 @@ use Hans\Alicia\Services\Actions\Delete;
 use Hans\Alicia\Services\Actions\Export;
 use Hans\Alicia\Services\Actions\External;
 use Hans\Alicia\Services\Actions\FromFile;
+use Hans\Alicia\Services\Actions\HlsExport;
 use Hans\Alicia\Services\Actions\MakeExternal;
 use Hans\Alicia\Services\Actions\Upload;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Image\Exceptions\InvalidManipulation;
 
@@ -41,7 +41,7 @@ class AliciaService
      */
     public function batch(array $files): self
     {
-        $this->data = ( new BatchUpload($files) )->run();
+        $this->data = (new BatchUpload($files))->run();
 
         return $this;
     }
@@ -57,7 +57,7 @@ class AliciaService
      */
     public function upload(UploadedFile $file): self
     {
-        $this->data->push(( new Upload($file) )->run());
+        $this->data->push((new Upload($file))->run());
 
         return $this;
     }
@@ -73,7 +73,7 @@ class AliciaService
      */
     public function external(string $file): self
     {
-        $this->data->push(( new External($file) )->run());
+        $this->data->push((new External($file))->run());
 
         return $this;
     }
@@ -89,13 +89,14 @@ class AliciaService
      */
     public function export(array $resolutions = null): self
     {
-        // TODO: write test for batch()->export()
-        $exports = collect($data = Arr::wrap($this->getData()));
-        foreach ($data as $model) {
-            $exports->push(( new Export($model, $resolutions) )->run()->toArray());
+        $exports = collect();
+        foreach ($this->data as $model) {
+            $exports->push((new Export($model, $resolutions))->run());
         }
 
-        $this->data = $exports->flatten(1)
+        $this->data = $exports->merge($this->data)
+                              ->flatten(1)
+                              ->filter()
                               ->groupBy(
                                   fn ($item, $key) => $item['parent_id'] ?
                                       $item['parent_id'].'-children' :
@@ -117,7 +118,7 @@ class AliciaService
      */
     public function makeExternal(Resource $model, string $url): self
     {
-        $this->data->push(( new MakeExternal($model, $url) )->run());
+        $this->data->push((new MakeExternal($model, $url))->run());
 
         return $this;
     }
@@ -133,7 +134,21 @@ class AliciaService
      */
     public function fromFile(string $path): self
     {
-        $this->data->push(( new FromFile($path) )->run());
+        $this->data->push((new FromFile($path))->run());
+
+        return $this;
+    }
+
+    /**
+     * Generate Hls export of uploaded video files in the background.
+     *
+     * @return $this
+     */
+    public function HlsExport(): self
+    {
+        foreach ($this->data as $model) {
+            (new HlsExport($model))->run();
+        }
 
         return $this;
     }
@@ -155,7 +170,7 @@ class AliciaService
                     ->select(['id', 'directory', 'external'])
                     ->findOrFail($model);
 
-        ( new Delete($model) )->run();
+        (new Delete($model))->run();
 
         return true;
     }

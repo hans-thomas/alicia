@@ -85,7 +85,7 @@
         | however if you want to protect your links leave it true
         |
         */
-        'signed'         => true,
+        'signed'         => false,
 
         /*
         |--------------------------------------------------------------------------
@@ -128,7 +128,7 @@
         |
         */
         'hls'                => [
-            'enable'              => true,
+            'enable'              => false,
             'bitrate'             => [250, 500, 1000],
             'setSegmentLength'    => 10,
             'setKeyFrameInterval' => 48,

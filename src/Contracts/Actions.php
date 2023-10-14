@@ -259,9 +259,7 @@ abstract class Actions
                 in_array($model->extension, alicia_config('extensions.images'))
             ) {
                 OptimizePictureJob::dispatch($model);
-            } elseif (
-                in_array($model->extension, alicia_config('extensions.videos'))
-            ) {
+            } elseif (in_array($model->extension, alicia_config('extensions.videos'))) {
                 if (alicia_config('optimization.videos')) {
                     $jobs[] = new OptimizeVideoJob($model);
                 }

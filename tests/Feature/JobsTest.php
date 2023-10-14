@@ -60,6 +60,8 @@ class JobsTest extends TestCase
      */
     public function VideoJobs(): void
     {
+        config()->set('alicia.hls.enable', true);
+        config()->set('alicia.optimization.videos', true);
         Bus::fake();
 
         $model = Alicia::upload(
@@ -116,6 +118,7 @@ class JobsTest extends TestCase
      */
     public function VideoJobsWithOptimizationDisabled(): void
     {
+        config()->set('alicia.hls.enable', true);
         config()->set('alicia.optimization.videos', false);
 
         Bus::fake();

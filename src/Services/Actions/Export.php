@@ -3,8 +3,6 @@
 namespace Hans\Alicia\Services\Actions;
 
 use Hans\Alicia\Contracts\Actions;
-use Hans\Alicia\Exceptions\AliciaErrorCode;
-use Hans\Alicia\Exceptions\AliciaException;
 use Hans\Alicia\Models\Resource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -22,23 +20,20 @@ class Export extends Actions
     /**
      * Contain action's logic.
      *
-     * @throws AliciaException
      * @throws InvalidManipulation
      *
      * @return Collection
      */
     public function run(): Collection
     {
+        $data = collect();
         if (
             $this->model->isExternal() or
             !in_array($this->model->extension, alicia_config('extensions.images'))
         ) {
-            throw new AliciaException(
-                'Invalid model for exportation!',
-                AliciaErrorCode::INVALID_MODEL_TO_EXPORT
-            );
+            return $data;
         }
-        $data = collect();
+
         foreach ($this->resolutions ?: alicia_config('export') as $height => $width) {
             $fileName = Str::remove('.'.$this->model->extension, $this->model->file).
                         "-{$height}x{$width}.".$this->model->extension;

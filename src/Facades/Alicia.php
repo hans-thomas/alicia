@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool                     deleteFile( string $path )
  * @method static AliciaService            makeExternal( Resource $model, string $url )
  * @method static AliciaService            fromFile( string $path )
+ * @method static AliciaService            hlsExport()
  * @method static Resource|Collection|null getData()
  *
  * @see AliciaService
