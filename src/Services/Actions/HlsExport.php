@@ -17,7 +17,7 @@ class HlsExport extends Actions
     /**
      * Contain action's logic.
      *
-     * @return resource|Collection
+     * @return Resource|Collection
      */
     public function run(): Resource|Collection
     {
