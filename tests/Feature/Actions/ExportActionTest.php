@@ -15,9 +15,9 @@ class ExportActionTest extends TestCase
     /**
      * @test
      *
-     * @return void
      * @throws AliciaException|InvalidManipulation
      *
+     * @return void
      */
     public function export(): void
     {
@@ -45,7 +45,6 @@ class ExportActionTest extends TestCase
             self::assertEquals($resolutions[$key][0], $model->options['height']);
             self::assertEquals($resolutions[$key][1], $model->options['width']);
 
-
             $this->assertDirectoryExists(alicia_storage()->path($model->directory));
             $this->assertFileExists(alicia_storage()->path($model->path));
         }
@@ -54,9 +53,9 @@ class ExportActionTest extends TestCase
     /**
      * @test
      *
-     * @return void
      * @throws AliciaException|InvalidManipulation
      *
+     * @return void
      */
     public function exportWithCustomResolution(): void
     {
@@ -69,7 +68,7 @@ class ExportActionTest extends TestCase
         )
                          ->export([
                              1280 => 720,
-                             640  => 480
+                             640  => 480,
                          ])
                          ->getData();
 
@@ -86,7 +85,6 @@ class ExportActionTest extends TestCase
             self::assertEquals($resolutions[$key][0], $model->options['height']);
             self::assertEquals($resolutions[$key][1], $model->options['width']);
 
-
             $this->assertDirectoryExists(alicia_storage()->path($model->directory));
             $this->assertFileExists(alicia_storage()->path($model->path));
         }
@@ -95,9 +93,9 @@ class ExportActionTest extends TestCase
     /**
      * @test
      *
-     * @return void
      * @throws AliciaException|InvalidManipulation
      *
+     * @return void
      */
     public function exportOnBatch(): void
     {
@@ -144,7 +142,6 @@ class ExportActionTest extends TestCase
             self::assertEquals($resolutions[$key][0], $model->options['height']);
             self::assertEquals($resolutions[$key][1], $model->options['width']);
 
-
             $this->assertDirectoryExists(alicia_storage()->path($model->directory));
             $this->assertFileExists(alicia_storage()->path($model->path));
         }
@@ -153,9 +150,9 @@ class ExportActionTest extends TestCase
     /**
      * @test
      *
-     * @return void
      * @throws AliciaException|InvalidManipulation
      *
+     * @return void
      */
     public function exportOnBatchWithCustomResolutions(): void
     {
@@ -187,7 +184,7 @@ class ExportActionTest extends TestCase
         )
                          ->export([
                              1280 => 720,
-                             640  => 480
+                             640  => 480,
                          ])
                          ->getData();
 
@@ -203,7 +200,6 @@ class ExportActionTest extends TestCase
 
             self::assertEquals($resolutions[$key][0], $model->options['height']);
             self::assertEquals($resolutions[$key][1], $model->options['width']);
-
 
             $this->assertDirectoryExists(alicia_storage()->path($model->directory));
             $this->assertFileExists(alicia_storage()->path($model->path));
