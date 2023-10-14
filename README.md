@@ -10,12 +10,13 @@
 
 It's a file uploader and manager with below features:
 
-- Upload pictures and videos and files
-- Store external links
+- Upload any file type in single or batch mode
+- Store external files
 - HLS support
-- Collect file's detail
-- Classification for files
-- Automatic optimization
+- Collect file's details automatically
+- Classification for uploaded files
+- Optimization for images and videos
+- Export images in different resolution
 
 for more information [see documentation](https://docs-alicia.vercel.app/).
 
