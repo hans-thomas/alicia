@@ -37,6 +37,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
  */
 class Resource extends Model
 {
+    // TODO: model attributes is not documented
     use FFMpegPreConfig;
 
     /**

@@ -51,7 +51,7 @@ class AliciaService
      *
      * @param UploadedFile $file
      *
-     * @throws AliciaException ()
+     * @throws AliciaException
      *
      * @return self
      */
@@ -67,7 +67,7 @@ class AliciaService
      *
      * @param string $file
      *
-     * @throws AliciaException ()
+     * @throws AliciaException
      *
      * @return self
      */
@@ -83,7 +83,7 @@ class AliciaService
      *
      * @param array|null $resolutions
      *
-     * @throws AliciaException|InvalidManipulation
+     * @throws InvalidManipulation
      *
      * @return AliciaService
      */
@@ -107,7 +107,7 @@ class AliciaService
     }
 
     /**
-     * Make a internal resource to external using given link.
+     * Make an internal resource to external using given link.
      *
      * @param resource $model
      * @param string   $url
