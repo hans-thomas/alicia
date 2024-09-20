@@ -28,9 +28,9 @@ class BatchUpload extends Actions
         $data = collect();
         foreach ($this->files as $file) {
             if ($file instanceof UploadedFile) {
-                $data->push(( new Upload($file) )->run());
+                $data->push((new Upload($file))->run());
             } elseif (is_string($file)) {
-                $data->push(( new External($file) )->run());
+                $data->push((new External($file))->run());
             }
         }
 

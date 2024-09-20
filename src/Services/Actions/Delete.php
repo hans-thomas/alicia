@@ -31,7 +31,7 @@ class Delete extends Actions
         try {
             if ($this->model->children()->exists()) {
                 foreach ($this->model->children()->select('id', 'directory', 'external')->get() as $child) {
-                    ( new self($child) )->run();
+                    (new self($child))->run();
                 }
             }
             $this->model->delete();
