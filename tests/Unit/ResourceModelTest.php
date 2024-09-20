@@ -4,9 +4,12 @@ namespace Hans\Alicia\Tests\Unit;
 
 use Hans\Alicia\Facades\Alicia;
 use Hans\Alicia\Facades\Signature;
+use Hans\Alicia\Models\Resource;
 use Hans\Alicia\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Spatie\Image\Exceptions\InvalidManipulation;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ResourceModelTest extends TestCase
@@ -285,5 +288,24 @@ class ResourceModelTest extends TestCase
 
         self::assertTrue($model->isNotExternal());
         self::assertFalse($model->isExternal());
+    }
+
+    /**
+     * @test
+     *
+     * @return void
+     * @throws InvalidManipulation
+     */
+    public function childrenDeletedAutomatically(): void
+    {
+        $model = Alicia::upload(
+            UploadedFile::fake()->image('g-eazy.png', 1080, 1080)
+        )
+                       ->export([540 => 540, 480 => 480])
+                       ->getData();
+
+        Alicia::delete($model->get('parents')->pluck('id')->first());
+
+        self::assertEmpty(DB::table('resources')->get()->pluck('id'));
     }
 }

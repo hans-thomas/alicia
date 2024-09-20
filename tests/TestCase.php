@@ -6,6 +6,7 @@ use Hans\Alicia\AliciaServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\DB;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
@@ -21,6 +22,7 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        DB::statement('PRAGMA foreign_keys = ON;'); // It's disabled in Sqlite by default
         $this->loadMigrationsFrom(__DIR__.'/Core/migrations');
     }
 
