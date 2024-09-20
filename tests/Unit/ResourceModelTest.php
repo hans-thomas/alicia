@@ -6,8 +6,11 @@ use Hans\Alicia\Facades\Alicia;
 use Hans\Alicia\Facades\Signature;
 use Hans\Alicia\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Spatie\Image\Exceptions\InvalidManipulation;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use function PHPUnit\Framework\assertDirectoryExists;
 
 class ResourceModelTest extends TestCase
 {
@@ -285,5 +288,28 @@ class ResourceModelTest extends TestCase
 
         self::assertTrue($model->isNotExternal());
         self::assertFalse($model->isExternal());
+    }
+
+
+    /**
+     * @test
+     *
+     * @throws InvalidManipulation
+     *
+     * @return void
+     */
+    public function childrenWIllBeDeleted(): void
+    {
+        $data = Alicia::upload(
+            UploadedFile::fake()->image('g-eazy.png', 1080, 1080)
+        )
+                       ->export([540 => 540, 480 => 480])
+                       ->getData();
+
+        Alicia::delete($data->get('parents')->pluck('id')->first());
+
+        self::assertEmpty(DB::table('resources')->get()->pluck('id'));
+        self::assertDirectoryDoesNotExist($data->first()->first()->fullpath);
+        self::assertDirectoryDoesNotExist($data->first()->last()->fullpath);
     }
 }

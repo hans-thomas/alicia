@@ -15,7 +15,7 @@
             Schema::create('resources', function (Blueprint $table) {
                 $table->id();
 
-                $table->foreignId('parent_id')->nullable()->constrained()->cascadeOnDelete();
+                $table->foreignId('parent_id')->nullable()->constrained('resources')->cascadeOnDelete();
 
                 $table->string('title');
                 $table->string('directory')->nullable();
