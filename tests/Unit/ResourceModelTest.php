@@ -4,7 +4,6 @@ namespace Hans\Alicia\Tests\Unit;
 
 use Hans\Alicia\Facades\Alicia;
 use Hans\Alicia\Facades\Signature;
-use Hans\Alicia\Models\Resource;
 use Hans\Alicia\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -293,8 +292,9 @@ class ResourceModelTest extends TestCase
     /**
      * @test
      *
-     * @return void
      * @throws InvalidManipulation
+     *
+     * @return void
      */
     public function childrenDeletedAutomatically(): void
     {
