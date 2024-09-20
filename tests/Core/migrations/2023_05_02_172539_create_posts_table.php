@@ -13,7 +13,7 @@
          */
         public function up()
         {
-            Schema::create(( new Post() )->getTable(), function (Blueprint $table) {
+            Schema::create((new Post())->getTable(), function (Blueprint $table) {
                 $table->id();
                 $table->string('title');
                 $table->text('content');
@@ -28,6 +28,6 @@
          */
         public function down()
         {
-            Schema::dropIfExists(( new Post() )->getTable());
+            Schema::dropIfExists((new Post())->getTable());
         }
     };
