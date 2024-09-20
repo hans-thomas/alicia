@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Spatie\Image\Exceptions\InvalidManipulation;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use function PHPUnit\Framework\assertDirectoryExists;
 
 class ResourceModelTest extends TestCase
 {
@@ -289,7 +288,6 @@ class ResourceModelTest extends TestCase
         self::assertTrue($model->isNotExternal());
         self::assertFalse($model->isExternal());
     }
-
 
     /**
      * @test
