@@ -40,7 +40,7 @@ class GenerateHLSJob implements ShouldQueue
         $export = $this->model->ffmpeg()->exportForHLS();
 
         foreach (Arr::wrap(alicia_config('hls.bitrate')) as $bitrate) {
-            $export->addFormat(( new X264() )->setKiloBitrate($bitrate));
+            $export->addFormat((new X264())->setKiloBitrate($bitrate));
         }
 
         $export->setSegmentLength(alicia_config('hls.setSegmentLength')) // optional
