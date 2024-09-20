@@ -296,16 +296,18 @@ class ResourceModelTest extends TestCase
      *
      * @return void
      */
-    public function childrenDeletedAutomatically(): void
+    public function childrenWIllBeDeleted(): void
     {
-        $model = Alicia::upload(
+        $data = Alicia::upload(
             UploadedFile::fake()->image('g-eazy.png', 1080, 1080)
         )
                        ->export([540 => 540, 480 => 480])
                        ->getData();
 
-        Alicia::delete($model->get('parents')->pluck('id')->first());
+        Alicia::delete($data->get('parents')->pluck('id')->first());
 
         self::assertEmpty(DB::table('resources')->get()->pluck('id'));
+        self::assertDirectoryDoesNotExist($data->first()->first()->fullpath);
+        self::assertDirectoryDoesNotExist($data->first()->last()->fullpath);
     }
 }
