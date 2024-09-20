@@ -29,6 +29,11 @@ class Delete extends Actions
         DB::beginTransaction();
 
         try {
+            if ($this->model->children()->exists()) {
+                foreach ($this->model->children()->select('id', 'directory', 'external')->get() as $child) {
+                    ( new self($child) )->run();
+                }
+            }
             $this->model->delete();
             if (!$this->model->isExternal() and alicia_storage()->exists($this->model->directory)) {
                 alicia_storage()->deleteDirectory($this->model->directory);
