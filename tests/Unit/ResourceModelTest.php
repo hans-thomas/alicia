@@ -289,13 +289,12 @@ class ResourceModelTest extends TestCase
         self::assertFalse($model->isExternal());
     }
 
-
     /**
      * @test
      *
-     * @return void
      * @throws InvalidManipulation
      *
+     * @return void
      */
     public function childrenWIllBeDeleted(): void
     {
