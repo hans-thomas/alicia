@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Spatie\Image\Exceptions\InvalidManipulation;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use function PHPUnit\Framework\assertDirectoryExists;
 
 class ResourceModelTest extends TestCase
 {
@@ -294,22 +293,27 @@ class ResourceModelTest extends TestCase
     /**
      * @test
      *
+     * @return void
      * @throws InvalidManipulation
      *
-     * @return void
      */
     public function childrenWIllBeDeleted(): void
     {
         $data = Alicia::upload(
             UploadedFile::fake()->image('g-eazy.png', 1080, 1080)
         )
-                       ->export([540 => 540, 480 => 480])
-                       ->getData();
+                      ->export([540 => 540, 480 => 480])
+                      ->getData();
 
-        Alicia::delete($data->get('parents')->pluck('id')->first());
+        $parentId = $data->get('parents')->pluck('id')->first();
+
+        self::assertDirectoryExists(alicia_storage()->path($data->get("$parentId-children")->first()->directory));
+        self::assertDirectoryExists(alicia_storage()->path($data->get("$parentId-children")->last()->directory));
+
+        Alicia::delete($parentId);
 
         self::assertEmpty(DB::table('resources')->get()->pluck('id'));
-        self::assertDirectoryDoesNotExist($data->first()->first()->fullpath);
-        self::assertDirectoryDoesNotExist($data->first()->last()->fullpath);
+        self::assertDirectoryDoesNotExist(alicia_storage()->path($data->get("$parentId-children")->first()->directory));
+        self::assertDirectoryDoesNotExist(alicia_storage()->path($data->get("$parentId-children")->last()->directory));
     }
 }
