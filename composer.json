@@ -1,6 +1,14 @@
 {
     "name": "hans-thomas/alicia",
-    "description": "it's a uploader and converter for pictures and videos",
+    "description": "it's an uploader and converter for pictures and videos",
+    "keywords": [
+        "file-manager",
+        "hls-live-streaming",
+        "file-uploader",
+        "upload-videos",
+        "upload-images",
+        "upload-files"
+    ],
     "license": "MIT",
     "authors": [
         {
