@@ -18,6 +18,12 @@ It's a file uploader and manager with below features:
 - Optimization for images and videos
 - Export images in different resolution
 
+
+| Version                                               | Laravel |
+|-------------------------------------------------------|---------|
+| [1.x](https://github.com/hans-thomas/alicia/tree/1.x) | 10.x    |
+| [2.x](https://github.com/hans-thomas/alicia/tree/2.x) | 11.x    |
+
 for more information [see documentation](https://docs-alicia.vercel.app/).
 
 ## Installation
