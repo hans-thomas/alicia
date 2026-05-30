@@ -87,7 +87,7 @@ class AliciaService
      *
      * @return AliciaService
      */
-    public function export(array $resolutions = null): self
+    public function export(?array $resolutions = null): self
     {
         $exports = collect();
         foreach ($this->data as $model) {
