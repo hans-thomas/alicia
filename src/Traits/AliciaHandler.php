@@ -51,7 +51,7 @@ trait AliciaHandler
      *
      * @return array
      */
-    public function attachTo(Resource $resource, string $key = null): array
+    public function attachTo(Resource $resource, ?string $key = null): array
     {
         $data = $key ?
             [$resource->id => ['key' => $key]] :

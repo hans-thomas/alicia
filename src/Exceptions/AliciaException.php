@@ -10,7 +10,7 @@ class AliciaException extends Exception
 {
     private int $errorCode;
 
-    public function __construct(string $message, int $errorCode, $code = 500, Throwable $previous = null)
+    public function __construct(string $message, int $errorCode, $code = 500, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->errorCode = $errorCode;

@@ -39,7 +39,7 @@ class ResourceControllerTest extends TestCase
     public function downloadExternal(): void
     {
         $model = Alicia::external(
-            'http://laravel.com/img/homepage/vapor.jpg'
+            'https://picperf.io/https://laravel-news.com/images/logo.svg'
         )
                        ->getData();
 
