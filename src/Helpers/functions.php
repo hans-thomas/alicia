@@ -40,7 +40,7 @@
          *
          * @return string
          */
-        function generate_file_name(string $driver = null, int $length = 16): string
+        function generate_file_name(?string $driver = null, int $length = 16): string
         {
             return match ($driver ?: alicia_config('naming')) {
                 'string'        => Str::random($length),
