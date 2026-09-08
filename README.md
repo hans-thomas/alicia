@@ -8,33 +8,33 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/hans-thomas/alicia)
 ![StyleCi](https://github.styleci.io/repos/464456765/shield?style=plastic)
 
-It's a file uploader and manager with below features:
+It's a file uploader and manager with the following features:
 
 - Upload any file type in single or batch mode
 - Store external files
 - HLS support
-- Collect file's details automatically
+- Collect file details automatically
 - Classification for uploaded files
 - Optimization for images and videos
-- Export images in different resolution
+- Export images in different resolutions
 
 
 | Version                                               | Laravel    |
 |-------------------------------------------------------|------------|
 | [1.x](https://github.com/hans-thomas/alicia/tree/1.x) | 10.x       |
-| [2.x](https://github.com/hans-thomas/alicia/tree/2.x) | 11.x, 12.x |
+| [2.x](https://github.com/hans-thomas/alicia/tree/2.x) | 11.x, 12.x, 13.x |
 
-for more information [see documentation](https://docs-alicia.vercel.app/).
+For more information [see documentation](https://docs-alicia.vercel.app/).
 
 ## Installation
 
-Install the package via composer
+Install the package via Composer
 
 ```shell
 composer require hans-thomas/alicia
 ```
 
-Then, publish config file using
+Then, publish the config file using
 
 ```shell
 php artisan vendor:publish --tag alicia-config
