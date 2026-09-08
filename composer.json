@@ -24,8 +24,9 @@
         "spatie/image": "^3.0"
     },
     "require-dev": {
-      "orchestra/testbench": "^8.0",
-      "nunomaduro/collision": "^7.0"
+      "orchestra/testbench": "^9",
+      "nunomaduro/collision": "^8",
+      "phpunit/phpunit": "^10"
     },
     "autoload": {
       "psr-4": {
@@ -46,6 +47,17 @@
                 "Hans\\Alicia\\AliciaServiceProvider"
             ]
         }
+    },
+    "config": {
+      "audit": {
+        "ignore": [
+          "PKSA-m5cs-t1y6-qpcs",
+          "PKSA-3r5d-mb8f-1qw9",
+          "PKSA-mdq4-51ck-6kdq",
+          "PKSA-8qx3-n5y5-vvnd",
+          "PKSA-w7xr-vk7n-rstm"
+        ]
+      }
     },
     "scripts": {
         "post-autoload-dump": [
