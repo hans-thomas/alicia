@@ -6,7 +6,9 @@ use Hans\Alicia\Exceptions\AliciaErrorCode;
 use Hans\Alicia\Exceptions\AliciaException;
 use Hans\Alicia\Facades\Signature;
 use Hans\Alicia\Models\Resource as ResourceModel;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -21,7 +23,7 @@ class ResourceController extends Controller
      *
      * @throws AliciaException
      *
-     * @return BinaryFileResponse|StreamedResponse
+     * @return Response|StreamedResponse
      */
     public function download(ResourceModel $resource, string $hash = '')
     {
@@ -43,17 +45,23 @@ class ResourceController extends Controller
         }
 
         if ($resource->isExternal()) {
-            alicia_storage()->deleteDirectory('temp');
-            alicia_storage()->put(
-                $tempFile = 'temp/'.generate_file_name().".$resource->extension",
-                file_get_contents($resource->link)
-            );
+            $content = file_get_contents($resource->link);
 
-            return response()
-                ->download(
-                    file: alicia_storage()->path($tempFile),
-                    name: "{$resource->title}.{$resource->extension}"
+            if ($content === false) {
+                throw new AliciaException(
+                    'Unable to retrieve remote file.',
+                    AliciaErrorCode::FILE_DOEST_NOT_EXIST,
+                    ResponseAlias::HTTP_NOT_FOUND
                 );
+            }
+
+            $filename = "{$resource->title}.{$resource->extension}";
+
+            return response($content, 200, [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Length' => strlen($content),
+            ]);
         }
 
         return alicia_storage()
