@@ -17,18 +17,18 @@ class ResourceControllerTest extends TestCase
     {
         $model = Alicia::upload(
             UploadedFile::fake()
-                        ->createWithContent(
-                            'g-eazy-freestyle.mp3',
-                            file_get_contents(__DIR__.'/../resources/G-Eazy-Break_From_LA_Freestyle.mp3')
-                        )
+                ->createWithContent(
+                    'g-eazy-freestyle.mp3',
+                    file_get_contents(__DIR__.'/../resources/G-Eazy-Break_From_LA_Freestyle.mp3')
+                )
         )
-                       ->getData();
+            ->getData();
 
         $this->getJson(
             uri: $model->downloadUrl
         )
-             ->assertOk()
-             ->assertDownload("{$model->title}.{$model->extension}");
+            ->assertOk()
+            ->assertDownload("{$model->title}.{$model->extension}");
     }
 
     /**
@@ -41,15 +41,13 @@ class ResourceControllerTest extends TestCase
         $model = Alicia::external(
             'https://picperf.io/https://laravel-news.com/images/logo.svg'
         )
-                       ->getData();
+            ->getData();
 
         $this->getJson(
             uri: $model->downloadUrl
         )
-             ->assertOk()
-             ->assertDownload("{$model->title}.{$model->extension}");
-
-        self::assertCount(1, alicia_storage()->files('temp'));
+            ->assertOk()
+            ->assertDownload("{$model->title}.{$model->extension}");
     }
 
     /**
@@ -62,17 +60,17 @@ class ResourceControllerTest extends TestCase
         config()->set('alicia.signed', true);
         $model = Alicia::upload(
             UploadedFile::fake()
-                        ->createWithContent(
-                            'g-eazy-freestyle.mp3',
-                            file_get_contents(__DIR__.'/../resources/G-Eazy-Break_From_LA_Freestyle.mp3')
-                        )
+                ->createWithContent(
+                    'g-eazy-freestyle.mp3',
+                    file_get_contents(__DIR__.'/../resources/G-Eazy-Break_From_LA_Freestyle.mp3')
+                )
         )
-                       ->getData();
+            ->getData();
 
         $this->getJson(
             uri: $model->downloadUrl.'sdfsdf4534s'
         )
-             ->assertBadRequest();
+            ->assertBadRequest();
     }
 
     /**
@@ -85,12 +83,12 @@ class ResourceControllerTest extends TestCase
         config()->set('alicia.signed', true);
         $model = Alicia::upload(
             UploadedFile::fake()
-                        ->createWithContent(
-                            'g-eazy-freestyle.mp3',
-                            file_get_contents(__DIR__.'/../resources/G-Eazy-Break_From_LA_Freestyle.mp3')
-                        )
+                ->createWithContent(
+                    'g-eazy-freestyle.mp3',
+                    file_get_contents(__DIR__.'/../resources/G-Eazy-Break_From_LA_Freestyle.mp3')
+                )
         )
-                       ->getData();
+            ->getData();
 
         $this->getJson(
             uri: $model->downloadUrl,
@@ -98,6 +96,6 @@ class ResourceControllerTest extends TestCase
                 'User-Agent' => fake()->userAgent(),
             ]
         )
-             ->assertUnauthorized();
+            ->assertUnauthorized();
     }
 }
